@@ -1,4 +1,4 @@
-# STORM FELLOWSHIP ⚡
+<h1 align="center">STORM FELLOWSHIP ⚡</h1>
 
 <p align="center">
   <img src="StormLogo.png" alt="STORM FELLOWSHIP Logo" width="220" />
