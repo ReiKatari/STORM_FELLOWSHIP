@@ -25,7 +25,7 @@
 
                 <!-- Header Actions -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnToggleMemberListClicked" ToolTip="Список участников">
+                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников">
                         <TextBlock Text="👥" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>

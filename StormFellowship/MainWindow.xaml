@@ -46,8 +46,7 @@
             <Grid Grid.Column="2">
                 <!-- Chat View -->
                 <controls:ChatViewControl x:Name="MainChatView" DataContext="{Binding ChatViewModel}"
-                                          Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"
-                                          ToggleMemberListRequested="OnToggleMemberListRequested" />
+                                          Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
 
                 <!-- Call Overlay Stage (Direct 1-1 / Voice Room) -->
                 <controls:CallOverlayControl x:Name="CallOverlay" DataContext="{Binding CallViewModel}"

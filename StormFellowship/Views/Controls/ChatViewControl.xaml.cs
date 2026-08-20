@@ -8,16 +8,9 @@ namespace StormFellowship.Views.Controls;
 
 public partial class ChatViewControl : UserControl
 {
-    public event RoutedEventHandler? ToggleMemberListRequested;
-
     public ChatViewControl()
     {
         InitializeComponent();
-    }
-
-    private void OnToggleMemberListClicked(object sender, RoutedEventArgs e)
-    {
-        ToggleMemberListRequested?.Invoke(this, e);
     }
 
     private void OnMessageInputKeyDown(object sender, KeyEventArgs e)
@@ -57,7 +50,7 @@ public partial class ChatViewControl : UserControl
     private void OnAttachButtonClicked(object sender, RoutedEventArgs e)
     {
         var channelId = (DataContext as ChatViewModel)?.CurrentChannel?.Id ?? "general";
-        Services.ChatService.Instance.SendMessage(channelId, "Attached tactical map overview:", attachmentUrl: "ms-appx:///Assets/Logo.png");
+        Services.ChatService.Instance.SendMessage(channelId, "Прикрепленный файл:", attachmentUrl: "ms-appx:///Assets/Logo.png");
     }
 
     private void OnReactionBadgeClicked(object sender, RoutedEventArgs e)

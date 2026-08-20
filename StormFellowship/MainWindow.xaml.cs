@@ -44,12 +44,4 @@ public partial class MainWindow : Window
             }
         }
     }
-
-    private void OnToggleMemberListRequested()
-    {
-        if (DataContext is MainViewModel vm)
-        {
-            vm.ToggleMemberList();
-        }
-    }
 }

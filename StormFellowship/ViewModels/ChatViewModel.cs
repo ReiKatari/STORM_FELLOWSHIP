@@ -50,12 +50,12 @@ public partial class ChatViewModel : ObservableObject
     public ObservableCollection<StickerItem> Stickers => ChatService.Instance.Stickers;
 
     public string HeaderTitle => IsDirectMessages
-        ? (CurrentDmUser != null ? $"@{CurrentDmUser.DisplayName}" : "Direct Messages")
-        : (CurrentChannel != null ? $"{CurrentChannel.Name}" : "general");
+        ? (CurrentDmUser != null ? $"@{CurrentDmUser.DisplayName}" : "Личные сообщения")
+        : (CurrentChannel != null ? $"{CurrentChannel.Name}" : "общий");
 
     public string HeaderTopic => IsDirectMessages
-        ? (CurrentDmUser?.CustomStatus ?? "Direct conversation")
-        : (CurrentChannel?.Topic ?? "Storm Fellowship Channel");
+        ? (CurrentDmUser?.CustomStatus ?? "Личная переписка")
+        : (CurrentChannel?.Topic ?? "Основной чат содружества");
 
     public ChatViewModel(MainViewModel mainVM)
     {
@@ -82,6 +82,12 @@ public partial class ChatViewModel : ObservableObject
         OnPropertyChanged(nameof(HeaderTopic));
         OnPropertyChanged(nameof(ChannelName));
         OnPropertyChanged(nameof(ChannelTopic));
+    }
+
+    [RelayCommand]
+    public void ToggleMemberList()
+    {
+        _mainVM.ToggleMemberList();
     }
 
     [RelayCommand]
@@ -142,7 +148,7 @@ public partial class ChatViewModel : ObservableObject
     public void PinMessage(ChatMessage message)
     {
         ChatService.Instance.PinMessage(message);
-        _mainVM.ShowToastNotification(message.IsPinned ? "Message pinned to channel" : "Message unpinned");
+        _mainVM.ShowToastNotification(message.IsPinned ? "Сообщение закреплено" : "Сообщение откреплено");
     }
 
     [RelayCommand]
