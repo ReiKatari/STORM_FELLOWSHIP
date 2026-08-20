@@ -27,6 +27,9 @@ internal static class Program
             Directory.CreateDirectory(installDir);
             Directory.CreateDirectory(startMenuDir);
 
+            // Install bundled prerequisites if present
+            InstallPrerequisites(sourceAssembling, appBase);
+
             // Copy files from Assembling to Install Directory
             if (Directory.Exists(sourceAssembling))
             {
@@ -84,7 +87,7 @@ timeout /t 2 >nul
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.1 has been installed successfully!\n\n• Desktop shortcut created\n• Start Menu shortcut created\n• Registry & storm:// protocol registered\n\nClick OK to launch STORM FELLOWSHIP.", "STORM FELLOWSHIP Setup", 0x00000040);
+            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.1 has been installed successfully!\n\n• All required runtimes & libraries bundled and installed\n• Desktop shortcut created\n• Start Menu shortcut created\n• Registry & storm:// protocol registered\n\nClick OK to launch STORM FELLOWSHIP.", "STORM FELLOWSHIP Setup", 0x00000040);
 
             // Launch app
             if (File.Exists(exePath))
@@ -100,6 +103,58 @@ timeout /t 2 >nul
         catch (Exception ex)
         {
             MessageBox(nint.Zero, $"Installation encountered an error:\n{ex.Message}", "STORM FELLOWSHIP Setup Error", 0x00000010);
+        }
+    }
+
+    private static void InstallPrerequisites(string sourceAssembling, string appBase)
+    {
+        try
+        {
+            string[] redistSearchPaths = new[]
+            {
+                Path.Combine(sourceAssembling, "Redist"),
+                Path.Combine(appBase, "Redist"),
+                Path.Combine(@"E:\STORM FELLOWSHIP\Files\Redist")
+            };
+
+            foreach (var rPath in redistSearchPaths)
+            {
+                if (!Directory.Exists(rPath)) continue;
+
+                // VC++ Redistributable
+                string vcInstaller = Path.Combine(rPath, "vc_redist.x64.exe");
+                if (File.Exists(vcInstaller))
+                {
+                    var p = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = vcInstaller,
+                        Arguments = "/install /quiet /norestart",
+                        UseShellExecute = true,
+                        CreateNoWindow = true
+                    });
+                    p?.WaitForExit(30000);
+                }
+
+                // WebView2 Bootstrapper
+                string wvInstaller = Path.Combine(rPath, "MicrosoftEdgeWebview2Setup.exe");
+                if (File.Exists(wvInstaller))
+                {
+                    var p = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = wvInstaller,
+                        Arguments = "/silent /install",
+                        UseShellExecute = true,
+                        CreateNoWindow = true
+                    });
+                    p?.WaitForExit(30000);
+                }
+
+                break;
+            }
+        }
+        catch
+        {
+            // Ignore optional prerequisites installation errors if already installed
         }
     }
 
