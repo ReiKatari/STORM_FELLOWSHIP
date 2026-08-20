@@ -1,77 +1,134 @@
-# ⚡ STORM FELLOWSHIP v0.0.1
+# STORM FELLOWSHIP ⚡
 
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11%20WinUI%203-00A3FF.svg)](https://microsoft.com)
-[![Framework](https://img.shields.io/badge/.NET-10%20%2F%20WindowsAppSDK%202.4-7000FF.svg)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/Version-0.0.1-22C55E.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)]()
+<p align="center">
+  <img src="StormLogo.png" alt="STORM FELLOWSHIP Logo" width="220" />
+</p>
 
-> High-performance, next-generation desktop communication, voice, video, and fellowship platform built on **WinUI 3 (Windows App SDK / .NET)**. Combines the best ultra low-latency, high-fidelity audio engine of **TeamSpeak 5** with the modern interface, rich messaging, emojis, stickers, and 1-on-1 direct calls of **Discord**.
+<p align="center">
+  <b>Высокопроизводительное, профессиональное десктопное приложение для общения, переписки, аудио- и видеосозвонов нового поколения на WinUI 3 (Windows App SDK / .NET). Сочетает сверхнизкую задержку и качество звука TeamSpeak 5 с удобством, гибкостью, кастомизацией и мультимедийными возможностями Discord.</b>
+</p>
 
----
-
-## 🌟 Key Features
-
-### 🎧 TeamSpeak-Grade Audio Engine
-- **Ultra Low-Latency Voice Channels**: Opus codec streaming at 64k, 96k, 128k, and 256k bitrates.
-- **Push-to-Talk (PTT) & Voice Activity Detection (VAD)**: Customizable sensitivity threshold slider with live VU-meter feedback.
-- **3D Positional Spatial Audio**: Channel node positioning for immersion.
-- **AI Noise Gate & Echo Cancellation**: Clean voice communication with studio clarity.
-- **Audio Feedback Cues**: Sound cues for mute, unmute, deafen, user join/leave, call ringtones.
-
-### 💬 Discord-Inspired Rich Messaging & Community
-- **1-on-1 Direct Calls**: High-tech call interface with animated avatar voice rings, 7-bar dynamic equalizer audio waveform, call timer, camera & screen sharing controls.
-- **Fellowships (Servers) & Groups**: Create, join via `storm://invite/...`, rename, customize icons, assign roles with granular permissions.
-- **Channel Hierarchies**: Text `#`, Voice `🔊`, and Announcement `📢` channels grouped in collapsible categories.
-- **Emojis & Stickers**: Custom Storm Fellowship stickers (Storm GG, Storm Hype, Storm Rage, Storm Victory) + categorized emoji picker.
-- **Reactions & Quoting**: Quick emoji reactions on messages, quoted replies, pinned messages, message history.
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%20Windows%2011-0078D4?style=for-the-badge&logo=windows" />
+  <img src="https://img.shields.io/badge/Framework-WinUI%203%20%2F%20Windows%20App%20SDK-00D2FF?style=for-the-badge&logo=windows-terminal" />
+  <img src="https://img.shields.io/badge/Language-C%23%20%2F%20.NET-7928CA?style=for-the-badge&logo=c-sharp" />
+  <img src="https://img.shields.io/badge/Version-v0.0.1-10B981?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" />
+</p>
 
 ---
 
-## 🎨 4 Bespoke Custom Storm Themes
+## ⚡ О проекте
 
-1. **STORM DARK** (Default): Deep navy and slate dark palette with electric cyan storm accents (`#00A3FF`).
-2. **STORM NIGHT**: Pure OLED pitch-black carbon aesthetic with neon cyber cyan glow (`#00E5FF`).
-3. **STORM DAY**: Clean, crisp high-contrast modern light theme with storm blue accents (`#0284C7`).
-4. **STORM MIDNIGHT**: Cyberpunk neon violet and purple storm aesthetic (`#A855F7`).
+**STORM FELLOWSHIP v0.0.1** — это клиент для командного и персонального общения, разработанный с нуля на базе новейшего нативного UI-фреймворка **WinUI 3** и современного рантайма **.NET**. 
 
----
-
-## 🚀 Quick Start & Building
-
-### Prerequisites
-- Windows 10 (version 1809+) or Windows 11
-- .NET 8 / 9 / 10 SDK with Windows App SDK 2.4+
-- Visual Studio 2022 / JetBrains Rider / VS Code with C# Dev Kit
-
-### Build from Sources
-```bash
-# Clone the repository
-git clone https://github.com/ReiKatari/STORM_FELLOWSHIP.git
-cd STORM_FELLOWSHIP
-
-# Build solution in Release mode
-dotnet build Sources/StormFellowship/StormFellowship.csproj -c Release -r win-x64 -p:WindowsPackageType=None
-
-# Publish standalone executable
-dotnet publish Sources/StormFellowship/StormFellowship.csproj -c Release -r win-x64 --self-contained true -p:WindowsPackageType=None -o E:\STORM FELLOWSHIP\Assembling
-```
+Приложение объединяет в себе лучшие инженерные решения двух индустриальных стандартов:
+1. **Качество и производительность TeamSpeak 5**: кристально чистый звук без задержек, иерархическое дерево каналов с настройкой битрейта до 256–384 kbps, позиционный 3D-звук, Push-to-Talk, Voice Activity Detection с живым VU-метром и шумоподавлением.
+2. **Удобство и гибкость Discord**: прямые 1-на-1 звонки с видео и демонстрацией экрана, динамический визуализатор звуковых волн, сервера (гильдии/Fellowships), продвинутый чат с поддержкой Markdown, коллекция анимированных и статичных стикеров, каталог эмодзи и интерактивные реакции на сообщения.
 
 ---
 
-## 📦 Directory Structure
+## 🎯 Ключевые возможности и функционал
+
+### 📞 1. Прямые звонки 1-на-1 и голосовые конференции
+- **Интерфейс прямых звонков 1-1** (с точным соответствием эталонному дизайну):
+  - Круглые аватары участников с неоновыми пульсирующими кольцами активности речи.
+  - Анимированный динамический 7-полосный эквалайзер звуковой волны (Waveform Visualizer) по центру.
+  - Таймер продолжительности разговора (`13:37`).
+  - Плавающая панель быстрого управления: переключение микрофона с выбором входного устройства, заглушение звука (Deafen), включение веб-камеры, трансляция экрана (Screen Share), мгновенное завершение вызова.
+  - Информационный нижний статус-бар: `🟢 Call ongoing • 13:37`.
+
+### 🎧 2. Аудио-движок профессионального уровня (TeamSpeak 5)
+- **Низколатентные голосовые комнаты**: поддержка кодека Opus с гибким выбором битрейта (64, 96, 128, 256, 384 kbps).
+- **Режимы активации микрофона**:
+  - **Voice Activity Detection (VAD)** с ползунком порога чувствительности и живым аппаратным индикатором уровня (VU-Meter).
+  - **Push-to-Talk (PTT)** с поддержкой назначения горячих клавиш и кнопок мыши.
+- **Пространственный 3D-звук (3D Positional Audio)** для позиционирования тиммейтов в игровом пространстве.
+- **Аппаратное шумоподавление и эхоподавление (RNNoise / Krisp AI / Acoustic Echo Cancellation)**.
+- **Звуковые оповещения (Sound Cues)** на вход/выход участников, отключение микрофона, входящие вызовы и сообщения.
+
+### 💬 3. Продвинутый чат, стикеры, эмодзи и реакции (Discord)
+- **Форматирование сообщений**: поддержка Markdown (жирный, курсив, цитаты, блоки кода, ссылки).
+- **Пакет эксклюзивных стикеров STORM FELLOWSHIP**: *STORM GG, HYPED UP!, RAGE MODE, VICTORY!, FELLOWSHIP, CLUTCH GOD*.
+- **Каталог эмодзи**: кастомные шторм-эмодзи (`⚡`, `🛡️`, `👑`, `🔥`, `⚔️`, `🏆`), эмоции, гейминг и технологии.
+- **Интерактивные реакции**: добавление эмодзи-реакций к сообщениям в 1 клик с живыми счётчиками.
+- **Управление перепиской**: цитирование с быстрым ответом, закрепление важных сообщений (Pin), удаление и прикрепление изображений/файлов.
+
+### 🛡️ 4. Гильдии (Fellowships), каналы и управление правами
+- **Создание и подключение к серверам**: создание гильдии с кастомным именем и иконкой или подключение по прямой ссылке `storm://invite/...`.
+- **Иерархия каналов**: текстовые `#`, голосовые `🔊` и каналы объявлений `📢`, сгруппированные по сворачиваемым категориям.
+- **Система ролей и прав**: *Storm Commander*, *Storm Guard*, *Moderator*, *Member*, *Guest* с цветовой дифференциацией тегов.
+- **Список участников**: группировка по онлайн/оффлайн статусам, контекстные действия (отправить ЛС, позвонить, заглушить).
+
+### 🎨 5. 4 Эксклюзивные темы оформления
+Приложение поддерживает мгновенное динамическое переключение тем в реальном времени со стилизацией всех окон, модальных диалогов, панелей и полей ввода:
+1. **⚡ STORM DARK** *(по умолчанию)* — глубокая тёмно-синяя/грифельная палитра с электрическими циан-акцентами (`#00A3FF`).
+2. **🌑 STORM NIGHT** — чистый глубокий OLED-чёрный карбон с неоновым кибер-свечением (`#00E5FF`).
+3. **☀️ STORM DAY** — чистая, современная высококонтрастная светлая тема с фирменными синими акцентами (`#0284C7`).
+4. **🔮 STORM MIDNIGHT** — неоновая киберпанк тема в глубоких фиолетово-пурпурных тонах (`#A855F7`).
+
+### 🔔 6. Трей Windows и системная интеграция
+- Сворачивание в область уведомлений Windows (System Tray).
+- Контекстное меню трея: быстрый Mute/Deafen, смена статуса (Online, Away, DND, Offline), вызов окна, выход.
+- Регистрация системного протокола `storm://` для интеграции с браузером и ссылками-приглашениями.
+
+---
+
+## 📦 Встроенные программы и библиотеки (Zero-Dependency)
+
+В сборку и установщик программы **нативно встроены все необходимые рантаймы и зависимости**:
+- Нативные библиотеки **Microsoft Visual C++ 2015–2026 (x64)** (`msvcp140.dll`, `vcruntime140.dll`, `concrt140.dll` и др.) для портативной работы без предварительной установки.
+- Автоматический установщик **VC++ Redistributable** (`vc_redist.x64.exe`).
+- Автоматический установщик **Microsoft Edge WebView2 Runtime** (`MicrosoftEdgeWebview2Setup.exe`).
+- Автономный пакет **Windows App SDK 2.4+ / .NET 10 (Self-Contained)**.
+
+---
+
+## 📁 Структура директорий проекта
 
 ```
 E:\STORM FELLOWSHIP\
-├── Sources\           # Full C# WinUI 3 source code repository
-│   ├── StormFellowship/          # Main WinUI 3 desktop client
-│   ├── StormFellowship.Installer/# Standalone setup wizard
-│   └── Assets/                   # Multi-resolution ICOs, PNGs, Avatars, Stickers
-├── Assembling\        # Standalone compiled release binaries
-└── Files\             # Setup installer (StormFellowshipSetup.exe) & PowerShell scripts
+├── Sources\                                # Полный исходный код решения
+│   ├── StormFellowship/                    # Основное приложение WinUI 3
+│   │   ├── Assets/                         # Иконки, аватары, стикеры, логотипы
+│   │   ├── Models/                         # Модели данных (User, Channel, Call...)
+│   │   ├── Services/                       # Аудио-движок, звонки, темы, трей
+│   │   ├── ViewModels/                     # MVVM-архитектура
+│   │   ├── Views/                          # XAML-представления и элементы управления
+│   │   └── Themes/                         # Ресурсы 4 тем оформления
+│   ├── StormFellowship.Installer/          # Мастер установки приложения
+│   └── StormFellowship.slnx                # Файл решения .NET
+├── Assembling\                             # Готовая к запуску скомпилированная сборка
+│   ├── StormFellowship.exe                 # Исполняемый файл программы
+│   └── Assets/ & Redist/                   # Встроенные ресурсы и нативные DLL
+└── Files\                                  # Пакеты установки для пользователей
+    ├── StormFellowshipSetup.exe            # Графический мастер установки
+    ├── Install.ps1                         # Скрипт быстрой автоматической установки
+    └── Uninstall.ps1                       # Скрипт полного удаления
 ```
 
 ---
 
-## 👤 Author & Credits
-- **Developer**: ReiKatari
-- **Repository**: [https://github.com/ReiKatari/STORM_FELLOWSHIP](https://github.com/ReiKatari/STORM_FELLOWSHIP)
+## 🛠️ Установка и запуск
+
+### Вариант 1: Быстрая установка через установщик
+Запустите `StormFellowshipSetup.exe` из папки `Files` или выполните команду в PowerShell:
+```powershell
+powershell -ExecutionPolicy Bypass -File "E:\STORM FELLOWSHIP\Files\Install.ps1"
+```
+Установщик автоматически:
+- Скопирует приложение в `%LOCALAPPDATA%\StormFellowship`
+- Создаст ярлык с фирменной иконкой на **Рабочем столе**
+- Добавит программу в меню **«Пуск»**
+- Зарегистрирует записи в реестре Windows (`Uninstall`) и протокол `storm://`
+
+### Вариант 2: Портативный запуск без установки
+Запустите напрямую `StormFellowship.exe` из папки `E:\STORM FELLOWSHIP\Assembling\`.
+
+---
+
+## 👤 Автор и контакты
+
+- **Разработчик**: [ReiKatari](https://github.com/ReiKatari)
+- **Репозиторий проекта**: [https://github.com/ReiKatari/STORM_FELLOWSHIP](https://github.com/ReiKatari/STORM_FELLOWSHIP)
+- **Версия**: `0.0.1` (Релиз)
