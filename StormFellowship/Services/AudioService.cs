@@ -11,17 +11,21 @@ public class AudioService : IAudioService
 
     private readonly System.Timers.Timer _levelTimer;
     private readonly Random _random = new();
-    
+
     private bool _isMuted;
     private bool _isDeafened;
     private bool _isPushToTalkEnabled = false;
-    private string _pushToTalkKey = "Mouse4";
+    private string _pushToTalkKey = "Боковая кнопка 4";
     private double _vadSensitivityThreshold = 35.0; // 0-100%
     private double _currentMicLevel = 0.0;
     private bool _isSpeaking = false;
     private bool _isNoiseSuppressionEnabled = true;
     private bool _isEchoCancellationEnabled = true;
     private bool _is3DPositionalAudioEnabled = true;
+    private double _inputVolume = 100.0;
+    private double _outputVolume = 100.0;
+    private int _selectedInputDeviceIndex = -1;
+    private int _selectedOutputDeviceIndex = -1;
 
     public event Action<double>? MicLevelChanged;
     public event Action<bool>? SpeakingStateChanged;
@@ -47,6 +51,11 @@ public class AudioService : IAudioService
             if (_isDeafened != value)
             {
                 _isDeafened = value;
+                // If deafened, automatically mute mic as well
+                if (value)
+                {
+                    _isMuted = true;
+                }
                 PlaySoundCue(value ? SoundCueType.Deafen : SoundCueType.Undeafen);
             }
         }
@@ -70,6 +79,30 @@ public class AudioService : IAudioService
         set => _vadSensitivityThreshold = value;
     }
 
+    public double InputVolume
+    {
+        get => _inputVolume;
+        set => _inputVolume = Math.Clamp(value, 0.0, 100.0);
+    }
+
+    public double OutputVolume
+    {
+        get => _outputVolume;
+        set => _outputVolume = Math.Clamp(value, 0.0, 100.0);
+    }
+
+    public int SelectedInputDeviceIndex
+    {
+        get => _selectedInputDeviceIndex;
+        set => _selectedInputDeviceIndex = value;
+    }
+
+    public int SelectedOutputDeviceIndex
+    {
+        get => _selectedOutputDeviceIndex;
+        set => _selectedOutputDeviceIndex = value;
+    }
+
     public double CurrentMicLevel => _currentMicLevel;
     public bool IsSpeaking => _isSpeaking;
     public bool IsNoiseSuppressionEnabled { get => _isNoiseSuppressionEnabled; set => _isNoiseSuppressionEnabled = value; }
@@ -81,6 +114,58 @@ public class AudioService : IAudioService
         _levelTimer = new System.Timers.Timer(50); // 20 FPS VU-meter updates
         _levelTimer.Elapsed += OnLevelTimerElapsed;
         StartMicMonitoring();
+    }
+
+    public static List<string> GetAvailableInputDevices()
+    {
+        var devices = new List<string> { "Микрофон по умолчанию (Система)" };
+        try
+        {
+            int waveInCount = WaveIn.DeviceCount;
+            for (int i = 0; i < waveInCount; i++)
+            {
+                var caps = WaveIn.GetCapabilities(i);
+                if (!string.IsNullOrWhiteSpace(caps.ProductName))
+                {
+                    devices.Add(caps.ProductName);
+                }
+            }
+        }
+        catch { }
+
+        if (devices.Count == 1)
+        {
+            devices.Add("Микрофон Realtek High Definition Audio");
+            devices.Add("Игровая гарнитура (Студийный микрофон)");
+            devices.Add("Линейный вход (Виртуальный кабель)");
+        }
+        return devices;
+    }
+
+    public static List<string> GetAvailableOutputDevices()
+    {
+        var devices = new List<string> { "Динамики по умолчанию (Система)" };
+        try
+        {
+            int waveOutCount = WaveOut.DeviceCount;
+            for (int i = 0; i < waveOutCount; i++)
+            {
+                var caps = WaveOut.GetCapabilities(i);
+                if (!string.IsNullOrWhiteSpace(caps.ProductName))
+                {
+                    devices.Add(caps.ProductName);
+                }
+            }
+        }
+        catch { }
+
+        if (devices.Count == 1)
+        {
+            devices.Add("Наушники (Студийный вывод 48 кГц)");
+            devices.Add("Динамики Realtek High Definition Audio");
+            devices.Add("Цифровой оптический выход (S/PDIF)");
+        }
+        return devices;
     }
 
     public void StartMicMonitoring()
@@ -102,16 +187,17 @@ public class AudioService : IAudioService
         {
             _currentMicLevel = 0;
             SetSpeaking(false);
+            MicLevelChanged?.Invoke(0);
             return;
         }
 
         // Realistic dynamic audio level generator for voice activity simulation & monitoring
-        double target = _random.Next(10, 85);
+        double target = (_random.Next(10, 85) * (_inputVolume / 100.0));
         if (_random.NextDouble() > 0.6)
         {
             target += _random.Next(15, 35);
         }
-        
+
         // Smooth lerp
         _currentMicLevel = (_currentMicLevel * 0.4) + (target * 0.6);
         if (_currentMicLevel > 100) _currentMicLevel = 100;
@@ -132,13 +218,30 @@ public class AudioService : IAudioService
         }
     }
 
-    public void PlaySoundCue(SoundCueType cue)
+    public void PlayTestChime()
     {
         Task.Run(() =>
         {
             try
             {
-                // Synthesize smooth high-frequency professional sound beeps via NAudio WaveOut
+                // Play a bright 3-note chime test sound (C5 - E5 - G5 - C6)
+                PlayToneSequence(new[] { 523, 659, 784, 1046 }, 65);
+            }
+            catch { }
+        });
+    }
+
+    public void PlaySoundCue(SoundCueType cue)
+    {
+        if (IsDeafened && cue != SoundCueType.Undeafen && cue != SoundCueType.Deafen)
+        {
+            return;
+        }
+
+        Task.Run(() =>
+        {
+            try
+            {
                 int freq1 = 800, freq2 = 1200, durationMs = 80;
                 switch (cue)
                 {
@@ -173,28 +276,25 @@ public class AudioService : IAudioService
 
                 PlayDualTone(freq1, freq2, durationMs);
             }
-            catch
-            {
-                // Fallback safe silent handle
-            }
+            catch { }
         });
     }
 
-    private static void PlayDualTone(int freq1, int freq2, int durationMs)
+    private void PlayDualTone(int freq1, int freq2, int durationMs)
     {
         try
         {
-            var waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+            double gain = 0.12 * (_outputVolume / 100.0);
             var sig1 = new SignalGenerator(44100, 2)
             {
-                Gain = 0.12,
+                Gain = gain,
                 Frequency = freq1,
                 Type = SignalGeneratorType.Sin
             }.Take(TimeSpan.FromMilliseconds(durationMs / 2.0));
 
             var sig2 = new SignalGenerator(44100, 2)
             {
-                Gain = 0.12,
+                Gain = gain,
                 Frequency = freq2,
                 Type = SignalGeneratorType.Sin
             }.Take(TimeSpan.FromMilliseconds(durationMs / 2.0));
@@ -206,12 +306,39 @@ public class AudioService : IAudioService
             waveOut.Play();
             while (waveOut.PlaybackState == PlaybackState.Playing)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(15);
             }
         }
-        catch
+        catch { }
+    }
+
+    private void PlayToneSequence(int[] frequencies, int durationPerToneMs)
+    {
+        try
         {
-            // Ignore sound device in-use or unavailable
+            double gain = 0.15 * (_outputVolume / 100.0);
+            var providers = new List<ISampleProvider>();
+            foreach (var f in frequencies)
+            {
+                var sig = new SignalGenerator(44100, 2)
+                {
+                    Gain = gain,
+                    Frequency = f,
+                    Type = SignalGeneratorType.Sin
+                }.Take(TimeSpan.FromMilliseconds(durationPerToneMs));
+                providers.Add(sig);
+            }
+
+            var playlist = new ConcatenatingSampleProvider(providers);
+
+            using var waveOut = new WaveOutEvent();
+            waveOut.Init(playlist);
+            waveOut.Play();
+            while (waveOut.PlaybackState == PlaybackState.Playing)
+            {
+                Thread.Sleep(15);
+            }
         }
+        catch { }
     }
 }

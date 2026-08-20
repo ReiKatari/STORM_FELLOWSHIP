@@ -16,17 +16,18 @@ public partial class ChannelSidebarViewModel : ObservableObject
     public ObservableCollection<User> DirectMessageUsers => FellowshipService.Instance.DirectMessageUsers;
     public User CurrentUser => FellowshipService.Instance.CurrentUser;
 
-    public string FellowshipTitle => IsDirectMessagesSelected ? "DIRECT MESSAGES" : (CurrentFellowship?.Name ?? "STORM SANCTUARY");
+    public string FellowshipTitle => IsDirectMessagesSelected ? "ЛИЧНЫЕ СООБЩЕНИЯ" : (CurrentFellowship?.Name ?? "СОДРУЖЕСТВО");
     public bool IsInDmMode => IsDirectMessagesSelected;
     public bool IsInFellowshipMode => !IsDirectMessagesSelected;
     public ObservableCollection<User> DmUsers => DirectMessageUsers;
     public ObservableCollection<ChannelCategory> Categories => CurrentFellowship?.Categories ?? new ObservableCollection<ChannelCategory>();
 
-    [ObservableProperty]
-    private bool _isMuted = false;
-
-    [ObservableProperty]
-    private bool _isDeafened = false;
+    public bool IsMuted => AudioService.Instance.IsMuted;
+    public bool IsDeafened => AudioService.Instance.IsDeafened;
+    public string MicIcon => IsMuted ? "🔇" : "🎤";
+    public string SoundIcon => IsDeafened ? "🔇" : "🎧";
+    public string MicTooltip => IsMuted ? "Включить микрофон" : "Отключить микрофон";
+    public string SoundTooltip => IsDeafened ? "Включить звук" : "Заглушить звук";
 
     [ObservableProperty]
     private bool _isSpeaking = false;
@@ -51,7 +52,7 @@ public partial class ChannelSidebarViewModel : ObservableObject
         };
     }
 
-    private void RefreshAll()
+    public void RefreshAll()
     {
         OnPropertyChanged(nameof(CurrentFellowship));
         OnPropertyChanged(nameof(CurrentDmUser));
@@ -60,6 +61,13 @@ public partial class ChannelSidebarViewModel : ObservableObject
         OnPropertyChanged(nameof(IsInDmMode));
         OnPropertyChanged(nameof(IsInFellowshipMode));
         OnPropertyChanged(nameof(Categories));
+        OnPropertyChanged(nameof(CurrentUser));
+        OnPropertyChanged(nameof(IsMuted));
+        OnPropertyChanged(nameof(IsDeafened));
+        OnPropertyChanged(nameof(MicIcon));
+        OnPropertyChanged(nameof(SoundIcon));
+        OnPropertyChanged(nameof(MicTooltip));
+        OnPropertyChanged(nameof(SoundTooltip));
     }
 
     [RelayCommand]
@@ -92,21 +100,43 @@ public partial class ChannelSidebarViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void OpenCreateChannel(ChannelCategory? category = null)
+    {
+        _mainVM.OpenCreateChannelDialog(category);
+    }
+
+    [RelayCommand]
+    public void OpenEditChannel(Channel? channel)
+    {
+        if (channel != null)
+        {
+            _mainVM.OpenEditChannelDialog(channel);
+        }
+    }
+
+    [RelayCommand]
+    public void DeleteChannel(Channel? channel)
+    {
+        if (channel != null && CurrentFellowship != null)
+        {
+            FellowshipService.Instance.DeleteChannel(CurrentFellowship.Id, channel.Id);
+            _mainVM.ShowToastNotification($"Канал #{channel.Name} удален");
+            RefreshAll();
+        }
+    }
+
+    [RelayCommand]
     public void ToggleMute()
     {
-        IsMuted = !IsMuted;
-        AudioService.Instance.IsMuted = IsMuted;
-        CurrentUser.IsMuted = IsMuted;
         CallService.Instance.ToggleMute();
+        RefreshAll();
     }
 
     [RelayCommand]
     public void ToggleDeafen()
     {
-        IsDeafened = !IsDeafened;
-        AudioService.Instance.IsDeafened = IsDeafened;
-        CurrentUser.IsDeafened = IsDeafened;
         CallService.Instance.ToggleDeafen();
+        RefreshAll();
     }
 
     [RelayCommand]

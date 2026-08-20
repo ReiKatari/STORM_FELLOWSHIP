@@ -1,7 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using StormFellowship.Models;
-using StormFellowship.Services;
+using StormFellowship.ViewModels;
 
 namespace StormFellowship.Views.Controls;
 
@@ -10,6 +9,14 @@ public partial class TitleBarControl : UserControl
     public TitleBarControl()
     {
         InitializeComponent();
+    }
+
+    private void OnCheckUpdatesClicked(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+        {
+            vm.CheckForUpdates();
+        }
     }
 
     private void OnMinimizeClicked(object sender, RoutedEventArgs e)
@@ -23,7 +30,7 @@ public partial class TitleBarControl : UserControl
         var win = Window.GetWindow(this);
         if (win != null)
         {
-            win.WindowState = win.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            win.WindowState = (win.WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
         }
     }
 
@@ -31,25 +38,5 @@ public partial class TitleBarControl : UserControl
     {
         var win = Window.GetWindow(this);
         win?.Close();
-    }
-
-    private void OnDarkThemeClicked(object sender, RoutedEventArgs e)
-    {
-        ThemeService.Instance.SetTheme(ThemeType.StormDark);
-    }
-
-    private void OnNightThemeClicked(object sender, RoutedEventArgs e)
-    {
-        ThemeService.Instance.SetTheme(ThemeType.StormNight);
-    }
-
-    private void OnDayThemeClicked(object sender, RoutedEventArgs e)
-    {
-        ThemeService.Instance.SetTheme(ThemeType.StormDay);
-    }
-
-    private void OnMidnightThemeClicked(object sender, RoutedEventArgs e)
-    {
-        ThemeService.Instance.SetTheme(ThemeType.StormMidnight);
     }
 }

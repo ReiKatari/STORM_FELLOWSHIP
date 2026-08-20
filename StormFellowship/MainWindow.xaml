@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
         xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
-        Title="STORM FELLOWSHIP v0.0.2"
+        Title="STORM FELLOWSHIP v0.0.3"
         Width="1280" Height="800"
         MinWidth="960" MinHeight="600"
         WindowStartupLocation="CenterScreen"
+        PreviewKeyDown="OnWindowPreviewKeyDown"
         Background="{DynamicResource AppBackgroundBrush}">
 
     <WindowChrome.WindowChrome>
@@ -76,6 +77,14 @@
 
         <Grid Grid.RowSpan="2" Visibility="{Binding IsUserSettingsModalOpen, Converter={StaticResource BoolToVis}}">
             <dialogs:UserSettingsDialog DataContext="{Binding UserSettingsViewModel}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsCreateChannelModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:CreateChannelDialog DataContext="{Binding CreateChannelModalViewModel}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsEditChannelModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:EditChannelDialog DataContext="{Binding EditChannelModalViewModel}" />
         </Grid>
     </Grid>
 </Window>

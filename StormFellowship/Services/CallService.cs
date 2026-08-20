@@ -15,6 +15,8 @@ public class CallService : ICallService
     public CallSession? ActiveCall { get; private set; }
     public bool IsInCall => ActiveCall != null && ActiveCall.State == CallState.Connected;
 
+    public double CallVolume { get; set; } = 100.0;
+
     public event Action<CallSession?>? CallStateChanged;
     public event Action<double[]>? WaveformUpdated;
 
@@ -25,89 +27,28 @@ public class CallService : ICallService
 
         _waveformTimer = new System.Timers.Timer(40); // 25 FPS wave visualizer
         _waveformTimer.Elapsed += OnWaveformTimerElapsed;
-
-        // Default initial session: Setup the iconic Sakura & You call matching reference image!
-        InitializeDemoCall();
-    }
-
-    private void InitializeDemoCall()
-    {
-        var sakura = new User
-        {
-            Id = "user_sakura",
-            Username = "Sakura",
-            DisplayName = "Sakura",
-            Tag = "7721",
-            AvatarPath = "ms-appx:///Assets/Avatars/sakura.png",
-            CustomStatus = "What the bobba",
-            Status = UserStatus.InVoice,
-            IsSpeaking = true,
-            RoleName = "Storm Guard",
-            RoleColorHex = "#FF6A88"
-        };
-
-        var localUser = new User
-        {
-            Id = "user_local",
-            Username = "You",
-            DisplayName = "You",
-            Tag = "0001",
-            AvatarPath = "ms-appx:///Assets/Avatars/you.png",
-            CustomStatus = "Building STORM FELLOWSHIP",
-            Status = UserStatus.InVoice,
-            IsSpeaking = false,
-            RoleName = "Storm Commander",
-            RoleColorHex = "#00A3FF"
-        };
-
-        ActiveCall = new CallSession
-        {
-            Type = CallType.Direct1v1,
-            State = CallState.Connected,
-            Title = "1-1 DIRECT CALLS",
-            RemoteUser = sakura,
-            LocalUser = localUser,
-            StartTime = DateTime.Now.AddMinutes(-13).AddSeconds(-37),
-            Duration = TimeSpan.FromMinutes(13) + TimeSpan.FromSeconds(37),
-            IsRemoteSpeaking = true,
-            IsLocalSpeaking = false,
-            PingMs = 18,
-            PacketLossPercent = 0.0
-        };
-
-        ActiveCall.Participants.Add(sakura);
-        ActiveCall.Participants.Add(localUser);
-
-        _callTimer.Start();
-        _waveformTimer.Start();
     }
 
     public void StartDirectCall(User remoteUser, bool isVideo = false)
     {
         AudioService.Instance.PlaySoundCue(SoundCueType.CallStart);
 
-        var localUser = new User
-        {
-            Id = "user_local",
-            Username = "You",
-            DisplayName = "You",
-            Tag = "0001",
-            AvatarPath = "ms-appx:///Assets/Avatars/you.png",
-            Status = UserStatus.InVoice,
-            RoleName = "Storm Commander"
-        };
+        var localUser = FellowshipService.Instance.CurrentUser;
 
         ActiveCall = new CallSession
         {
             Type = isVideo ? CallType.DirectVideo : CallType.Direct1v1,
             State = CallState.Connected,
-            Title = isVideo ? "1-1 VIDEO CALL" : "1-1 DIRECT CALL",
+            Title = isVideo ? "ПРЯМОЙ ВИДЕОЗВОНОК" : "ПРЯМОЙ ВЫЗОВ",
             RemoteUser = remoteUser,
             LocalUser = localUser,
             StartTime = DateTime.Now,
             Duration = TimeSpan.Zero,
             IsRemoteSpeaking = true,
-            IsVideoOn = isVideo
+            IsVideoOn = isVideo,
+            PingMs = 16,
+            PacketLossPercent = 0.0,
+            Codec = "Opus 128 kbps Low-Latency VBR"
         };
 
         ActiveCall.Participants.Add(remoteUser);
@@ -123,16 +64,7 @@ public class CallService : ICallService
     {
         AudioService.Instance.PlaySoundCue(SoundCueType.UserJoin);
 
-        var localUser = new User
-        {
-            Id = "user_local",
-            Username = "You",
-            DisplayName = "You",
-            Tag = "0001",
-            AvatarPath = "ms-appx:///Assets/Avatars/you.png",
-            Status = UserStatus.InVoice,
-            RoleName = "Storm Commander"
-        };
+        var localUser = FellowshipService.Instance.CurrentUser;
 
         ActiveCall = new CallSession
         {
@@ -140,9 +72,17 @@ public class CallService : ICallService
             State = CallState.Connected,
             Title = $"🔊 {voiceChannel.Name.ToUpper()}",
             LocalUser = localUser,
+            RemoteUser = new User
+            {
+                DisplayName = "Голосовая комната",
+                CustomStatus = $"{voiceChannel.BitrateKbps} Кбит/с",
+                AvatarGlyph = "🔊"
+            },
             StartTime = DateTime.Now,
             Duration = TimeSpan.Zero,
-            Codec = $"Opus {voiceChannel.BitrateKbps} kbps Low-Latency VBR"
+            Codec = $"Opus {voiceChannel.BitrateKbps} Кбит/с Сверхнизкая задержка",
+            PingMs = 14,
+            PacketLossPercent = 0.0
         };
 
         ActiveCall.Participants.Add(localUser);
@@ -176,6 +116,12 @@ public class CallService : ICallService
         {
             ActiveCall.IsMicMuted = !ActiveCall.IsMicMuted;
             AudioService.Instance.IsMuted = ActiveCall.IsMicMuted;
+            FellowshipService.Instance.CurrentUser.IsMuted = ActiveCall.IsMicMuted;
+        }
+        else
+        {
+            AudioService.Instance.IsMuted = !AudioService.Instance.IsMuted;
+            FellowshipService.Instance.CurrentUser.IsMuted = AudioService.Instance.IsMuted;
         }
     }
 
@@ -185,6 +131,12 @@ public class CallService : ICallService
         {
             ActiveCall.IsDeafened = !ActiveCall.IsDeafened;
             AudioService.Instance.IsDeafened = ActiveCall.IsDeafened;
+            FellowshipService.Instance.CurrentUser.IsDeafened = ActiveCall.IsDeafened;
+        }
+        else
+        {
+            AudioService.Instance.IsDeafened = !AudioService.Instance.IsDeafened;
+            FellowshipService.Instance.CurrentUser.IsDeafened = AudioService.Instance.IsDeafened;
         }
     }
 
@@ -209,8 +161,8 @@ public class CallService : ICallService
         if (ActiveCall != null)
         {
             ActiveCall.Duration = DateTime.Now - ActiveCall.StartTime;
-            ActiveCall.IsRemoteSpeaking = (_random.NextDouble() > 0.3);
-            ActiveCall.IsLocalSpeaking = !ActiveCall.IsMicMuted && (_random.NextDouble() > 0.7);
+            ActiveCall.IsRemoteSpeaking = (_random.NextDouble() > 0.35);
+            ActiveCall.IsLocalSpeaking = !AudioService.Instance.IsMuted && (_random.NextDouble() > 0.65);
         }
     }
 
@@ -218,7 +170,6 @@ public class CallService : ICallService
     {
         if (ActiveCall == null) return;
 
-        // Generate 7-bar dynamic audio levels for voice indicator waveform (between Sakura and You)
         double[] bars = new double[7];
         bool speaking = ActiveCall.IsRemoteSpeaking || ActiveCall.IsLocalSpeaking;
         

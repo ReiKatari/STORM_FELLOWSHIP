@@ -12,59 +12,51 @@ public partial class ChannelSidebarControl : UserControl
         InitializeComponent();
     }
 
-    private void OnCreateChannelClicked(object sender, RoutedEventArgs e)
+    private void OnChannelClicked(object sender, RoutedEventArgs e)
     {
-        if (DataContext is ChannelSidebarViewModel vm)
+        if (sender is Button btn && btn.Tag is Channel chan && DataContext is ChannelSidebarViewModel vm)
         {
-            if (vm.CurrentFellowship != null)
-            {
-                var cat = vm.CurrentFellowship.Categories.FirstOrDefault();
-                if (cat != null)
-                {
-                    Services.FellowshipService.Instance.AddChannel(vm.CurrentFellowship.Id, cat.Id, "new-channel", ChannelType.Text);
-                }
-            }
-        }
-    }
-
-    private void OnServerSettingsClicked(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is ChannelSidebarViewModel vm)
-        {
-            vm.OpenFellowshipSettings();
+            vm.SelectChannel(chan);
         }
     }
 
     private void OnCategoryHeaderClicked(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is ChannelCategory cat)
+        if (sender is Button btn && btn.Tag is ChannelCategory cat && DataContext is ChannelSidebarViewModel vm)
         {
-            if (DataContext is ChannelSidebarViewModel vm)
-            {
-                vm.ToggleCategory(cat);
-            }
+            vm.ToggleCategory(cat);
         }
     }
 
-    private void OnChannelClicked(object sender, RoutedEventArgs e)
+    private void OnAddChannelToCategoryClicked(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is Channel chan)
+        if (sender is Button btn && btn.Tag is ChannelCategory cat && DataContext is ChannelSidebarViewModel vm)
         {
-            if (DataContext is ChannelSidebarViewModel vm)
-            {
-                vm.SelectChannel(chan);
-            }
+            vm.OpenCreateChannel(cat);
+        }
+    }
+
+    private void OnContextEditChannelClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem item && item.Tag is Channel chan && DataContext is ChannelSidebarViewModel vm)
+        {
+            vm.OpenEditChannel(chan);
+        }
+    }
+
+    private void OnContextDeleteChannelClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem item && item.Tag is Channel chan && DataContext is ChannelSidebarViewModel vm)
+        {
+            vm.DeleteChannel(chan);
         }
     }
 
     private void OnDirectCallButtonClicked(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is User user)
+        if (sender is Button btn && btn.Tag is User user && DataContext is ChannelSidebarViewModel vm)
         {
-            if (DataContext is ChannelSidebarViewModel vm)
-            {
-                vm.StartDirectCallWithUser(user);
-            }
+            vm.StartDirectCallWithUser(user);
         }
     }
 }

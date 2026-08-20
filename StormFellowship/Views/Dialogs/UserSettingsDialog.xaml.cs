@@ -66,6 +66,22 @@ public partial class UserSettingsDialog : UserControl
         TabAboutContent.Visibility = Visibility.Visible;
     }
 
+    private void OnAvatarPresetClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string glyph && DataContext is UserSettingsViewModel vm)
+        {
+            vm.SelectAvatarPreset(glyph);
+        }
+    }
+
+    private void OnStatusPresetClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is StatusPresetItem item && DataContext is UserSettingsViewModel vm)
+        {
+            vm.SelectStatusPreset(item);
+        }
+    }
+
     private void OnThemeDarkClicked(object sender, RoutedEventArgs e)
     {
         ThemeService.Instance.SetTheme(ThemeType.StormDark);

@@ -1,0 +1,35 @@
+<UserControl x:Class="StormFellowship.Views.Dialogs.EditChannelDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Backdrop Overlay (Click to close) -->
+    <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}" MouseDown="OnBackdropMouseDown">
+        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="480" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24" MouseDown="OnDialogCardMouseDown">
+            <StackPanel>
+                <!-- Title -->
+                <TextBlock Text="НАСТРОЙКА КАНАЛА" FontWeight="Black" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
+                <TextBlock Text="Изменение параметров и управление каналом." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16" />
+
+                <!-- Channel Name Input -->
+                <TextBlock Text="НАЗВАНИЕ КАНАЛА" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding EditingChannelName, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" Margin="0,0,0,14" />
+
+                <!-- Channel Topic Input -->
+                <TextBlock Text="ТЕМА КАНАЛА" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding EditingChannelTopic, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" Margin="0,0,0,14" />
+
+                <!-- Bitrate Selector -->
+                <TextBlock Text="БИТРЕЙТ ЗВУКА" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <ComboBox ItemsSource="{Binding AvailableBitrates}" SelectedItem="{Binding EditingChannelBitrate}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Padding="8,6" Margin="0,0,0,20" />
+
+                <!-- Actions -->
+                <Grid>
+                    <Button Content="Удалить канал" HorizontalAlignment="Left" Background="Transparent" Foreground="{DynamicResource StatusDndBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding SubmitDeleteChannelCommand}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Отмена" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand" Command="{Binding CloseEditChannelDialogCommand}" />
+                        <Button Content="Сохранить" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="18,8" Cursor="Hand" Command="{Binding SubmitEditChannelCommand}" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

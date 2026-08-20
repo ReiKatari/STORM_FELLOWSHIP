@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Backdrop Overlay (Click to close) -->
     <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}" MouseDown="OnBackdropMouseDown">
-        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="680" Height="520" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
+        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="720" Height="560" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="52" />
@@ -18,7 +18,7 @@
                             <TextBlock Text="⚙" FontSize="16" Foreground="{DynamicResource AccentBrush}" Margin="0,0,10,0" VerticalAlignment="Center" />
                             <TextBlock Text="НАСТРОЙКИ STORM FELLOWSHIP" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Button HorizontalAlignment="Right" Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding CloseCommand}" ToolTip="Закрыть">
+                        <Button HorizontalAlignment="Right" Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding CloseCommand}" ToolTip="Закрыть (ESC)">
                             <TextBlock Text="✕" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Button>
                     </Grid>
@@ -27,7 +27,7 @@
                 <!-- Main Content Tabs -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="190" />
+                        <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
@@ -36,7 +36,7 @@
                         <StackPanel>
                             <Button Content="🎨 Внешний вид и темы" Click="OnTabThemesClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
                             <Button Content="🎙️ Голос и звук" Click="OnTabAudioClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
-                            <Button Content="👤 Профиль пользователя" Click="OnTabProfileClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="👤 Профиль и статусы" Click="OnTabProfileClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
                             <Button Content="⌨️ Горячие клавиши" Click="OnTabHotkeysClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
                             <Button Content="ℹ️ О программе" Click="OnTabAboutClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
                         </StackPanel>
@@ -99,8 +99,37 @@
 
                             <!-- TAB 2: VOICE & AUDIO -->
                             <StackPanel x:Name="TabAudioContent" Visibility="Collapsed">
-                                <TextBlock Text="ЗВУКОВОЙ ДВИЖОК STORM" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                <TextBlock Text="ЗВУКОВОЙ ДВИЖОК И УСТРОЙСТВА" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,12" />
 
+                                <!-- Input Device -->
+                                <TextBlock Text="УСТРОЙСТВО ВВОДА (МИКРОФОН)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding AudioInputDevices}" SelectedItem="{Binding SelectedAudioInput}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Padding="8,6" Margin="0,0,0,6" />
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Minimum="0" Maximum="100" Value="{Binding InputVolume}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding InputVolume, StringFormat='{}{0:0}%'}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </Grid>
+
+                                <!-- Output Device & Test Sound -->
+                                <TextBlock Text="УСТРОЙСТВО ВЫВОДА (ДИНАМИКИ / НАУШНИКИ)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding AudioOutputDevices}" SelectedItem="{Binding SelectedAudioOutput}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Padding="8,6" Margin="0,0,0,6" />
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Minimum="0" Maximum="100" Value="{Binding OutputVolume}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding OutputVolume, StringFormat='{}{0:0}%'}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,12,0" VerticalAlignment="Center" />
+                                    <Button Grid.Column="2" Content="🔊 Проверить звук" Command="{Binding TestAudioCommand}" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="12,4" Cursor="Hand" FontWeight="SemiBold" FontSize="11" />
+                                </Grid>
+
+                                <Separator Background="{DynamicResource DividerBrush}" Margin="0,4,0,12" />
+
+                                <!-- Activation Mode -->
                                 <TextBlock Text="Режим активации микрофона:" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                                     <RadioButton Content="Активация по голосу" IsChecked="{Binding IsVadMode}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,16,0" />
@@ -118,13 +147,76 @@
                                 <CheckBox Content="Аппаратное шумоподавление" IsChecked="{Binding NoiseSuppressionEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
                             </StackPanel>
 
-                            <!-- TAB 3: USER PROFILE -->
+                            <!-- TAB 3: USER PROFILE & STATUSES -->
                             <StackPanel x:Name="TabProfileContent" Visibility="Collapsed">
-                                <TextBlock Text="ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                <TextBlock Text="ПРОФИЛЬ И СТАТУСЫ" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+
+                                <!-- Avatar Customization Block -->
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,14">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Current Avatar Preview -->
+                                        <Border Width="56" Height="56" CornerRadius="28" Background="{DynamicResource AccentBrush}" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding AvatarGlyph}" FontSize="28" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Avatar actions & Presets -->
+                                        <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                <Button Content="📁 Загрузить свой аватар..." Command="{Binding UploadCustomAvatarCommand}" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="12,5" Cursor="Hand" FontSize="11" />
+                                            </StackPanel>
+                                            <TextBlock Text="Или выберите фирменную иконку:" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4" />
+                                            <ItemsControl ItemsSource="{Binding AvatarPresets}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Width="28" Height="28" Margin="0,0,4,4" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnAvatarPresetClicked">
+                                                            <TextBlock Text="{Binding}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
                                 <TextBlock Text="Отображаемое имя:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
                                 <TextBox Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="8,6" Margin="0,0,0,10" />
+
                                 <TextBlock Text="Пользовательский статус:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
-                                <TextBox Text="{Binding CustomStatus, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="8,6" />
+                                <TextBox Text="{Binding CustomStatus, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="8,6" Margin="0,0,0,12" />
+
+                                <!-- 24+ Status Presets Grid -->
+                                <TextBlock Text="КАТАЛОГ СТАТУСОВ (В 1 КЛИК):" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="8" MaxHeight="160">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding StatusPresets}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Margin="2" Padding="8,4" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnStatusPresetClicked">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Icon}" FontSize="12" Margin="0,0,6,0" />
+                                                            <TextBlock Text="{Binding Title}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
                             </StackPanel>
 
                             <!-- TAB 4: HOTKEYS -->
@@ -153,11 +245,11 @@
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="STORM FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                        <TextBlock Text="Версия 0.0.2 (Официальный релиз)" FontSize="11" Foreground="{DynamicResource AccentBrush}" />
+                                        <TextBlock Text="Версия 0.0.3 (Официальный релиз)" FontSize="11" Foreground="{DynamicResource AccentBrush}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <TextBlock Text="Высокопроизводительная настольная платформа для общения, совместных голосовых и видеосозвонов нового поколения." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
-                                <TextBlock Text="Студийное качество звука, минимальная задержка, интерактивный чат и управление содружествами." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="Студийное качество звука, минимальная задержка, интерактивный чат, гибкие настройки и управление содружествами." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>

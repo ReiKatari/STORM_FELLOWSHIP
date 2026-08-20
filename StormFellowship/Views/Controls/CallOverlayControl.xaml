@@ -8,11 +8,17 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Top Title Banner -->
-        <TextBlock Text="{Binding CallTitle}"
-                   FontSize="28" FontWeight="Black"
-                   Foreground="{DynamicResource TextPrimaryBrush}"
-                   HorizontalAlignment="Center" Margin="0,20,0,16" />
+        <!-- Top Title & Connection Stats Banner -->
+        <StackPanel HorizontalAlignment="Center" Margin="0,16,0,12">
+            <TextBlock Text="{Binding CallTitle}"
+                       FontSize="26" FontWeight="Black"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding ConnectionStats}"
+                       FontSize="11" FontWeight="SemiBold"
+                       Foreground="{DynamicResource AccentBrush}"
+                       HorizontalAlignment="Center" Margin="0,4,0,0" />
+        </StackPanel>
 
         <!-- Main Call Stage Card -->
         <Border Grid.Row="1" Background="{DynamicResource CallContainerBackgroundBrush}"
@@ -36,30 +42,32 @@
 
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Border Width="28" Height="28" CornerRadius="14" Background="{DynamicResource AccentBrush}" Margin="0,0,10,0">
-                            <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding RemoteAvatarGlyph}" FontSize="14" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding RemoteCustomStatus}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0" />
                     </StackPanel>
 
-                    <!-- More options -->
-                    <Button Grid.Column="1" Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Параметры">
-                        <TextBlock Text="•••" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Button>
+                    <!-- Volume slider for call -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🔊" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Slider Width="100" Minimum="0" Maximum="200" Value="{Binding CallVolume}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding CallVolume, StringFormat='{}{0:0}%'}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Grid>
 
-                <!-- Center Stage: Remote User + Equalizer Waveform + Local User -->
-                <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,16,0,16">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Center Stage: Avatars / Video Box / Screen Share / Waveform -->
+                <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,12,0,12">
+                    <!-- Standard Audio Call View -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding IsVideoOn, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
 
                         <!-- Remote Participant -->
-                        <StackPanel HorizontalAlignment="Center" Width="130">
-                            <!-- Avatar with animated glowing speaking ring -->
+                        <StackPanel HorizontalAlignment="Center" Width="140">
                             <Grid Width="106" Height="106" HorizontalAlignment="Center">
                                 <Ellipse Width="106" Height="106" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
                                          Visibility="{Binding IsRemoteSpeaking, Converter={StaticResource BoolToVis}}" />
                                 <Border Width="92" Height="92" CornerRadius="46" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="👤" FontSize="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding RemoteAvatarGlyph}" FontSize="38" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
                             <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="14"
@@ -67,7 +75,7 @@
                         </StackPanel>
 
                         <!-- Middle Dynamic Audio Waveform (7 Bars) & Timer -->
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="40,0" Width="100">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="40,0" Width="110">
                             <StackPanel Orientation="Horizontal" Height="36" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Border Width="3" Height="{Binding Bar1Height}" CornerRadius="1.5" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
                                 <Border Width="3" Height="{Binding Bar2Height}" CornerRadius="1.5" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
@@ -82,25 +90,36 @@
                         </StackPanel>
 
                         <!-- Local Participant (You) -->
-                        <StackPanel HorizontalAlignment="Center" Width="130">
-                            <!-- Avatar with animated glowing speaking ring -->
+                        <StackPanel HorizontalAlignment="Center" Width="140">
                             <Grid Width="106" Height="106" HorizontalAlignment="Center">
                                 <Ellipse Width="106" Height="106" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
                                          Visibility="{Binding IsLocalSpeaking, Converter={StaticResource BoolToVis}}" />
                                 <Border Width="92" Height="92" CornerRadius="46" Background="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="⚡" FontSize="42" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding LocalAvatarGlyph}" FontSize="38" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
                             <TextBlock Text="{Binding LocalDisplayName}" FontWeight="Bold" FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
                         </StackPanel>
-
                     </StackPanel>
+
+                    <!-- Video / Screen Share Box (When active) -->
+                    <Border Background="#050810" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" CornerRadius="12" Width="480" Height="220" Padding="16" Visibility="{Binding IsVideoOn, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="📹 Видеопоток активен" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Камера транслирует видео в разрешении 1080p 60 FPS" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,6,0,0" />
+                            </StackPanel>
+                            <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="4" Padding="6,2" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <TextBlock Text="LIVE HD" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                            </Border>
+                        </Grid>
+                    </Border>
                 </Grid>
 
                 <!-- Floating Call Control Pill Bar -->
                 <Border Grid.Row="2" Background="{DynamicResource CallControlBarBackgroundBrush}"
-                        CornerRadius="24" Padding="14,8" HorizontalAlignment="Center" Margin="0,0,0,16"
+                        CornerRadius="24" Padding="14,8" HorizontalAlignment="Center" Margin="0,0,0,14"
                         BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
                     <StackPanel Orientation="Horizontal">
                         <!-- Mic Button -->
@@ -108,7 +127,7 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="21" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="🎤" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding IsMicMuted, Converter={StaticResource BoolToMicIcon}}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -126,11 +145,11 @@
                         </Button>
 
                         <!-- Video Camera Toggle -->
-                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource CallWaveformActiveBrush}" BorderThickness="1.5" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Камера" Margin="3,0">
+                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Камера" Margin="3,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <TextBlock Text="📹" FontSize="16" Foreground="{DynamicResource CallWaveformActiveBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Text="📹" FontSize="16" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -160,7 +179,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Bottom Status Pill ("🟢 Вызов активен • 00:00") -->
+                <!-- Bottom Status Pill -->
                 <Border Grid.Row="3" Background="{DynamicResource CallOverlayPillBrush}" CornerRadius="12"
                         Padding="14,5" HorizontalAlignment="Center" Margin="0,0,0,4">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -172,8 +191,8 @@
         </Border>
 
         <!-- Bottom Subtitle Footer -->
-        <TextBlock Grid.Row="2" Text="НИЗКАЯ ЗАДЕРЖКА ЗВУКА STORM"
+        <TextBlock Grid.Row="2" Text="НИЗКАЯ ЗАДЕРЖКА ЗВУКА STORM FELLOWSHIP"
                    FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
-                   HorizontalAlignment="Center" Margin="0,16,0,20" />
+                   HorizontalAlignment="Center" Margin="0,14,0,16" />
     </Grid>
 </UserControl>

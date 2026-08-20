@@ -21,10 +21,10 @@
 
                 <!-- Action buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCreateChannelClicked" ToolTip="Создать канал">
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreateChannelCommand}" ToolTip="Создать канал">
                         <TextBlock Text="+" FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnServerSettingsClicked" ToolTip="Настройки содружества">
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenFellowshipSettingsCommand}" ToolTip="Настройки содружества">
                         <TextBlock Text="⚙" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
@@ -52,7 +52,7 @@
                                         <!-- Avatar with status dot -->
                                         <Grid VerticalAlignment="Center">
                                             <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource InputBackgroundBrush}">
-                                                <TextBlock Text="👤" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                             <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
                                         </Grid>
@@ -86,19 +86,36 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,4,0,8">
-                                    <!-- Category Header -->
-                                    <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="6,2" Cursor="Hand" Tag="{Binding}" Click="OnCategoryHeaderClicked">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="▾ " FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
-                                        </StackPanel>
-                                    </Button>
+                                    <!-- Category Header with + Button -->
+                                    <Grid Margin="0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="6,2" Cursor="Hand" Tag="{Binding}" Click="OnCategoryHeaderClicked">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="▾ " FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="1" Width="20" Height="20" Background="Transparent" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnAddChannelToCategoryClicked" ToolTip="Добавить канал в категорию">
+                                            <TextBlock Text="+" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </Grid>
 
                                     <!-- Channels -->
                                     <ItemsControl ItemsSource="{Binding Channels}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Margin="0,1" Padding="8,6" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Cursor="Hand" Tag="{Binding}" Click="OnChannelClicked">
+                                                    <!-- Right-Click Context Menu -->
+                                                    <Button.ContextMenu>
+                                                        <ContextMenu>
+                                                            <MenuItem Header="✏️ Настройка канала" Tag="{Binding}" Click="OnContextEditChannelClicked" />
+                                                            <Separator />
+                                                            <MenuItem Header="🗑️ Удалить канал" Foreground="#EF4444" Tag="{Binding}" Click="OnContextDeleteChannelClicked" />
+                                                        </ContextMenu>
+                                                    </Button.ContextMenu>
                                                     <Button.Template>
                                                         <ControlTemplate TargetType="Button">
                                                             <Border CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
@@ -133,7 +150,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Bottom User Bar (Avatar + Name + Mic/Headphone/Settings Toggles) -->
+        <!-- Bottom User Bar (Avatar + Name + Status + Mic/Headphone/Settings Toggles) -->
         <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="10,0">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -144,22 +161,22 @@
 
                 <!-- Avatar -->
                 <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
-                    <TextBlock Text="⚡" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding CurrentUser.AvatarGlyph}" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
 
                 <!-- Name & Status -->
                 <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{Binding CurrentUser.DisplayName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding CurrentUser.StatusText}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding CurrentUser.CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <!-- Controls -->
+                <!-- Controls with Dynamic Icons and Tooltips -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Отключить микрофон">
-                        <TextBlock Text="🎤" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="{Binding MicTooltip}">
+                        <TextBlock Text="{Binding MicIcon}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Заглушить звук">
-                        <TextBlock Text="🎧" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="{Binding SoundTooltip}">
+                        <TextBlock Text="{Binding SoundIcon}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                     <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
                         <TextBlock Text="⚙" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />

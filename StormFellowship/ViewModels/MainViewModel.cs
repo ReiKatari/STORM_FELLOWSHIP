@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StormFellowship.Models;
@@ -35,6 +36,12 @@ public partial class MainViewModel : ObservableObject
     private bool _isUserSettingsModalOpen = false;
 
     [ObservableProperty]
+    private bool _isCreateChannelModalOpen = false;
+
+    [ObservableProperty]
+    private bool _isEditChannelModalOpen = false;
+
+    [ObservableProperty]
     private string _toastMessage = string.Empty;
 
     [ObservableProperty]
@@ -55,14 +62,48 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _inviteLink = "storm://invite/main";
 
+    // Channel Creation properties
+    [ObservableProperty]
+    private string _newChannelName = string.Empty;
+
+    [ObservableProperty]
+    private string _newChannelTopic = string.Empty;
+
+    [ObservableProperty]
+    private ChannelType _newChannelType = ChannelType.Text;
+
+    [ObservableProperty]
+    private int _newChannelBitrate = 128;
+
+    [ObservableProperty]
+    private ChannelCategory? _targetCategoryForNewChannel;
+
+    // Channel Editing properties
+    [ObservableProperty]
+    private Channel? _selectedChannelForEdit;
+
+    [ObservableProperty]
+    private string _editingChannelName = string.Empty;
+
+    [ObservableProperty]
+    private string _editingChannelTopic = string.Empty;
+
+    [ObservableProperty]
+    private int _editingChannelBitrate = 128;
+
     public FellowshipRailViewModel RailViewModel { get; }
     public ChannelSidebarViewModel SidebarViewModel { get; }
     public ChatViewModel ChatViewModel { get; }
     public CallViewModel CallViewModel { get; }
     public MemberListViewModel MemberListViewModel { get; }
     public UserSettingsViewModel UserSettingsViewModel { get; }
+
     public MainViewModel CreateFellowshipModalViewModel => this;
     public MainViewModel FellowshipSettingsModalViewModel => this;
+    public MainViewModel CreateChannelModalViewModel => this;
+    public MainViewModel EditChannelModalViewModel => this;
+
+    public ObservableCollection<int> AvailableBitrates { get; } = new() { 64, 96, 128, 256, 384 };
 
     public MainViewModel()
     {
@@ -83,6 +124,12 @@ public partial class MainViewModel : ObservableObject
     public void ToggleMemberList()
     {
         IsMemberListVisible = !IsMemberListVisible;
+    }
+
+    [RelayCommand]
+    public void CheckForUpdates()
+    {
+        ShowToastNotification("Проверка обновлений... Вы используете актуальную версию STORM FELLOWSHIP v0.0.3");
     }
 
     [RelayCommand]
@@ -168,12 +215,111 @@ public partial class MainViewModel : ObservableObject
         IsUserSettingsModalOpen = false;
     }
 
+    // Channel CRUD
+    public void OpenCreateChannelDialog(ChannelCategory? category = null)
+    {
+        TargetCategoryForNewChannel = category;
+        NewChannelName = string.Empty;
+        NewChannelTopic = string.Empty;
+        NewChannelType = ChannelType.Text;
+        NewChannelBitrate = 128;
+        IsCreateChannelModalOpen = true;
+    }
+
     [RelayCommand]
-    public void Close()
+    public void CloseCreateChannelDialog()
+    {
+        IsCreateChannelModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void SubmitCreateChannel()
+    {
+        if (string.IsNullOrWhiteSpace(NewChannelName))
+        {
+            NewChannelName = NewChannelType == ChannelType.Voice ? "голосовой-канал" : "текстовый-чат";
+        }
+
+        var currentF = FellowshipService.Instance.CurrentFellowship;
+        if (currentF != null)
+        {
+            var chan = FellowshipService.Instance.AddChannel(
+                currentF.Id,
+                TargetCategoryForNewChannel?.Id,
+                NewChannelName,
+                NewChannelTopic,
+                NewChannelType,
+                NewChannelBitrate
+            );
+            ShowToastNotification($"Канал #{chan.Name} успешно создан!");
+        }
+        IsCreateChannelModalOpen = false;
+    }
+
+    public void OpenEditChannelDialog(Channel channel)
+    {
+        SelectedChannelForEdit = channel;
+        EditingChannelName = channel.Name;
+        EditingChannelTopic = channel.Topic;
+        EditingChannelBitrate = channel.BitrateKbps;
+        IsEditChannelModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseEditChannelDialog()
+    {
+        IsEditChannelModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void SubmitEditChannel()
+    {
+        if (SelectedChannelForEdit != null)
+        {
+            var currentF = FellowshipService.Instance.CurrentFellowship;
+            if (currentF != null)
+            {
+                FellowshipService.Instance.UpdateChannel(
+                    currentF.Id,
+                    SelectedChannelForEdit.Id,
+                    EditingChannelName,
+                    EditingChannelTopic,
+                    EditingChannelBitrate
+                );
+                ShowToastNotification($"Канал #{EditingChannelName} обновлен!");
+            }
+        }
+        IsEditChannelModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void SubmitDeleteChannel()
+    {
+        if (SelectedChannelForEdit != null)
+        {
+            var currentF = FellowshipService.Instance.CurrentFellowship;
+            if (currentF != null)
+            {
+                FellowshipService.Instance.DeleteChannel(currentF.Id, SelectedChannelForEdit.Id);
+                ShowToastNotification($"Канал #{SelectedChannelForEdit.Name} удален");
+            }
+        }
+        IsEditChannelModalOpen = false;
+    }
+
+    public void CloseAllModals()
     {
         IsCreateFellowshipModalOpen = false;
         IsFellowshipSettingsModalOpen = false;
         IsUserSettingsModalOpen = false;
+        IsCreateChannelModalOpen = false;
+        IsEditChannelModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void Close()
+    {
+        CloseAllModals();
     }
 
     public void ShowToastNotification(string message)

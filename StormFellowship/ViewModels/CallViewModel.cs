@@ -16,15 +16,23 @@ public partial class CallViewModel : ObservableObject
     public string CallTitle => ActiveCall?.Title ?? "ПРЯМОЙ ВЫЗОВ";
     public string RemoteDisplayName => ActiveCall?.RemoteUser.DisplayName ?? "Собеседник";
     public string RemoteCustomStatus => ActiveCall?.RemoteUser.CustomStatus ?? "В разговоре";
-    public string RemoteAvatarPath => ActiveCall?.RemoteUser.AvatarPath ?? "ms-appx:///Assets/Avatars/you.png";
-    public string LocalDisplayName => ActiveCall?.LocalUser.DisplayName ?? "Вы";
-    public string LocalAvatarPath => ActiveCall?.LocalUser.AvatarPath ?? "ms-appx:///Assets/Avatars/you.png";
+    public string RemoteAvatarGlyph => ActiveCall?.RemoteUser.AvatarGlyph ?? "👤";
+    public string LocalDisplayName => FellowshipService.Instance.CurrentUser.DisplayName;
+    public string LocalAvatarGlyph => FellowshipService.Instance.CurrentUser.AvatarGlyph;
+
     public bool IsRemoteSpeaking => ActiveCall?.IsRemoteSpeaking ?? true;
     public bool IsLocalSpeaking => ActiveCall?.IsLocalSpeaking ?? false;
-    public bool IsMicMuted => ActiveCall?.IsMicMuted ?? false;
-    public bool IsDeafened => ActiveCall?.IsDeafened ?? false;
+    public bool IsMicMuted => AudioService.Instance.IsMuted;
+    public bool IsDeafened => AudioService.Instance.IsDeafened;
+    public bool IsVideoOn => ActiveCall?.IsVideoOn ?? false;
+    public bool IsScreenSharing => ActiveCall?.IsScreenSharing ?? false;
+
     public string DurationFormatted => ActiveCall?.DurationFormatted ?? "00:00";
-    public string BottomCallStatus => ActiveCall?.BottomCallStatus ?? "Вызов активен • 00:00";
+    public string BottomCallStatus => $"Вызов активен • {DurationFormatted} • {ActiveCall?.Codec ?? "Opus 128 Кбит/с"}";
+    public string ConnectionStats => $"Пинг: {ActiveCall?.PingMs ?? 16} мс | Потери: {ActiveCall?.PacketLossPercent:0.0}%";
+
+    [ObservableProperty]
+    private double _callVolume = 100.0;
 
     [ObservableProperty]
     private double _bar1Height = 12.0;
@@ -78,15 +86,18 @@ public partial class CallViewModel : ObservableObject
         OnPropertyChanged(nameof(CallTitle));
         OnPropertyChanged(nameof(RemoteDisplayName));
         OnPropertyChanged(nameof(RemoteCustomStatus));
-        OnPropertyChanged(nameof(RemoteAvatarPath));
+        OnPropertyChanged(nameof(RemoteAvatarGlyph));
         OnPropertyChanged(nameof(LocalDisplayName));
-        OnPropertyChanged(nameof(LocalAvatarPath));
+        OnPropertyChanged(nameof(LocalAvatarGlyph));
         OnPropertyChanged(nameof(IsRemoteSpeaking));
         OnPropertyChanged(nameof(IsLocalSpeaking));
         OnPropertyChanged(nameof(IsMicMuted));
         OnPropertyChanged(nameof(IsDeafened));
+        OnPropertyChanged(nameof(IsVideoOn));
+        OnPropertyChanged(nameof(IsScreenSharing));
         OnPropertyChanged(nameof(DurationFormatted));
         OnPropertyChanged(nameof(BottomCallStatus));
+        OnPropertyChanged(nameof(ConnectionStats));
     }
 
     [RelayCommand]
@@ -108,6 +119,7 @@ public partial class CallViewModel : ObservableObject
     {
         CallService.Instance.ToggleVideo();
         RefreshProperties();
+        _mainVM.ShowToastNotification(IsVideoOn ? "Камера включена" : "Камера выключена");
     }
 
     [RelayCommand]
@@ -115,6 +127,7 @@ public partial class CallViewModel : ObservableObject
     {
         CallService.Instance.ToggleScreenShare();
         RefreshProperties();
+        _mainVM.ShowToastNotification(IsScreenSharing ? "Трансляция экрана запущена" : "Трансляция экрана остановлена");
     }
 
     [RelayCommand]
@@ -122,5 +135,11 @@ public partial class CallViewModel : ObservableObject
     {
         CallService.Instance.EndCall();
         RefreshProperties();
+        _mainVM.ShowToastNotification("Вызов завершен");
+    }
+
+    partial void OnCallVolumeChanged(double value)
+    {
+        CallService.Instance.CallVolume = value;
     }
 }

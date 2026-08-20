@@ -30,7 +30,7 @@ public class FellowshipService : IFellowshipService
             Username = "user",
             DisplayName = "Пользователь",
             Tag = "0001",
-            AvatarPath = "ms-appx:///Assets/Avatars/you.png",
+            AvatarGlyph = "⚡",
             Status = UserStatus.Online,
             CustomStatus = "В сети",
             RoleName = "Создатель",
@@ -42,7 +42,6 @@ public class FellowshipService : IFellowshipService
 
     private void SeedData()
     {
-        // Initial Clean Fellowship
         var mainFellowship = new Fellowship
         {
             Id = "guild_main",
@@ -107,7 +106,7 @@ public class FellowshipService : IFellowshipService
             Id = "m1",
             ChannelId = genChan.Id,
             Author = CurrentUser,
-            Content = "⚡ **Добро пожаловать в STORM FELLOWSHIP v0.0.2!**\nСоздавайте каналы, настраивайте содружество и пользуйтесь голосовой связью с высоким качеством звука.",
+            Content = "⚡ **Добро пожаловать в STORM FELLOWSHIP v0.0.3!**\nСоздавайте каналы, настраивайте содружество и пользуйтесь голосовой связью с высоким качеством звука.",
             Timestamp = DateTime.Now,
             IsPinned = true
         };
@@ -184,32 +183,76 @@ public class FellowshipService : IFellowshipService
         }
     }
 
-    public Channel AddChannel(string fellowshipId, string categoryId, string name, ChannelType type, int bitrateKbps = 128)
+    public Channel AddChannel(string fellowshipId, string? categoryId, string name, ChannelType type, int bitrateKbps = 128)
     {
-        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId);
+        return AddChannel(fellowshipId, categoryId, name, string.Empty, type, bitrateKbps);
+    }
+
+    public Channel AddChannel(string fellowshipId, string? categoryId, string name, string topic, ChannelType type, int bitrateKbps = 128)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
         if (f == null) throw new InvalidOperationException("Содружество не найдено");
 
-        var cat = f.Categories.FirstOrDefault(c => c.Id == categoryId) ?? f.Categories.FirstOrDefault();
+        ChannelCategory? cat = null;
+        if (!string.IsNullOrWhiteSpace(categoryId))
+        {
+            cat = f.Categories.FirstOrDefault(c => c.Id == categoryId);
+        }
+
+        if (cat == null)
+        {
+            cat = f.Categories.FirstOrDefault(c => (type == ChannelType.Voice && c.Name.Contains("ГОЛОСОВЫЕ", StringComparison.OrdinalIgnoreCase))
+                                                || (type != ChannelType.Voice && c.Name.Contains("ТЕКСТОВЫЕ", StringComparison.OrdinalIgnoreCase)))
+                  ?? f.Categories.FirstOrDefault();
+        }
+
         if (cat == null)
         {
             cat = new ChannelCategory { Name = type == ChannelType.Voice ? "ГОЛОСОВЫЕ КАНАЛЫ" : "ТЕКСТОВЫЕ КАНАЛЫ" };
             f.Categories.Add(cat);
         }
 
+        var cleanName = name.Trim().ToLower().Replace(" ", "-");
+        if (string.IsNullOrWhiteSpace(cleanName)) cleanName = "новый-канал";
+
         var chan = new Channel
         {
-            Name = name.ToLower().Replace(" ", "-"),
+            Name = cleanName,
+            Topic = topic,
             Type = type,
             BitrateKbps = bitrateKbps
         };
 
         cat.Channels.Add(chan);
+        SelectChannel(chan);
         return chan;
+    }
+
+    public void UpdateChannel(string fellowshipId, string channelId, string newName, string newTopic, int bitrateKbps)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
+        if (f == null) return;
+
+        foreach (var cat in f.Categories)
+        {
+            var chan = cat.Channels.FirstOrDefault(c => c.Id == channelId);
+            if (chan != null)
+            {
+                chan.Name = newName.Trim().ToLower().Replace(" ", "-");
+                chan.Topic = newTopic;
+                chan.BitrateKbps = bitrateKbps;
+                if (CurrentChannel?.Id == channelId)
+                {
+                    CurrentChannelChanged?.Invoke(chan);
+                }
+                break;
+            }
+        }
     }
 
     public void DeleteChannel(string fellowshipId, string channelId)
     {
-        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId);
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
         if (f == null) return;
 
         foreach (var cat in f.Categories)
@@ -226,6 +269,15 @@ public class FellowshipService : IFellowshipService
                 break;
             }
         }
+    }
+
+    public void AddCategory(string fellowshipId, string name)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
+        if (f == null) return;
+
+        var cat = new ChannelCategory { Name = name.ToUpper() };
+        f.Categories.Add(cat);
     }
 
     public void SelectFellowship(Fellowship? fellowship)

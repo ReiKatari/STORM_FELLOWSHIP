@@ -27,7 +27,10 @@ public partial class User : ObservableObject
     private string _displayName = "Пользователь";
 
     [ObservableProperty]
-    private string _avatarPath = "ms-appx:///Assets/Avatars/you.png";
+    private string _avatarGlyph = "⚡";
+
+    [ObservableProperty]
+    private string _avatarPath = string.Empty;
 
     [ObservableProperty]
     private UserStatus _status = UserStatus.Online;
@@ -36,7 +39,7 @@ public partial class User : ObservableObject
     private string _customStatus = "В сети";
 
     [ObservableProperty]
-    private string _roleName = "Участник";
+    private string _roleName = "Создатель";
 
     [ObservableProperty]
     private string _roleColorHex = "#00A3FF";
@@ -62,6 +65,8 @@ public partial class User : ObservableObject
     [ObservableProperty]
     private int _pingMs = 18;
 
+    public bool HasCustomAvatarImage => !string.IsNullOrWhiteSpace(AvatarPath);
+
     public string FullUsername => $"@{Username}#{Tag}";
 
     public string StatusBadgeColor => Status switch
@@ -85,4 +90,9 @@ public partial class User : ObservableObject
         UserStatus.Streaming => "В эфире",
         _ => "Не в сети"
     };
+
+    partial void OnAvatarPathChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasCustomAvatarImage));
+    }
 }
