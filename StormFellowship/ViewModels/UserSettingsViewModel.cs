@@ -44,7 +44,11 @@ public partial class UserSettingsViewModel : ObservableObject
         set => IsPushToTalk = value;
     }
 
-    public double LiveMicLevel => MicLiveLevel;
+    public double LiveMicLevel
+    {
+        get => MicLiveLevel;
+        set => MicLiveLevel = value;
+    }
     public string PttKeyName => PttKey;
 
     [ObservableProperty]

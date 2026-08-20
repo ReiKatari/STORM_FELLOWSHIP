@@ -110,7 +110,7 @@
                                 <Slider Minimum="0" Maximum="100" Value="{Binding VadThreshold}" Margin="0,0,0,12" />
 
                                 <TextBlock Text="Live Mic VU-Meter:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
-                                <ProgressBar Value="{Binding LiveMicLevel}" Minimum="0" Maximum="100" Height="8" Foreground="{DynamicResource StatusOnlineBrush}" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,14" />
+                                <ProgressBar Value="{Binding LiveMicLevel, Mode=OneWay}" Minimum="0" Maximum="100" Height="8" Foreground="{DynamicResource StatusOnlineBrush}" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,14" />
 
                                 <CheckBox Content="Enable Sound Cues (Mute/Join/Leave)" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
                                 <CheckBox Content="Enable 3D Positional Spatial Audio" IsChecked="{Binding SpatialAudioEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />

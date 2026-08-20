@@ -14,9 +14,9 @@ public partial class App : Application
             {
                 string log = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.log");
                 System.IO.File.WriteAllText(log, $"[FATAL] {DateTime.Now}\n{args.Exception}\nStack: {args.Exception.StackTrace}");
+                MessageBox.Show($"STORM FELLOWSHIP Error:\n{args.Exception.Message}\n\n{args.Exception.StackTrace}", "STORM FELLOWSHIP Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch { }
-            args.Handled = true;
         };
     }
 }
