@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
         xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
-        Title="STORM FELLOWSHIP v0.0.1"
+        Title="STORM FELLOWSHIP v0.0.2"
         Width="1280" Height="800"
         MinWidth="960" MinHeight="600"
         WindowStartupLocation="CenterScreen"
@@ -50,7 +50,7 @@
 
                 <!-- Call Overlay Stage (Direct 1-1 / Voice Room) -->
                 <controls:CallOverlayControl x:Name="CallOverlay" DataContext="{Binding CallViewModel}"
-                                            Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}}" />
+                                             Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}}" />
             </Grid>
 
             <!-- 4. Right Member List Panel -->
@@ -65,17 +65,17 @@
             <TextBlock Text="{Binding ToastMessage}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
         </Border>
 
-        <!-- Modals & Dialogs Layer -->
-        <dialogs:CreateFellowshipDialog x:Name="CreateFellowshipModal" Grid.RowSpan="2"
-                                        DataContext="{Binding CreateFellowshipModalViewModel}"
-                                        Visibility="{Binding IsCreateFellowshipModalOpen, Converter={StaticResource BoolToVis}}" />
+        <!-- Modals & Dialogs Layer with Reliable Container Visibility Binding -->
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsCreateFellowshipModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:CreateFellowshipDialog DataContext="{Binding CreateFellowshipModalViewModel}" />
+        </Grid>
 
-        <dialogs:FellowshipSettingsDialog x:Name="FellowshipSettingsModal" Grid.RowSpan="2"
-                                          DataContext="{Binding FellowshipSettingsModalViewModel}"
-                                          Visibility="{Binding IsFellowshipSettingsModalOpen, Converter={StaticResource BoolToVis}}" />
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsFellowshipSettingsModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:FellowshipSettingsDialog DataContext="{Binding FellowshipSettingsModalViewModel}" />
+        </Grid>
 
-        <dialogs:UserSettingsDialog x:Name="UserSettingsModal" Grid.RowSpan="2"
-                                    DataContext="{Binding UserSettingsViewModel}"
-                                    Visibility="{Binding IsUserSettingsModalOpen, Converter={StaticResource BoolToVis}}" />
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsUserSettingsModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:UserSettingsDialog DataContext="{Binding UserSettingsViewModel}" />
+        </Grid>
     </Grid>
 </Window>

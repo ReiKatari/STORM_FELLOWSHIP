@@ -41,19 +41,19 @@ public partial class MainViewModel : ObservableObject
     private bool _isToastVisible = false;
 
     [ObservableProperty]
-    private string _fellowshipNameInput = "My Fellowship";
+    private string _fellowshipNameInput = "Новое содружество";
 
     [ObservableProperty]
     private string _joinCodeInput = string.Empty;
 
     [ObservableProperty]
-    private string _fellowshipName = "STORM FELLOWSHIP SANCTUARY";
+    private string _fellowshipName = "Основное содружество";
 
     [ObservableProperty]
-    private string _fellowshipDescription = "Official Fellowship server for storm fellowship communication.";
+    private string _fellowshipDescription = "Пространство для голосового и текстового общения.";
 
     [ObservableProperty]
-    private string _inviteLink = "storm://invite/sanctuary";
+    private string _inviteLink = "storm://invite/main";
 
     public FellowshipRailViewModel RailViewModel { get; }
     public ChannelSidebarViewModel SidebarViewModel { get; }
@@ -103,7 +103,7 @@ public partial class MainViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(FellowshipNameInput))
         {
             FellowshipService.Instance.CreateFellowship(FellowshipNameInput);
-            ShowToastNotification($"Created Fellowship: {FellowshipNameInput}");
+            ShowToastNotification($"Создано содружество: {FellowshipNameInput}");
             IsCreateFellowshipModalOpen = false;
         }
     }
@@ -114,7 +114,7 @@ public partial class MainViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(JoinCodeInput))
         {
             FellowshipService.Instance.JoinFellowship(JoinCodeInput);
-            ShowToastNotification($"Joined Fellowship via code: {JoinCodeInput}");
+            ShowToastNotification($"Подключение к содружеству: {JoinCodeInput}");
             IsCreateFellowshipModalOpen = false;
         }
     }
@@ -134,14 +134,14 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void SaveChanges()
     {
-        ShowToastNotification("Saved Fellowship settings");
+        ShowToastNotification("Настройки содружества сохранены");
         IsFellowshipSettingsModalOpen = false;
     }
 
     [RelayCommand]
     public void DeleteFellowship()
     {
-        ShowToastNotification("Fellowship deleted");
+        ShowToastNotification("Содружество удалено");
         IsFellowshipSettingsModalOpen = false;
     }
 
@@ -151,7 +151,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             System.Windows.Clipboard.SetText(InviteLink);
-            ShowToastNotification("Invite link copied to clipboard!");
+            ShowToastNotification("Ссылка-приглашение скопирована в буфер обмена!");
         }
         catch { }
     }

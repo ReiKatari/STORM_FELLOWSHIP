@@ -13,18 +13,18 @@ public partial class CallViewModel : ObservableObject
     public CallSession? ActiveCall => CallService.Instance.ActiveCall;
     public bool IsInCall => CallService.Instance.IsInCall;
 
-    public string CallTitle => ActiveCall?.Title ?? "1-1 DIRECT CALL";
-    public string RemoteDisplayName => ActiveCall?.RemoteUser.DisplayName ?? "Sakura";
-    public string RemoteCustomStatus => ActiveCall?.RemoteUser.CustomStatus ?? "What the bobba";
-    public string RemoteAvatarPath => ActiveCall?.RemoteUser.AvatarPath ?? "ms-appx:///Assets/Avatars/sakura.png";
-    public string LocalDisplayName => ActiveCall?.LocalUser.DisplayName ?? "You";
+    public string CallTitle => ActiveCall?.Title ?? "ПРЯМОЙ ВЫЗОВ";
+    public string RemoteDisplayName => ActiveCall?.RemoteUser.DisplayName ?? "Собеседник";
+    public string RemoteCustomStatus => ActiveCall?.RemoteUser.CustomStatus ?? "В разговоре";
+    public string RemoteAvatarPath => ActiveCall?.RemoteUser.AvatarPath ?? "ms-appx:///Assets/Avatars/you.png";
+    public string LocalDisplayName => ActiveCall?.LocalUser.DisplayName ?? "Вы";
     public string LocalAvatarPath => ActiveCall?.LocalUser.AvatarPath ?? "ms-appx:///Assets/Avatars/you.png";
     public bool IsRemoteSpeaking => ActiveCall?.IsRemoteSpeaking ?? true;
     public bool IsLocalSpeaking => ActiveCall?.IsLocalSpeaking ?? false;
     public bool IsMicMuted => ActiveCall?.IsMicMuted ?? false;
     public bool IsDeafened => ActiveCall?.IsDeafened ?? false;
-    public string DurationFormatted => ActiveCall?.DurationFormatted ?? "13:37";
-    public string BottomCallStatus => ActiveCall?.BottomCallStatus ?? "Call ongoing • 13:37";
+    public string DurationFormatted => ActiveCall?.DurationFormatted ?? "00:00";
+    public string BottomCallStatus => ActiveCall?.BottomCallStatus ?? "Вызов активен • 00:00";
 
     [ObservableProperty]
     private double _bar1Height = 12.0;

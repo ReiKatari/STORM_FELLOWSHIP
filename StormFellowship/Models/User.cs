@@ -18,13 +18,13 @@ public partial class User : ObservableObject
     private string _id = Guid.NewGuid().ToString();
 
     [ObservableProperty]
-    private string _username = string.Empty;
+    private string _username = "user";
 
     [ObservableProperty]
     private string _tag = "0001";
 
     [ObservableProperty]
-    private string _displayName = string.Empty;
+    private string _displayName = "Пользователь";
 
     [ObservableProperty]
     private string _avatarPath = "ms-appx:///Assets/Avatars/you.png";
@@ -33,10 +33,10 @@ public partial class User : ObservableObject
     private UserStatus _status = UserStatus.Online;
 
     [ObservableProperty]
-    private string _customStatus = string.Empty;
+    private string _customStatus = "В сети";
 
     [ObservableProperty]
-    private string _roleName = "Member";
+    private string _roleName = "Участник";
 
     [ObservableProperty]
     private string _roleColorHex = "#00A3FF";
@@ -69,20 +69,20 @@ public partial class User : ObservableObject
         UserStatus.Online => "#22C55E",
         UserStatus.Idle => "#F59E0B",
         UserStatus.DoNotDisturb => "#EF4444",
-        UserStatus.Offline => "#64748B",
+        UserStatus.Offline => "#94A3B8",
         UserStatus.InVoice => "#00A3FF",
         UserStatus.Streaming => "#A855F7",
-        _ => "#64748B"
+        _ => "#94A3B8"
     };
 
     public string StatusText => Status switch
     {
-        UserStatus.Online => "Online",
-        UserStatus.Idle => "Away",
-        UserStatus.DoNotDisturb => "Do Not Disturb",
-        UserStatus.Offline => "Offline",
-        UserStatus.InVoice => "In Voice Channel",
-        UserStatus.Streaming => "Streaming",
-        _ => "Offline"
+        UserStatus.Online => "В сети",
+        UserStatus.Idle => "Отошел",
+        UserStatus.DoNotDisturb => "Не беспокоить",
+        UserStatus.Offline => "Не в сети",
+        UserStatus.InVoice => "В голосовом канале",
+        UserStatus.Streaming => "В эфире",
+        _ => "Не в сети"
     };
 }

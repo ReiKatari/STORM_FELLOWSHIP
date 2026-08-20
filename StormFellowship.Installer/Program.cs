@@ -41,7 +41,7 @@ internal static class Program
 
             // Create Desktop Shortcut
             string desktopShortcut = Path.Combine(desktopDir, "STORM FELLOWSHIP.lnk");
-            CreateShortcut(desktopShortcut, exePath, installDir, iconPath, "STORM FELLOWSHIP - Next-gen communication platform");
+            CreateShortcut(desktopShortcut, exePath, installDir, iconPath, "STORM FELLOWSHIP — Платформа для общения и голосовых созвонов");
 
             // Create Start Menu Shortcut
             string startMenuShortcut = Path.Combine(startMenuDir, "STORM FELLOWSHIP.lnk");
@@ -51,7 +51,7 @@ internal static class Program
             using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\StormFellowship"))
             {
                 key.SetValue("DisplayName", "STORM FELLOWSHIP");
-                key.SetValue("DisplayVersion", "0.0.1");
+                key.SetValue("DisplayVersion", "0.0.2");
                 key.SetValue("Publisher", "ReiKatari");
                 key.SetValue("DisplayIcon", iconPath);
                 key.SetValue("InstallLocation", installDir);
@@ -81,13 +81,13 @@ reg delete ""HKCU\Software\Classes\storm"" /f >nul 2>&1
 del /f /q ""{desktopShortcut}"" >nul 2>&1
 del /f /q ""{startMenuShortcut}"" >nul 2>&1
 rmdir /s /q ""{startMenuDir}"" >nul 2>&1
-echo STORM FELLOWSHIP uninstalled successfully.
+echo STORM FELLOWSHIP успешно удален.
 timeout /t 2 >nul
 ";
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.1 has been installed successfully!\n\n• All required runtimes & libraries bundled and installed\n• Desktop shortcut created\n• Start Menu shortcut created\n• Registry & storm:// protocol registered\n\nClick OK to launch STORM FELLOWSHIP.", "STORM FELLOWSHIP Setup", 0x00000040);
+            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.2 успешно установлена!\n\n• Все необходимые компоненты встроены и настроены\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
 
             // Launch app
             if (File.Exists(exePath))
@@ -102,7 +102,7 @@ timeout /t 2 >nul
         }
         catch (Exception ex)
         {
-            MessageBox(nint.Zero, $"Installation encountered an error:\n{ex.Message}", "STORM FELLOWSHIP Setup Error", 0x00000010);
+            MessageBox(nint.Zero, $"Ошибка при установке:\n{ex.Message}", "Ошибка установки STORM FELLOWSHIP", 0x00000010);
         }
     }
 

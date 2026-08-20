@@ -49,6 +49,7 @@ public partial class UserSettingsViewModel : ObservableObject
         get => MicLiveLevel;
         set => MicLiveLevel = value;
     }
+
     public string PttKeyName => PttKey;
 
     [ObservableProperty]
@@ -64,7 +65,7 @@ public partial class UserSettingsViewModel : ObservableObject
     private bool _isPushToTalk = false;
 
     [ObservableProperty]
-    private string _pttKey = "Mouse4";
+    private string _pttKey = "Боковая кнопка 4";
 
     [ObservableProperty]
     private bool _soundCuesEnabled = true;
@@ -85,25 +86,25 @@ public partial class UserSettingsViewModel : ObservableObject
     private bool _is3DPositionalAudio = true;
 
     [ObservableProperty]
-    private string _selectedAudioInput = "Default System Microphone (Storm CoreAudio)";
+    private string _selectedAudioInput = "Микрофон по умолчанию";
 
     [ObservableProperty]
-    private string _selectedAudioOutput = "Default System Headphones (Storm WASAPI 48kHz)";
+    private string _selectedAudioOutput = "Динамики по умолчанию";
 
     public ObservableCollection<string> AudioInputDevices { get; } = new()
     {
-        "Default System Microphone (Storm CoreAudio)",
-        "Microphone (Realtek High Definition Audio)",
-        "Headset Microphone (Gaming Studio Pro)",
-        "Line In (Virtual Audio Cable)"
+        "Микрофон по умолчанию",
+        "Микрофон Realtek High Definition",
+        "Игровая гарнитура",
+        "Линейный вход"
     };
 
     public ObservableCollection<string> AudioOutputDevices { get; } = new()
     {
-        "Default System Headphones (Storm WASAPI 48kHz)",
-        "Speakers (Realtek High Definition Audio)",
-        "Headphones (Gaming Studio Pro 7.1 Surround)",
-        "Digital Output (S/PDIF Optical)"
+        "Динамики по умолчанию",
+        "Наушники",
+        "Динамики Realtek High Definition",
+        "Цифровой оптический выход"
     };
 
     public UserSettingsViewModel(MainViewModel mainVM)
@@ -113,6 +114,7 @@ public partial class UserSettingsViewModel : ObservableObject
         VadThreshold = AudioService.Instance.VadSensitivityThreshold;
         IsPushToTalk = AudioService.Instance.IsPushToTalkEnabled;
         PttKey = AudioService.Instance.PushToTalkKey;
+        if (PttKey == "Mouse4") PttKey = "Боковая кнопка 4";
         IsNoiseSuppression = AudioService.Instance.IsNoiseSuppressionEnabled;
         IsEchoCancellation = AudioService.Instance.IsEchoCancellationEnabled;
         Is3DPositionalAudio = AudioService.Instance.Is3DPositionalAudioEnabled;
@@ -131,7 +133,7 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             SelectedTheme = theme;
             ThemeService.Instance.SetTheme(theme);
-            _mainVM.ShowToastNotification($"Theme switched to {themeName}");
+            _mainVM.ShowToastNotification("Тема оформления изменена");
         }
     }
 
@@ -141,7 +143,7 @@ public partial class UserSettingsViewModel : ObservableObject
         if (Enum.TryParse<UserStatus>(statusString, out var status))
         {
             CurrentUser.Status = status;
-            _mainVM.ShowToastNotification($"Status updated to {CurrentUser.StatusText}");
+            _mainVM.ShowToastNotification($"Статус изменен: {CurrentUser.StatusText}");
         }
     }
 
@@ -154,7 +156,7 @@ public partial class UserSettingsViewModel : ObservableObject
     [RelayCommand]
     public void Save()
     {
-        _mainVM.ShowToastNotification("User settings saved successfully!");
+        _mainVM.ShowToastNotification("Настройки пользователя успешно сохранены!");
         _mainVM.CloseUserSettingsDialog();
     }
 

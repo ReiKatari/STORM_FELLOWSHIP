@@ -21,10 +21,10 @@
 
                 <!-- Action buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCreateChannelClicked" ToolTip="Create Channel">
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCreateChannelClicked" ToolTip="Создать канал">
                         <TextBlock Text="+" FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnServerSettingsClicked" ToolTip="Fellowship Settings">
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnServerSettingsClicked" ToolTip="Настройки содружества">
                         <TextBlock Text="⚙" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
@@ -36,7 +36,7 @@
             <StackPanel>
                 <!-- IF IN HOME/DM MODE: DIRECT MESSAGES LIST -->
                 <StackPanel Visibility="{Binding IsInDmMode, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="DIRECT MESSAGES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="8,4,0,8" />
+                    <TextBlock Text="ЛИЧНЫЕ СООБЩЕНИЯ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="8,4,0,8" />
 
                     <ItemsControl ItemsSource="{Binding DmUsers}">
                         <ItemsControl.ItemTemplate>
@@ -64,7 +64,7 @@
                                         </StackPanel>
 
                                         <!-- Direct Call Button (Phone icon) -->
-                                        <Button Grid.Column="2" Width="28" Height="28" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Start Direct Call">
+                                        <Button Grid.Column="2" Width="28" Height="28" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Начать прямой вызов">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
                                                     <Border CornerRadius="14" Background="{TemplateBinding Background}">
@@ -147,7 +147,7 @@
                     <TextBlock Text="⚡" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
 
-                <!-- Name & Tag -->
+                <!-- Name & Status -->
                 <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{Binding CurrentUser.DisplayName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
                     <TextBlock Text="{Binding CurrentUser.StatusText}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
@@ -155,13 +155,13 @@
 
                 <!-- Controls -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Mute Mic">
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Отключить микрофон">
                         <TextBlock Text="🎤" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Deafen Sound">
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Заглушить звук">
                         <TextBlock Text="🎧" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="User Settings">
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
                         <TextBlock Text="⚙" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>

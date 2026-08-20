@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using StormFellowship.Models;
 using StormFellowship.Services;
 using StormFellowship.ViewModels;
@@ -11,6 +12,19 @@ public partial class UserSettingsDialog : UserControl
     public UserSettingsDialog()
     {
         InitializeComponent();
+    }
+
+    private void OnBackdropMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (DataContext is UserSettingsViewModel vm)
+        {
+            vm.Close();
+        }
+    }
+
+    private void OnDialogCardMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
     }
 
     private void HideAllTabs()

@@ -10,7 +10,7 @@
 
         <!-- Top Title Banner -->
         <TextBlock Text="{Binding CallTitle}"
-                   FontSize="32" FontWeight="Black"
+                   FontSize="28" FontWeight="Black"
                    Foreground="{DynamicResource TextPrimaryBrush}"
                    HorizontalAlignment="Center" Margin="0,20,0,16" />
 
@@ -36,30 +36,30 @@
 
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Border Width="28" Height="28" CornerRadius="14" Background="{DynamicResource AccentBrush}" Margin="0,0,10,0">
-                            <TextBlock Text="🌸" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding RemoteCustomStatus}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0" />
                     </StackPanel>
 
                     <!-- More options -->
-                    <Button Grid.Column="1" Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    <Button Grid.Column="1" Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Параметры">
                         <TextBlock Text="•••" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </Grid>
 
-                <!-- Center Stage: Sakura + Equalizer Waveform + You -->
+                <!-- Center Stage: Remote User + Equalizer Waveform + Local User -->
                 <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,16,0,16">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                        <!-- Remote Participant (Sakura) -->
+                        <!-- Remote Participant -->
                         <StackPanel HorizontalAlignment="Center" Width="130">
                             <!-- Avatar with animated glowing speaking ring -->
                             <Grid Width="106" Height="106" HorizontalAlignment="Center">
                                 <Ellipse Width="106" Height="106" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
                                          Visibility="{Binding IsRemoteSpeaking, Converter={StaticResource BoolToVis}}" />
-                                <Border Width="92" Height="92" CornerRadius="46" Background="#2A1B3D" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="🌸" FontSize="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Border Width="92" Height="92" CornerRadius="46" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="👤" FontSize="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
                             <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="14"
@@ -104,7 +104,7 @@
                         BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
                     <StackPanel Orientation="Horizontal">
                         <!-- Mic Button -->
-                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Toggle Mic" Margin="3,0">
+                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Микрофон" Margin="3,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="21" Background="{TemplateBinding Background}">
@@ -115,7 +115,7 @@
                         </Button>
 
                         <!-- Sound Button -->
-                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Toggle Sound" Margin="3,0">
+                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Звук" Margin="3,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="21" Background="{TemplateBinding Background}">
@@ -125,8 +125,8 @@
                             </Button.Template>
                         </Button>
 
-                        <!-- Video Camera Toggle (Green Neon Highlight) -->
-                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource CallWaveformActiveBrush}" BorderThickness="1.5" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Toggle Video" Margin="3,0">
+                        <!-- Video Camera Toggle -->
+                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource CallWaveformActiveBrush}" BorderThickness="1.5" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Камера" Margin="3,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
@@ -137,7 +137,7 @@
                         </Button>
 
                         <!-- Screen Share Toggle -->
-                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleScreenShareCommand}" ToolTip="Share Screen" Margin="3,0">
+                        <Button Width="42" Height="42" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleScreenShareCommand}" ToolTip="Демонстрация экрана" Margin="3,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="8" Background="{TemplateBinding Background}">
@@ -148,7 +148,7 @@
                         </Button>
 
                         <!-- End Call (Red Pill) -->
-                        <Button Width="48" Height="42" Background="{DynamicResource CallEndButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding EndCallCommand}" ToolTip="End Call" Margin="6,0,0,0">
+                        <Button Width="48" Height="42" Background="{DynamicResource CallEndButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding EndCallCommand}" ToolTip="Завершить вызов" Margin="6,0,0,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="21" Background="{TemplateBinding Background}">
@@ -160,7 +160,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Bottom Status Pill ("🟢 Call ongoing • 13:37") -->
+                <!-- Bottom Status Pill ("🟢 Вызов активен • 00:00") -->
                 <Border Grid.Row="3" Background="{DynamicResource CallOverlayPillBrush}" CornerRadius="12"
                         Padding="14,5" HorizontalAlignment="Center" Margin="0,0,0,4">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -172,7 +172,7 @@
         </Border>
 
         <!-- Bottom Subtitle Footer -->
-        <TextBlock Grid.Row="2" Text="STORM FELLOWSHIP LOW-LATENCY DIRECT AUDIO"
+        <TextBlock Grid.Row="2" Text="НИЗКАЯ ЗАДЕРЖКА ЗВУКА STORM"
                    FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"
                    HorizontalAlignment="Center" Margin="0,16,0,20" />
     </Grid>

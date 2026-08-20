@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
 
         <!-- Direct Messages / Home Button -->
-        <Button Margin="0,10,0,6" Width="44" Height="44" Background="{DynamicResource AccentBrush}" BorderThickness="0" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding SelectHomeCommand}">
+        <Button Margin="0,10,0,6" Width="44" Height="44" Background="{DynamicResource AccentBrush}" BorderThickness="0" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding SelectHomeCommand}" ToolTip="Личные сообщения">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="12" Background="{TemplateBinding Background}">
@@ -34,12 +34,12 @@
                             <!-- Indicator pill on active -->
                             <Border Width="4" Height="36" CornerRadius="2" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Left" Margin="-10,0,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
 
-                            <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnFellowshipClicked">
+                            <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnFellowshipClicked" ToolTip="{Binding Name}">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
                                             <Grid>
-                                                <TextBlock Text="{Binding IconEmoji}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                <TextBlock Text="🛡️" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 <!-- Unread badge -->
                                                 <Border Width="16" Height="16" CornerRadius="8" Background="{DynamicResource StatusDndBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-2,-2" Visibility="{Binding UnreadCount, Converter={StaticResource NullToVis}}">
                                                     <TextBlock Text="{Binding UnreadCount}" FontSize="9" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -56,7 +56,7 @@
         </ScrollViewer>
 
         <!-- Add Fellowship (+) Button -->
-        <Button Grid.Row="3" Margin="0,6,0,6" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding CreateFellowshipCommand}">
+        <Button Grid.Row="3" Margin="0,6,0,6" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding CreateFellowshipCommand}" ToolTip="Создать или войти в содружество">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="22" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
@@ -67,7 +67,7 @@
         </Button>
 
         <!-- User Settings (Gear) Button -->
-        <Button Grid.Row="4" Margin="0,0,0,10" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}">
+        <Button Grid.Row="4" Margin="0,0,0,10" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border CornerRadius="22" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">

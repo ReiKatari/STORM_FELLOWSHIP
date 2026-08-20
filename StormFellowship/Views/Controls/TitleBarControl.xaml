@@ -18,27 +18,27 @@
             <TextBlock Text="STORM" FontWeight="Black" FontSize="15" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
             <TextBlock Text=" FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
             <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="v0.0.1" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                <TextBlock Text="v0.0.2" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
             </Border>
         </StackPanel>
 
-        <!-- Quick Theme Selector Chips -->
+        <!-- Quick Theme Selector Chips (Russian) -->
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0" WindowChrome.IsHitTestVisibleInChrome="True">
-            <Button Content="DARK" Click="OnDarkThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" />
-            <Button Content="NIGHT" Click="OnNightThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" />
-            <Button Content="DAY" Click="OnDayThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" />
-            <Button Content="MIDNIGHT" Click="OnMidnightThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" />
+            <Button Content="ТЕМНАЯ" Click="OnDarkThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Темная тема" />
+            <Button Content="НОЧНАЯ" Click="OnNightThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Ночная тема" />
+            <Button Content="СВЕТЛАЯ" Click="OnDayThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Светлая тема" />
+            <Button Content="ПОЛУНОЧЬ" Click="OnMidnightThemeClicked" Margin="3,0" Padding="10,4" FontSize="10" FontWeight="Bold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Тема Полуночный киберпанк" />
         </StackPanel>
 
         <!-- Window System Buttons -->
         <StackPanel Grid.Column="3" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMinimizeClicked" Cursor="Hand">
+            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMinimizeClicked" Cursor="Hand" ToolTip="Свернуть">
                 <TextBlock Text="🗕" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMaximizeRestoreClicked" Cursor="Hand">
+            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMaximizeRestoreClicked" Cursor="Hand" ToolTip="Развернуть / Восстановить">
                 <TextBlock Text="🗖" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnCloseClicked" Cursor="Hand">
+            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnCloseClicked" Cursor="Hand" ToolTip="Закрыть">
                 <TextBlock Text="✕" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Button>
         </StackPanel>

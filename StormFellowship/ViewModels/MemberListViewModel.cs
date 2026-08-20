@@ -13,7 +13,7 @@ public partial class MemberListViewModel : ObservableObject
     public Fellowship? CurrentFellowship => FellowshipService.Instance.CurrentFellowship;
 
     public ObservableCollection<User> Members => CurrentFellowship?.Members ?? FellowshipService.Instance.DirectMessageUsers;
-    public string HeaderText => $"ONLINE — {OnlineMembers.Count}";
+    public string HeaderText => $"В СЕТИ — {OnlineMembers.Count}";
 
     public ObservableCollection<User> OnlineMembers { get; } = new();
     public ObservableCollection<User> OfflineMembers { get; } = new();

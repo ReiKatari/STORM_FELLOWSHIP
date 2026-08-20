@@ -10,8 +10,8 @@
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="#25143C" />
     <SolidColorBrush x:Key="CardHoverBrush" Color="#321C50" />
     <SolidColorBrush x:Key="InputBackgroundBrush" Color="#150B22" />
-    <SolidColorBrush x:Key="BorderSubtleBrush" Color="#3B1D5F" />
-    <SolidColorBrush x:Key="DividerBrush" Color="#2D1648" />
+    <SolidColorBrush x:Key="BorderSubtleBrush" Color="#4C1D95" />
+    <SolidColorBrush x:Key="DividerBrush" Color="#3B0764" />
 
     <!-- Accents (Neon Purple) -->
     <SolidColorBrush x:Key="AccentBrush" Color="#A855F7" />
@@ -20,17 +20,17 @@
     <SolidColorBrush x:Key="AccentGlowBrush" Color="#40A855F7" />
     <SolidColorBrush x:Key="AccentMutedBrush" Color="#20A855F7" />
 
-    <!-- Typography -->
+    <!-- High-Contrast Bright Typography (No dark text on dark background) -->
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FAF5FF" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#E9D5FF" />
-    <SolidColorBrush x:Key="TextMutedBrush" Color="#A855F7" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#C084FC" />
     <SolidColorBrush x:Key="TextOnAccentBrush" Color="#FFFFFF" />
 
     <!-- Status -->
     <SolidColorBrush x:Key="StatusOnlineBrush" Color="#22C55E" />
     <SolidColorBrush x:Key="StatusIdleBrush" Color="#F59E0B" />
     <SolidColorBrush x:Key="StatusDndBrush" Color="#EF4444" />
-    <SolidColorBrush x:Key="StatusOfflineBrush" Color="#64748B" />
+    <SolidColorBrush x:Key="StatusOfflineBrush" Color="#C084FC" />
 
     <!-- Call Specific -->
     <SolidColorBrush x:Key="CallContainerBackgroundBrush" Color="#170B26" />
