@@ -89,7 +89,7 @@ public class FellowshipService : IFellowshipService
             DisplayName = "Elena",
             Tag = "9920",
             AvatarPath = "ms-appx:///Assets/Avatars/elena.png",
-            CustomStatus = "Streaming TeamSpeak 5 + Discord UI",
+            CustomStatus = "Streaming STORM Fellowship Session",
             Status = UserStatus.Idle,
             RoleName = "Moderator",
             RoleColorHex = "#F59E0B"
@@ -145,7 +145,7 @@ public class FellowshipService : IFellowshipService
         textCat.Channels.Add(clipsChan);
 
         var voiceCat = new ChannelCategory { Id = "cat_voice", Name = "VOICE CHANNELS" };
-        var opsVoice = new Channel { Id = "voice_ops", Name = "Ops Command 1", Topic = "TeamSpeak low-latency 128kbps audio channel", Type = ChannelType.Voice, BitrateKbps = 128 };
+        var opsVoice = new Channel { Id = "voice_ops", Name = "Ops Command 1", Topic = "Low-latency 128kbps Opus audio channel", Type = ChannelType.Voice, BitrateKbps = 128 };
         var duoVoice = new Channel { Id = "voice_duo", Name = "Duo Queue A", Topic = "2-player tactical channel", Type = ChannelType.Voice, BitrateKbps = 96, UserLimit = 2 };
         var spatialVoice = new Channel { Id = "voice_3d", Name = "3D Positional Stage", Topic = "3D spatial audio demonstration channel", Type = ChannelType.Voice, BitrateKbps = 160 };
         var afkVoice = new Channel { Id = "voice_afk", Name = "AFK Lounge", Topic = "Muted standby area", Type = ChannelType.Voice, BitrateKbps = 32 };
@@ -199,7 +199,7 @@ public class FellowshipService : IFellowshipService
             Id = "m1",
             ChannelId = chan.Id,
             Author = stormBot,
-            Content = "⚡ **Welcome to STORM FELLOWSHIP v0.0.1!**\nExperience ultra-low latency TeamSpeak-grade voice channels combined with rich Discord chat, animated stickers, customizable themes, and 1-1 direct calling.",
+            Content = "⚡ **Welcome to STORM FELLOWSHIP v0.0.1!**\nExperience ultra-low latency voice channels combined with rich chat, animated stickers, customizable themes, and 1-1 direct calling.",
             Timestamp = DateTime.Now.AddMinutes(-45),
             IsPinned = true
         };
@@ -223,7 +223,7 @@ public class FellowshipService : IFellowshipService
             Id = "m3",
             ChannelId = chan.Id,
             Author = alex,
-            Content = "The 3D positional audio and Opus 128kbps codec latency is less than 15ms. TeamSpeak level clarity achieved!",
+            Content = "The 3D positional audio and Opus 128kbps codec latency is less than 15ms. Studio-grade clarity achieved!",
             Timestamp = DateTime.Now.AddMinutes(-20)
         };
 

@@ -96,9 +96,9 @@
                                 </UniformGrid>
                             </StackPanel>
 
-                            <!-- TAB 2: VOICE & AUDIO (TeamSpeak Engine) -->
+                            <!-- TAB 2: VOICE & AUDIO (Audio Engine) -->
                             <StackPanel x:Name="TabAudioContent" Visibility="Collapsed">
-                                <TextBlock Text="TEAMSPEAK-GRADE AUDIO ENGINE" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                <TextBlock Text="STORM AUDIO ENGINE" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
 
                                 <TextBlock Text="Input Mode:" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4" />
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
@@ -112,7 +112,7 @@
                                 <TextBlock Text="Live Mic VU-Meter:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
                                 <ProgressBar Value="{Binding LiveMicLevel}" Minimum="0" Maximum="100" Height="8" Foreground="{DynamicResource StatusOnlineBrush}" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,14" />
 
-                                <CheckBox Content="Enable TeamSpeak Sound Cues (Mute/Join/Leave)" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                                <CheckBox Content="Enable Sound Cues (Mute/Join/Leave)" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
                                 <CheckBox Content="Enable 3D Positional Spatial Audio" IsChecked="{Binding SpatialAudioEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
                                 <CheckBox Content="AI Background Noise Suppression (RNNoise)" IsChecked="{Binding NoiseSuppressionEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
                             </StackPanel>
@@ -156,7 +156,7 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <TextBlock Text="High-performance modern communication, voice and fellowship platform." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
-                                <TextBlock Text="Combines TeamSpeak 5 low-latency audio engine with Discord rich chat &amp; fellowships." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="Featuring low-latency high-fidelity voice engine with rich chat, stickers &amp; fellowships." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
