@@ -1,0 +1,19 @@
+# Visual Studio / .NET / WinUI .gitignore
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM64/
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_ReSharper*/
+*.DotSettings.user

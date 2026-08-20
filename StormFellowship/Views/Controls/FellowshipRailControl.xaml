@@ -1,0 +1,95 @@
+<UserControl
+    x:Class="StormFellowship.Views.Controls.FellowshipRailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:StormFellowship.Models"
+    xmlns:helpers="using:StormFellowship.Helpers"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helpers:BoolToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
+    <Grid Width="72" Background="{StaticResource RailBackgroundBrush}" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Direct Messages / Home Button -->
+        <Grid Margin="0,12,0,0">
+            <!-- Active Pill Indicator -->
+            <Border Width="4" Height="36" HorizontalAlignment="Left" CornerRadius="0,4,4,0"
+                    Background="{StaticResource AccentBrush}"
+                    Visibility="{x:Bind ViewModel.IsDirectMessagesSelected, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
+
+            <Button ToolTipService.ToolTip="Direct Messages" Width="48" Height="48" CornerRadius="24"
+                    HorizontalAlignment="Center" Padding="0" Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1"
+                    Command="{x:Bind ViewModel.SelectDirectMessagesCommand}">
+                <Image Source="ms-appx:///Assets/Icons/storm_logo_512.png" Width="30" Height="30" Stretch="Uniform" />
+            </Button>
+        </Grid>
+
+        <!-- Divider -->
+        <Rectangle Grid.Row="1" Height="2" Width="32" Fill="{StaticResource DividerBrush}" RadiusX="1" RadiusY="1" Margin="0,8" />
+
+        <!-- Fellowship / Server List -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollMode="Disabled">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.Fellowships, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="models:Fellowship">
+                        <Grid Margin="0,4" Height="52">
+                            <!-- Active Pill Indicator -->
+                            <Border Width="4" Height="32" HorizontalAlignment="Left" CornerRadius="0,4,4,0"
+                                    Background="{StaticResource AccentBrush}"
+                                    Visibility="{x:Bind IsSelected, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
+
+                            <!-- Server Icon Button -->
+                            <Button ToolTipService.ToolTip="{x:Bind Name}" Width="48" Height="48" CornerRadius="24"
+                                    HorizontalAlignment="Center" Padding="0" Background="{StaticResource CardBackgroundBrush}"
+                                    BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1"
+                                    Click="OnFellowshipButtonClicked" Tag="{x:Bind}">
+                                <Grid>
+                                    <Image Source="{x:Bind IconUrl}" Stretch="UniformToFill" Width="48" Height="48" />
+                                    <!-- Fallback Initials -->
+                                    <TextBlock Text="{x:Bind ShortInitials}" FontSize="13" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="Collapsed" />
+                                </Grid>
+                            </Button>
+
+                            <!-- Unread Badge -->
+                            <Border Background="{StaticResource AccentBrush}" CornerRadius="10" MinWidth="18" Height="18"
+                                    Padding="4,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,2"
+                                    Visibility="{x:Bind HasUnread, Mode=OneWay, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{x:Bind UnreadTotal, Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextOnAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Bottom Actions (Add Server & Settings) -->
+        <StackPanel Grid.Row="3" Margin="0,0,0,12" Spacing="8">
+            <Button ToolTipService.ToolTip="Create / Join Fellowship" Width="48" Height="48" CornerRadius="24"
+                    HorizontalAlignment="Center" Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource AccentBrush}" BorderThickness="1"
+                    Command="{x:Bind ViewModel.AddFellowshipCommand}">
+                <FontIcon Glyph="&#xE710;" FontSize="18" Foreground="{StaticResource AccentBrush}" />
+            </Button>
+
+            <Button ToolTipService.ToolTip="User &amp; Audio Settings" Width="48" Height="48" CornerRadius="24"
+                    HorizontalAlignment="Center" Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1"
+                    Command="{x:Bind ViewModel.OpenSettingsCommand}">
+                <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="{StaticResource TextSecondaryBrush}" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

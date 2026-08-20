@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="StormFellowship.Installer/StormFellowship.Installer.csproj" />
+  <Project Path="StormFellowship/StormFellowship.csproj" />
+</Solution>

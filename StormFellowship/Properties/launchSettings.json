@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StormFellowship (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "StormFellowship (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
