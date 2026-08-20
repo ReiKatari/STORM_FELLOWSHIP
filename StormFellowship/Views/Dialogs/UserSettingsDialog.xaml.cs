@@ -1,88 +1,74 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+using System.Windows;
+using System.Windows.Controls;
 using StormFellowship.Models;
 using StormFellowship.Services;
 using StormFellowship.ViewModels;
 
 namespace StormFellowship.Views.Dialogs;
 
-public sealed partial class UserSettingsDialog : UserControl
+public partial class UserSettingsDialog : UserControl
 {
-    public static readonly DependencyProperty ViewModelProperty =
-        DependencyProperty.Register(nameof(ViewModel), typeof(UserSettingsViewModel), typeof(UserSettingsDialog), new PropertyMetadata(null));
-
-    public UserSettingsViewModel ViewModel
-    {
-        get => (UserSettingsViewModel)GetValue(ViewModelProperty);
-        set => SetValue(ViewModelProperty, value);
-    }
-
-    public event RoutedEventHandler? CloseRequested;
-
     public UserSettingsDialog()
     {
         InitializeComponent();
     }
 
-    private void OnCloseClicked(object sender, RoutedEventArgs e)
+    private void HideAllTabs()
     {
-        CloseRequested?.Invoke(this, e);
+        TabThemesContent.Visibility = Visibility.Collapsed;
+        TabAudioContent.Visibility = Visibility.Collapsed;
+        TabProfileContent.Visibility = Visibility.Collapsed;
+        TabHotkeysContent.Visibility = Visibility.Collapsed;
+        TabAboutContent.Visibility = Visibility.Collapsed;
     }
 
-    private void OnNavThemesClicked(object sender, RoutedEventArgs e)
+    private void OnTabThemesClicked(object sender, RoutedEventArgs e)
     {
-        ThemesTab.Visibility = Visibility.Visible;
-        VoiceTab.Visibility = Visibility.Collapsed;
-        ProfileTab.Visibility = Visibility.Collapsed;
-        AboutTab.Visibility = Visibility.Collapsed;
+        HideAllTabs();
+        TabThemesContent.Visibility = Visibility.Visible;
     }
 
-    private void OnNavVoiceClicked(object sender, RoutedEventArgs e)
+    private void OnTabAudioClicked(object sender, RoutedEventArgs e)
     {
-        ThemesTab.Visibility = Visibility.Collapsed;
-        VoiceTab.Visibility = Visibility.Visible;
-        ProfileTab.Visibility = Visibility.Collapsed;
-        AboutTab.Visibility = Visibility.Collapsed;
+        HideAllTabs();
+        TabAudioContent.Visibility = Visibility.Visible;
     }
 
-    private void OnNavProfileClicked(object sender, RoutedEventArgs e)
+    private void OnTabProfileClicked(object sender, RoutedEventArgs e)
     {
-        ThemesTab.Visibility = Visibility.Collapsed;
-        VoiceTab.Visibility = Visibility.Collapsed;
-        ProfileTab.Visibility = Visibility.Visible;
-        AboutTab.Visibility = Visibility.Collapsed;
+        HideAllTabs();
+        TabProfileContent.Visibility = Visibility.Visible;
     }
 
-    private void OnNavAboutClicked(object sender, RoutedEventArgs e)
+    private void OnTabHotkeysClicked(object sender, RoutedEventArgs e)
     {
-        ThemesTab.Visibility = Visibility.Collapsed;
-        VoiceTab.Visibility = Visibility.Collapsed;
-        ProfileTab.Visibility = Visibility.Collapsed;
-        AboutTab.Visibility = Visibility.Visible;
+        HideAllTabs();
+        TabHotkeysContent.Visibility = Visibility.Visible;
     }
 
-    private void OnApplyDarkClicked(object sender, RoutedEventArgs e)
+    private void OnTabAboutClicked(object sender, RoutedEventArgs e)
     {
-        ViewModel?.SelectTheme("StormDark");
+        HideAllTabs();
+        TabAboutContent.Visibility = Visibility.Visible;
     }
 
-    private void OnApplyNightClicked(object sender, RoutedEventArgs e)
+    private void OnThemeDarkClicked(object sender, RoutedEventArgs e)
     {
-        ViewModel?.SelectTheme("StormNight");
+        ThemeService.Instance.SetTheme(ThemeType.StormDark);
     }
 
-    private void OnApplyDayClicked(object sender, RoutedEventArgs e)
+    private void OnThemeNightClicked(object sender, RoutedEventArgs e)
     {
-        ViewModel?.SelectTheme("StormDay");
+        ThemeService.Instance.SetTheme(ThemeType.StormNight);
     }
 
-    private void OnApplyMidnightClicked(object sender, RoutedEventArgs e)
+    private void OnThemeDayClicked(object sender, RoutedEventArgs e)
     {
-        ViewModel?.SelectTheme("StormMidnight");
+        ThemeService.Instance.SetTheme(ThemeType.StormDay);
     }
 
-    private void OnStatusOnlineClicked(object sender, RoutedEventArgs e) => ViewModel?.SetUserStatus("Online");
-    private void OnStatusIdleClicked(object sender, RoutedEventArgs e) => ViewModel?.SetUserStatus("Idle");
-    private void OnStatusDndClicked(object sender, RoutedEventArgs e) => ViewModel?.SetUserStatus("DoNotDisturb");
-    private void OnStatusOfflineClicked(object sender, RoutedEventArgs e) => ViewModel?.SetUserStatus("Offline");
+    private void OnThemeMidnightClicked(object sender, RoutedEventArgs e)
+    {
+        ThemeService.Instance.SetTheme(ThemeType.StormMidnight);
+    }
 }

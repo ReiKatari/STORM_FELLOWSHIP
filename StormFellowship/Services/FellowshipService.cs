@@ -245,6 +245,11 @@ public class FellowshipService : IFellowshipService
         chan.Messages.Add(msg4);
     }
 
+    public Fellowship CreateFellowship(string name)
+    {
+        return CreateFellowship(name, "Fellowship created by " + CurrentUser.DisplayName);
+    }
+
     public Fellowship CreateFellowship(string name, string description, string iconUrl = "")
     {
         var f = new Fellowship
@@ -270,6 +275,16 @@ public class FellowshipService : IFellowshipService
         Fellowships.Add(f);
         SelectFellowship(f);
         return f;
+    }
+
+    public Fellowship? JoinFellowship(string inviteCode)
+    {
+        var existing = Fellowships.FirstOrDefault();
+        if (existing != null)
+        {
+            SelectFellowship(existing);
+        }
+        return existing;
     }
 
     public void DeleteFellowship(string fellowshipId)

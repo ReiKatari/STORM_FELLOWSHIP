@@ -88,6 +88,11 @@ public class ChatService : IChatService
         return msg;
     }
 
+    public ChatMessage SendVoiceNote(string channelId, int durationSeconds)
+    {
+        return SendMessage(channelId, "🎤 Voice Note (" + durationSeconds + "s)", isVoiceNote: true, voiceDuration: durationSeconds);
+    }
+
     public void ToggleReaction(ChatMessage message, string emojiSymbol, string emojiCode)
     {
         var existing = message.Reactions.FirstOrDefault(r => r.EmojiSymbol == emojiSymbol || r.EmojiCode == emojiCode);

@@ -13,6 +13,19 @@ public partial class CallViewModel : ObservableObject
     public CallSession? ActiveCall => CallService.Instance.ActiveCall;
     public bool IsInCall => CallService.Instance.IsInCall;
 
+    public string CallTitle => ActiveCall?.Title ?? "1-1 DIRECT CALL";
+    public string RemoteDisplayName => ActiveCall?.RemoteUser.DisplayName ?? "Sakura";
+    public string RemoteCustomStatus => ActiveCall?.RemoteUser.CustomStatus ?? "What the bobba";
+    public string RemoteAvatarPath => ActiveCall?.RemoteUser.AvatarPath ?? "ms-appx:///Assets/Avatars/sakura.png";
+    public string LocalDisplayName => ActiveCall?.LocalUser.DisplayName ?? "You";
+    public string LocalAvatarPath => ActiveCall?.LocalUser.AvatarPath ?? "ms-appx:///Assets/Avatars/you.png";
+    public bool IsRemoteSpeaking => ActiveCall?.IsRemoteSpeaking ?? true;
+    public bool IsLocalSpeaking => ActiveCall?.IsLocalSpeaking ?? false;
+    public bool IsMicMuted => ActiveCall?.IsMicMuted ?? false;
+    public bool IsDeafened => ActiveCall?.IsDeafened ?? false;
+    public string DurationFormatted => ActiveCall?.DurationFormatted ?? "13:37";
+    public string BottomCallStatus => ActiveCall?.BottomCallStatus ?? "Call ongoing • 13:37";
+
     [ObservableProperty]
     private double _bar1Height = 12.0;
 
@@ -40,8 +53,7 @@ public partial class CallViewModel : ObservableObject
 
         CallService.Instance.CallStateChanged += (call) =>
         {
-            OnPropertyChanged(nameof(ActiveCall));
-            OnPropertyChanged(nameof(IsInCall));
+            RefreshProperties();
         };
 
         CallService.Instance.WaveformUpdated += (bars) =>
@@ -59,37 +71,56 @@ public partial class CallViewModel : ObservableObject
         };
     }
 
+    public void RefreshProperties()
+    {
+        OnPropertyChanged(nameof(ActiveCall));
+        OnPropertyChanged(nameof(IsInCall));
+        OnPropertyChanged(nameof(CallTitle));
+        OnPropertyChanged(nameof(RemoteDisplayName));
+        OnPropertyChanged(nameof(RemoteCustomStatus));
+        OnPropertyChanged(nameof(RemoteAvatarPath));
+        OnPropertyChanged(nameof(LocalDisplayName));
+        OnPropertyChanged(nameof(LocalAvatarPath));
+        OnPropertyChanged(nameof(IsRemoteSpeaking));
+        OnPropertyChanged(nameof(IsLocalSpeaking));
+        OnPropertyChanged(nameof(IsMicMuted));
+        OnPropertyChanged(nameof(IsDeafened));
+        OnPropertyChanged(nameof(DurationFormatted));
+        OnPropertyChanged(nameof(BottomCallStatus));
+    }
+
     [RelayCommand]
     public void ToggleMute()
     {
         CallService.Instance.ToggleMute();
-        OnPropertyChanged(nameof(ActiveCall));
+        RefreshProperties();
     }
 
     [RelayCommand]
     public void ToggleDeafen()
     {
         CallService.Instance.ToggleDeafen();
-        OnPropertyChanged(nameof(ActiveCall));
+        RefreshProperties();
     }
 
     [RelayCommand]
     public void ToggleVideo()
     {
         CallService.Instance.ToggleVideo();
-        OnPropertyChanged(nameof(ActiveCall));
+        RefreshProperties();
     }
 
     [RelayCommand]
     public void ToggleScreenShare()
     {
         CallService.Instance.ToggleScreenShare();
-        OnPropertyChanged(nameof(ActiveCall));
+        RefreshProperties();
     }
 
     [RelayCommand]
     public void EndCall()
     {
         CallService.Instance.EndCall();
+        RefreshProperties();
     }
 }

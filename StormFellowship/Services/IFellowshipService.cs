@@ -17,7 +17,9 @@ public interface IFellowshipService
     event Action<Channel?>? CurrentChannelChanged;
     event Action<User?>? CurrentDmUserChanged;
 
+    Fellowship CreateFellowship(string name);
     Fellowship CreateFellowship(string name, string description, string iconUrl = "");
+    Fellowship? JoinFellowship(string inviteCode);
     void DeleteFellowship(string fellowshipId);
     void RenameFellowship(string fellowshipId, string newName, string newDescription);
     Channel AddChannel(string fellowshipId, string categoryId, string name, ChannelType type, int bitrateKbps = 96);

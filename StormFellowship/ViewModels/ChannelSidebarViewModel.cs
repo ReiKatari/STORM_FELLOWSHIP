@@ -16,6 +16,12 @@ public partial class ChannelSidebarViewModel : ObservableObject
     public ObservableCollection<User> DirectMessageUsers => FellowshipService.Instance.DirectMessageUsers;
     public User CurrentUser => FellowshipService.Instance.CurrentUser;
 
+    public string FellowshipTitle => IsDirectMessagesSelected ? "DIRECT MESSAGES" : (CurrentFellowship?.Name ?? "STORM SANCTUARY");
+    public bool IsInDmMode => IsDirectMessagesSelected;
+    public bool IsInFellowshipMode => !IsDirectMessagesSelected;
+    public ObservableCollection<User> DmUsers => DirectMessageUsers;
+    public ObservableCollection<ChannelCategory> Categories => CurrentFellowship?.Categories ?? new ObservableCollection<ChannelCategory>();
+
     [ObservableProperty]
     private bool _isMuted = false;
 
@@ -31,20 +37,29 @@ public partial class ChannelSidebarViewModel : ObservableObject
 
         FellowshipService.Instance.CurrentFellowshipChanged += (f) =>
         {
-            OnPropertyChanged(nameof(CurrentFellowship));
-            OnPropertyChanged(nameof(IsDirectMessagesSelected));
+            RefreshAll();
         };
 
         FellowshipService.Instance.CurrentDmUserChanged += (u) =>
         {
-            OnPropertyChanged(nameof(CurrentDmUser));
-            OnPropertyChanged(nameof(IsDirectMessagesSelected));
+            RefreshAll();
         };
 
         AudioService.Instance.SpeakingStateChanged += (speaking) =>
         {
             IsSpeaking = speaking;
         };
+    }
+
+    private void RefreshAll()
+    {
+        OnPropertyChanged(nameof(CurrentFellowship));
+        OnPropertyChanged(nameof(CurrentDmUser));
+        OnPropertyChanged(nameof(IsDirectMessagesSelected));
+        OnPropertyChanged(nameof(FellowshipTitle));
+        OnPropertyChanged(nameof(IsInDmMode));
+        OnPropertyChanged(nameof(IsInFellowshipMode));
+        OnPropertyChanged(nameof(Categories));
     }
 
     [RelayCommand]

@@ -1,61 +1,79 @@
-<Window
-    x:Class="StormFellowship.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:StormFellowship.Views.Controls"
-    xmlns:dialogs="using:StormFellowship.Views.Dialogs"
-    mc:Ignorable="d"
-    Title="STORM FELLOWSHIP v0.0.1">
+<Window x:Class="StormFellowship.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
+        xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
+        Title="STORM FELLOWSHIP v0.0.1"
+        Width="1280" Height="800"
+        MinWidth="960" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="False"
+        Background="{DynamicResource AppBackgroundBrush}">
 
-    <Grid x:Name="RootGrid" Background="{StaticResource AppBackgroundBrush}">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="38" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" />
+    </WindowChrome.WindowChrome>
+
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="38" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Custom Styled Title Bar -->
-        <controls:TitleBarControl x:Name="AppTitleBar" />
+        <!-- Custom Storm TitleBar -->
+        <controls:TitleBarControl x:Name="AppTitleBar" DataContext="{Binding}" />
 
-        <!-- Main Content Area -->
+        <!-- Main Workspace (Rail + Channel Sidebar + Main Area + Member List) -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition Width="240" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- 1. Leftmost Fellowship / Server Rail -->
-            <controls:FellowshipRailControl x:Name="FellowshipRail" Grid.Column="0" />
+            <!-- 1. Left Icon Rail (Fellowships + DMs) -->
+            <controls:FellowshipRailControl x:Name="FellowshipRail" Grid.Column="0" DataContext="{Binding RailViewModel}" />
 
             <!-- 2. Channel & DM Sidebar -->
-            <controls:ChannelSidebarControl x:Name="ChannelSidebar" Grid.Column="1" />
+            <controls:ChannelSidebarControl x:Name="ChannelSidebar" Grid.Column="1" DataContext="{Binding SidebarViewModel}" />
 
-            <!-- 3. Central Workspace: Chat View & Call View Overlay -->
+            <!-- 3. Central Stage (Chat View OR Call Overlay) -->
             <Grid Grid.Column="2">
                 <!-- Chat View -->
-                <controls:ChatViewControl x:Name="MainChatView"
+                <controls:ChatViewControl x:Name="MainChatView" DataContext="{Binding ChatViewModel}"
+                                          Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"
                                           ToggleMemberListRequested="OnToggleMemberListRequested" />
 
-                <!-- Call Overlay Screen (1-1 Direct Calls & Group Calls) -->
-                <controls:CallOverlayControl x:Name="CallOverlay" />
+                <!-- Call Overlay Stage (Direct 1-1 / Voice Room) -->
+                <controls:CallOverlayControl x:Name="CallOverlay" DataContext="{Binding CallViewModel}"
+                                            Visibility="{Binding IsInCallView, Converter={StaticResource BoolToVis}}" />
             </Grid>
 
-            <!-- 4. Right Member List Sidebar (Collapsible) -->
-            <controls:MemberListControl x:Name="MemberList" Grid.Column="3" />
+            <!-- 4. Right Member List Panel -->
+            <controls:MemberListControl x:Name="MemberList" Grid.Column="3" DataContext="{Binding MemberListViewModel}"
+                                        Visibility="{Binding IsMemberListVisible, Converter={StaticResource BoolToVis}}" />
         </Grid>
 
-        <!-- MODAL DIALOG OVERLAYS -->
-        <!-- Create / Join Fellowship Modal -->
-        <dialogs:CreateFellowshipDialog x:Name="CreateFellowshipModal" Grid.RowSpan="2" Visibility="Collapsed" />
+        <!-- Toast Notification Floating Pill -->
+        <Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,16,0,0"
+                Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5"
+                CornerRadius="20" Padding="16,8" Visibility="{Binding IsToastVisible, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="{Binding ToastMessage}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+        </Border>
 
-        <!-- Fellowship Settings Modal -->
-        <dialogs:FellowshipSettingsDialog x:Name="FellowshipSettingsModal" Grid.RowSpan="2" Visibility="Collapsed" />
+        <!-- Modals & Dialogs Layer -->
+        <dialogs:CreateFellowshipDialog x:Name="CreateFellowshipModal" Grid.RowSpan="2"
+                                        DataContext="{Binding CreateFellowshipModalViewModel}"
+                                        Visibility="{Binding IsCreateFellowshipModalOpen, Converter={StaticResource BoolToVis}}" />
 
-        <!-- User Settings Modal -->
-        <dialogs:UserSettingsDialog x:Name="UserSettingsModal" Grid.RowSpan="2" Visibility="Collapsed"
-                                    CloseRequested="OnUserSettingsCloseRequested" />
+        <dialogs:FellowshipSettingsDialog x:Name="FellowshipSettingsModal" Grid.RowSpan="2"
+                                          DataContext="{Binding FellowshipSettingsModalViewModel}"
+                                          Visibility="{Binding IsFellowshipSettingsModalOpen, Converter={StaticResource BoolToVis}}" />
+
+        <dialogs:UserSettingsDialog x:Name="UserSettingsModal" Grid.RowSpan="2"
+                                    DataContext="{Binding UserSettingsViewModel}"
+                                    Visibility="{Binding IsUserSettingsModalOpen, Converter={StaticResource BoolToVis}}" />
     </Grid>
 </Window>

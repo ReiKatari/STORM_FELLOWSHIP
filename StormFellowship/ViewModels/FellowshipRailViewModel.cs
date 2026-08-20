@@ -29,6 +29,12 @@ public partial class FellowshipRailViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void SelectHome()
+    {
+        SelectDirectMessages();
+    }
+
+    [RelayCommand]
     public void SelectDirectMessages()
     {
         IsDirectMessagesSelected = true;
@@ -38,9 +44,21 @@ public partial class FellowshipRailViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void CreateFellowship()
+    {
+        AddFellowship();
+    }
+
+    [RelayCommand]
     public void AddFellowship()
     {
         _mainVM.OpenCreateFellowshipDialog();
+    }
+
+    [RelayCommand]
+    public void OpenUserSettings()
+    {
+        _mainVM.OpenUserSettingsDialog();
     }
 
     [RelayCommand]

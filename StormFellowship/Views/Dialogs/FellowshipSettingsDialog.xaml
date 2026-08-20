@@ -1,83 +1,38 @@
-<UserControl
-    x:Class="StormFellowship.Views.Dialogs.FellowshipSettingsDialog"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+<UserControl x:Class="StormFellowship.Views.Dialogs.FellowshipSettingsDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}">
+        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="520" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
+            <StackPanel>
+                <!-- Title -->
+                <TextBlock Text="FELLOWSHIP OVERVIEW &amp; SETTINGS" FontWeight="Black" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16" />
 
-    <Grid Background="{StaticResource ModalOverlayBackgroundBrush}">
-        <Border Background="{StaticResource ModalDialogBackgroundBrush}"
-                BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1"
-                CornerRadius="14" Width="520" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="24">
-            <StackPanel Spacing="16">
-                <!-- Header -->
-                <Grid>
+                <!-- Fellowship Name -->
+                <TextBlock Text="FELLOWSHIP NAME" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding FellowshipName, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" Margin="0,0,0,16" />
+
+                <!-- Description -->
+                <TextBlock Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <TextBox Text="{Binding FellowshipDescription, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" Margin="0,0,0,16" />
+
+                <!-- Invite Link -->
+                <TextBlock Text="SHARE INVITE LINK" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <Grid Margin="0,0,0,24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="FELLOWSHIP OVERVIEW &amp; SETTINGS" FontSize="18" FontWeight="Black" Foreground="{StaticResource TextPrimaryBrush}" />
-                        <TextBlock Text="Configure server identity, roles, voice bitrate and management." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
-                    </StackPanel>
-                    <Button Grid.Column="1" Width="28" Height="28" Padding="0" Background="Transparent" BorderThickness="0" Click="OnCloseClicked">
-                        <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="{StaticResource TextMutedBrush}" />
-                    </Button>
+                    <TextBox Text="{Binding InviteLink}" IsReadOnly="True" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" />
+                    <Button Grid.Column="1" Content="Copy" Margin="8,0,0,0" Padding="14,0" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Command="{Binding CopyInviteCommand}" />
                 </Grid>
 
-                <!-- Server Name -->
-                <StackPanel Spacing="6">
-                    <TextBlock Text="FELLOWSHIP NAME" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" />
-                    <TextBox x:Name="EditNameInput" Background="{StaticResource InputBackgroundBrush}"
-                             BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="6" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}" />
-                </StackPanel>
-
-                <!-- Server Description -->
-                <StackPanel Spacing="6">
-                    <TextBlock Text="DESCRIPTION" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" />
-                    <TextBox x:Name="EditDescInput" Background="{StaticResource InputBackgroundBrush}"
-                             BorderBrush="{StaticResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="6" FontSize="13" Foreground="{StaticResource TextPrimaryBrush}" />
-                </StackPanel>
-
-                <!-- TeamSpeak Audio Bitrate Defaults -->
-                <StackPanel Spacing="6">
-                    <TextBlock Text="DEFAULT AUDIO CODEC &amp; BITRATE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" />
-                    <ComboBox SelectedIndex="1" HorizontalAlignment="Stretch" Background="{StaticResource InputBackgroundBrush}" BorderBrush="{StaticResource BorderSubtleBrush}">
-                        <ComboBoxItem Content="Opus Voice 64 kbps (Standard)" />
-                        <ComboBoxItem Content="Opus Voice 128 kbps (Ultra Low-Latency HQ)" />
-                        <ComboBoxItem Content="Opus Music 256 kbps (Studio Fidelity)" />
-                        <ComboBoxItem Content="Opus 3D Spatial Audio 384 kbps (Positional)" />
-                    </ComboBox>
-                </StackPanel>
-
-                <Rectangle Height="1" Fill="{StaticResource DividerBrush}" Margin="0,4" />
-
-                <!-- Danger Zone: Delete Server -->
-                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="#EF4444" BorderThickness="1" CornerRadius="8" Padding="12">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="2">
-                            <TextBlock Text="Delete Fellowship" FontWeight="Bold" FontSize="13" Foreground="#EF4444" />
-                            <TextBlock Text="Permanently delete this server and all channels." FontSize="11" Foreground="{StaticResource TextMutedBrush}" />
-                        </StackPanel>
-                        <Button Grid.Column="1" Content="Delete Server" Background="#EF4444" Foreground="#FFFFFF"
-                                FontWeight="Bold" CornerRadius="6" Padding="12,6" Click="OnDeleteFellowshipClicked" />
-                    </Grid>
-                </Border>
-
                 <!-- Actions -->
-                <Grid Margin="0,8,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Button Content="Cancel" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextSecondaryBrush}" Click="OnCloseClicked" />
-                    <Button Grid.Column="1" Content="Save Changes" Background="{StaticResource AccentBrush}" Foreground="{StaticResource TextOnAccentBrush}"
-                            FontWeight="Bold" CornerRadius="6" Padding="20,8" Click="OnSaveChangesClicked" />
+                <Grid>
+                    <Button Content="Delete Fellowship" HorizontalAlignment="Left" Background="Transparent" Foreground="{DynamicResource StatusDndBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding DeleteFellowshipCommand}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancel" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand" Command="{Binding CloseCommand}" />
+                        <Button Content="Save Changes" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="18,8" Cursor="Hand" Command="{Binding SaveChangesCommand}" />
+                    </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>

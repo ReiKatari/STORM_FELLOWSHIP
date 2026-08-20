@@ -1,23 +1,13 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using StormFellowship.Models;
 using StormFellowship.ViewModels;
-using Windows.System;
 
 namespace StormFellowship.Views.Controls;
 
-public sealed partial class ChatViewControl : UserControl
+public partial class ChatViewControl : UserControl
 {
-    public static readonly DependencyProperty ViewModelProperty =
-        DependencyProperty.Register(nameof(ViewModel), typeof(ChatViewModel), typeof(ChatViewControl), new PropertyMetadata(null));
-
-    public ChatViewModel ViewModel
-    {
-        get => (ChatViewModel)GetValue(ViewModelProperty);
-        set => SetValue(ViewModelProperty, value);
-    }
-
     public event RoutedEventHandler? ToggleMemberListRequested;
 
     public ChatViewControl()
@@ -30,84 +20,54 @@ public sealed partial class ChatViewControl : UserControl
         ToggleMemberListRequested?.Invoke(this, e);
     }
 
-    private void OnMessageInputKeyDown(object sender, KeyRoutedEventArgs e)
+    private void OnMessageInputKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == VirtualKey.Enter)
+        if (e.Key == Key.Enter)
         {
-            ViewModel?.SendMessage();
+            if (DataContext is ChatViewModel vm)
+            {
+                vm.SendMessage();
+            }
             e.Handled = true;
         }
     }
 
-    private void OnEmojiItemClicked(object sender, ItemClickEventArgs e)
+    private void OnEmojiButtonClicked(object sender, RoutedEventArgs e)
     {
-        if (e.ClickedItem is EmojiItem emoji)
+        if (DataContext is ChatViewModel vm)
         {
-            ViewModel?.InsertEmoji(emoji);
+            vm.InsertEmoji(new EmojiItem { Symbol = "⚡", Code = ":storm_bolt:" });
         }
     }
 
-    private void OnStickerItemClicked(object sender, ItemClickEventArgs e)
+    private void OnStickerButtonClicked(object sender, RoutedEventArgs e)
     {
-        if (e.ClickedItem is StickerItem sticker)
+        if (DataContext is ChatViewModel vm)
         {
-            ViewModel?.SendSticker(sticker);
+            vm.SendSticker(new StickerItem { Name = "STORM GG" });
         }
     }
 
-    private void OnReactionButtonClicked(object sender, RoutedEventArgs e)
+    private void OnVoiceNoteButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var channelId = (DataContext as ChatViewModel)?.CurrentChannel?.Id ?? "general";
+        Services.ChatService.Instance.SendVoiceNote(channelId, 12);
+    }
+
+    private void OnAttachButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var channelId = (DataContext as ChatViewModel)?.CurrentChannel?.Id ?? "general";
+        Services.ChatService.Instance.SendMessage(channelId, "Attached tactical map overview:", attachmentUrl: "ms-appx:///Assets/Logo.png");
+    }
+
+    private void OnReactionBadgeClicked(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.Tag is MessageReaction rx && btn.DataContext is ChatMessage msg)
         {
-            ViewModel?.ToggleReaction(new object[] { msg, rx.EmojiSymbol, rx.EmojiCode });
+            if (DataContext is ChatViewModel vm)
+            {
+                vm.ToggleReaction(new object[] { msg, rx.EmojiSymbol, rx.EmojiCode });
+            }
         }
-    }
-
-    private void OnQuickReactLightning(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is ChatMessage msg)
-        {
-            ViewModel?.ToggleReaction(new object[] { msg, "⚡", ":storm_bolt:" });
-        }
-    }
-
-    private void OnQuickReactHeart(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is ChatMessage msg)
-        {
-            ViewModel?.ToggleReaction(new object[] { msg, "💖", ":heart:" });
-        }
-    }
-
-    private void OnReplyClicked(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is ChatMessage msg)
-        {
-            ViewModel?.ReplyTo(msg);
-            MessageInputBox.Focus(FocusState.Programmatic);
-        }
-    }
-
-    private void OnPinClicked(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is ChatMessage msg)
-        {
-            ViewModel?.PinMessage(msg);
-        }
-    }
-
-    private void OnDeleteClicked(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is ChatMessage msg)
-        {
-            ViewModel?.DeleteMessage(msg);
-        }
-    }
-
-    private void OnAttachFileClicked(object sender, RoutedEventArgs e)
-    {
-        // Add sample sticker/media attachment
-        var channelId = ViewModel?.CurrentChannel?.Id ?? "general";
-        Services.ChatService.Instance.SendMessage(channelId, "Attached tactical play screenshot:", attachmentUrl: "ms-appx:///Assets/Logo.png");
     }
 }

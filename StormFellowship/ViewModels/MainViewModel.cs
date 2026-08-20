@@ -20,7 +20,7 @@ public partial class MainViewModel : ObservableObject
     private ActiveMainView _activeView = ActiveMainView.Fellowship;
 
     [ObservableProperty]
-    private bool _isCallOverlayVisible = false;
+    private bool _isInCallView = false;
 
     [ObservableProperty]
     private bool _isMemberListVisible = true;
@@ -35,36 +35,47 @@ public partial class MainViewModel : ObservableObject
     private bool _isUserSettingsModalOpen = false;
 
     [ObservableProperty]
-    private bool _isImageViewerModalOpen = false;
+    private string _toastMessage = string.Empty;
 
     [ObservableProperty]
-    private string _modalImageSource = string.Empty;
+    private bool _isToastVisible = false;
 
     [ObservableProperty]
-    private string _statusMessage = string.Empty;
+    private string _fellowshipNameInput = "My Fellowship";
 
     [ObservableProperty]
-    private bool _hasStatusNotification = false;
+    private string _joinCodeInput = string.Empty;
 
-    public FellowshipRailViewModel RailVM { get; }
-    public ChannelSidebarViewModel SidebarVM { get; }
-    public ChatViewModel ChatVM { get; }
-    public CallViewModel CallVM { get; }
-    public MemberListViewModel MemberListVM { get; }
-    public UserSettingsViewModel UserSettingsVM { get; }
+    [ObservableProperty]
+    private string _fellowshipName = "STORM FELLOWSHIP SANCTUARY";
+
+    [ObservableProperty]
+    private string _fellowshipDescription = "Official Fellowship server for storm fellowship communication.";
+
+    [ObservableProperty]
+    private string _inviteLink = "storm://invite/sanctuary";
+
+    public FellowshipRailViewModel RailViewModel { get; }
+    public ChannelSidebarViewModel SidebarViewModel { get; }
+    public ChatViewModel ChatViewModel { get; }
+    public CallViewModel CallViewModel { get; }
+    public MemberListViewModel MemberListViewModel { get; }
+    public UserSettingsViewModel UserSettingsViewModel { get; }
+    public MainViewModel CreateFellowshipModalViewModel => this;
+    public MainViewModel FellowshipSettingsModalViewModel => this;
 
     public MainViewModel()
     {
-        RailVM = new FellowshipRailViewModel(this);
-        SidebarVM = new ChannelSidebarViewModel(this);
-        ChatVM = new ChatViewModel(this);
-        CallVM = new CallViewModel(this);
-        MemberListVM = new MemberListViewModel(this);
-        UserSettingsVM = new UserSettingsViewModel(this);
+        RailViewModel = new FellowshipRailViewModel(this);
+        SidebarViewModel = new ChannelSidebarViewModel(this);
+        ChatViewModel = new ChatViewModel(this);
+        CallViewModel = new CallViewModel(this);
+        MemberListViewModel = new MemberListViewModel(this);
+        UserSettingsViewModel = new UserSettingsViewModel(this);
 
         CallService.Instance.CallStateChanged += (call) =>
         {
-            IsCallOverlayVisible = (call != null);
+            IsInCallView = (call != null);
         };
     }
 
@@ -87,6 +98,28 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void Create()
+    {
+        if (!string.IsNullOrWhiteSpace(FellowshipNameInput))
+        {
+            FellowshipService.Instance.CreateFellowship(FellowshipNameInput);
+            ShowToastNotification($"Created Fellowship: {FellowshipNameInput}");
+            IsCreateFellowshipModalOpen = false;
+        }
+    }
+
+    [RelayCommand]
+    public void JoinWithCode()
+    {
+        if (!string.IsNullOrWhiteSpace(JoinCodeInput))
+        {
+            FellowshipService.Instance.JoinFellowship(JoinCodeInput);
+            ShowToastNotification($"Joined Fellowship via code: {JoinCodeInput}");
+            IsCreateFellowshipModalOpen = false;
+        }
+    }
+
+    [RelayCommand]
     public void OpenFellowshipSettingsDialog()
     {
         IsFellowshipSettingsModalOpen = true;
@@ -96,6 +129,31 @@ public partial class MainViewModel : ObservableObject
     public void CloseFellowshipSettingsDialog()
     {
         IsFellowshipSettingsModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void SaveChanges()
+    {
+        ShowToastNotification("Saved Fellowship settings");
+        IsFellowshipSettingsModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void DeleteFellowship()
+    {
+        ShowToastNotification("Fellowship deleted");
+        IsFellowshipSettingsModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void CopyInvite()
+    {
+        try
+        {
+            System.Windows.Clipboard.SetText(InviteLink);
+            ShowToastNotification("Invite link copied to clipboard!");
+        }
+        catch { }
     }
 
     [RelayCommand]
@@ -111,25 +169,20 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void OpenImageModal(string url)
+    public void Close()
     {
-        ModalImageSource = url;
-        IsImageViewerModalOpen = true;
-    }
-
-    [RelayCommand]
-    public void CloseImageModal()
-    {
-        IsImageViewerModalOpen = false;
+        IsCreateFellowshipModalOpen = false;
+        IsFellowshipSettingsModalOpen = false;
+        IsUserSettingsModalOpen = false;
     }
 
     public void ShowToastNotification(string message)
     {
-        StatusMessage = message;
-        HasStatusNotification = true;
+        ToastMessage = message;
+        IsToastVisible = true;
         Task.Delay(3500).ContinueWith(_ =>
         {
-            HasStatusNotification = false;
+            IsToastVisible = false;
         }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

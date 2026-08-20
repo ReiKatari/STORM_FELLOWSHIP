@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Microsoft.UI.Dispatching;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
@@ -10,7 +9,6 @@ public class AudioService : IAudioService
     private static AudioService? _instance;
     public static AudioService Instance => _instance ??= new AudioService();
 
-    private readonly DispatcherQueue _dispatcherQueue;
     private readonly System.Timers.Timer _levelTimer;
     private readonly Random _random = new();
     
@@ -80,7 +78,6 @@ public class AudioService : IAudioService
 
     public AudioService()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? DispatcherQueue.GetForCurrentThread();
         _levelTimer = new System.Timers.Timer(50); // 20 FPS VU-meter updates
         _levelTimer.Elapsed += OnLevelTimerElapsed;
         StartMicMonitoring();
@@ -204,7 +201,7 @@ public class AudioService : IAudioService
 
             var playlist = new ConcatenatingSampleProvider(new[] { sig1, sig2 });
 
-            using var waveOut = new WaveOut();
+            using var waveOut = new WaveOutEvent();
             waveOut.Init(playlist);
             waveOut.Play();
             while (waveOut.PlaybackState == PlaybackState.Playing)

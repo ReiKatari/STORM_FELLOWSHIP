@@ -35,7 +35,6 @@ public partial class ChatViewModel : ObservableObject
         {
             if (IsDirectMessages && CurrentDmUser != null)
             {
-                // Return or create messages for DM
                 return FellowshipService.Instance.Fellowships.FirstOrDefault()?.Categories.FirstOrDefault()?.Channels.FirstOrDefault()?.Messages
                     ?? new ObservableCollection<ChatMessage>();
             }
@@ -43,12 +42,16 @@ public partial class ChatViewModel : ObservableObject
         }
     }
 
+    public ObservableCollection<ChatMessage> Messages => CurrentMessages;
+    public string ChannelName => HeaderTitle;
+    public string ChannelTopic => HeaderTopic;
+
     public ObservableCollection<EmojiItem> Emojis => ChatService.Instance.Emojis;
     public ObservableCollection<StickerItem> Stickers => ChatService.Instance.Stickers;
 
     public string HeaderTitle => IsDirectMessages
         ? (CurrentDmUser != null ? $"@{CurrentDmUser.DisplayName}" : "Direct Messages")
-        : (CurrentChannel != null ? $"#{CurrentChannel.Name}" : "Select a Channel");
+        : (CurrentChannel != null ? $"{CurrentChannel.Name}" : "general");
 
     public string HeaderTopic => IsDirectMessages
         ? (CurrentDmUser?.CustomStatus ?? "Direct conversation")
@@ -60,19 +63,25 @@ public partial class ChatViewModel : ObservableObject
 
         FellowshipService.Instance.CurrentChannelChanged += (c) =>
         {
-            OnPropertyChanged(nameof(CurrentChannel));
-            OnPropertyChanged(nameof(CurrentMessages));
-            OnPropertyChanged(nameof(HeaderTitle));
-            OnPropertyChanged(nameof(HeaderTopic));
+            RefreshProperties();
         };
 
         FellowshipService.Instance.CurrentDmUserChanged += (u) =>
         {
-            OnPropertyChanged(nameof(CurrentDmUser));
-            OnPropertyChanged(nameof(CurrentMessages));
-            OnPropertyChanged(nameof(HeaderTitle));
-            OnPropertyChanged(nameof(HeaderTopic));
+            RefreshProperties();
         };
+    }
+
+    public void RefreshProperties()
+    {
+        OnPropertyChanged(nameof(CurrentChannel));
+        OnPropertyChanged(nameof(CurrentDmUser));
+        OnPropertyChanged(nameof(CurrentMessages));
+        OnPropertyChanged(nameof(Messages));
+        OnPropertyChanged(nameof(HeaderTitle));
+        OnPropertyChanged(nameof(HeaderTopic));
+        OnPropertyChanged(nameof(ChannelName));
+        OnPropertyChanged(nameof(ChannelTopic));
     }
 
     [RelayCommand]
@@ -87,6 +96,7 @@ public partial class ChatViewModel : ObservableObject
 
         MessageInputText = string.Empty;
         ReplyingToMessage = null;
+        RefreshProperties();
     }
 
     [RelayCommand]
@@ -104,6 +114,7 @@ public partial class ChatViewModel : ObservableObject
         CurrentMessages.Add(msg);
         IsStickerPickerOpen = false;
         ReplyingToMessage = null;
+        RefreshProperties();
     }
 
     [RelayCommand]

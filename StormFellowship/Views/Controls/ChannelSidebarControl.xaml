@@ -1,143 +1,127 @@
-<UserControl
-    x:Class="StormFellowship.Views.Controls.ChannelSidebarControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:StormFellowship.Models"
-    xmlns:helpers="using:StormFellowship.Helpers"
-    mc:Ignorable="d">
-
-    <UserControl.Resources>
-        <helpers:BoolToVisibilityConverter x:Key="BoolToVis" />
-        <helpers:NullToVisibilityConverter x:Key="NullToVis" />
-        <helpers:HexToBrushConverter x:Key="HexToBrush" />
-    </UserControl.Resources>
-
-    <Grid Width="240" Background="{StaticResource SidebarBackgroundBrush}" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,1,0">
+<UserControl x:Class="StormFellowship.Views.Controls.ChannelSidebarControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="240">
+    <Grid Background="{DynamicResource SidebarBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="52" />
+            <RowDefinition Height="48" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="58" />
+            <RowDefinition Height="54" />
         </Grid.RowDefinitions>
 
-        <!-- Header: Fellowship Name or Direct Messages Header -->
-        <Border BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,0,1" Padding="14,0" Background="{StaticResource TitleBarBackgroundBrush}">
+        <!-- Sidebar Header (Fellowship Title or Direct Messages) -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="14,0">
             <Grid VerticalAlignment="Center">
-                <!-- Fellowship Mode Header -->
-                <Button Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" Padding="0"
-                        Visibility="{x:Bind ViewModel.CurrentFellowship, Mode=OneWay, Converter={StaticResource NullToVis}}">
-                    <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="Fellowship Settings" Click="OnServerSettingsClicked">
-                                <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE713;" /></MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Create Channel" Click="OnCreateChannelClicked">
-                                <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE710;" /></MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Copy Invite Link (storm://invite/...)" Click="OnCopyInviteClicked">
-                                <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE8C8;" /></MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Notification Settings">
-                                <MenuFlyoutItem.Icon><FontIcon Glyph="&#xEA8F;" /></MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{x:Bind ViewModel.CurrentFellowship.Name, Mode=OneWay}" FontWeight="Bold" FontSize="14" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind ViewModel.CurrentFellowship.Tag, Mode=OneWay}" FontSize="10" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
-                        </StackPanel>
-                        <FontIcon Grid.Column="1" Glyph="&#xE70D;" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
-                    </Grid>
-                </Button>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <!-- Direct Messages Mode Header -->
-                <Grid Visibility="{x:Bind ViewModel.IsDirectMessagesSelected, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="DIRECT MESSAGES" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
-                </Grid>
+                <TextBlock Text="{Binding FellowshipTitle}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+                <!-- Action buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCreateChannelClicked" ToolTip="Create Channel">
+                        <TextBlock Text="+" FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnServerSettingsClicked" ToolTip="Fellowship Settings">
+                        <TextBlock Text="⚙" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Channel Tree or DM List -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled" Padding="8,10">
-            <StackPanel Spacing="6">
-                
-                <!-- FELLOWSHIP CHANNELS VIEW -->
-                <StackPanel Visibility="{x:Bind ViewModel.CurrentFellowship, Mode=OneWay, Converter={StaticResource NullToVis}}">
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.CurrentFellowship.Categories, Mode=OneWay}">
+        <!-- Channels & DM Scroll List -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="8,10">
+            <StackPanel>
+                <!-- IF IN HOME/DM MODE: DIRECT MESSAGES LIST -->
+                <StackPanel Visibility="{Binding IsInDmMode, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="DIRECT MESSAGES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="8,4,0,8" />
+
+                    <ItemsControl ItemsSource="{Binding DmUsers}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="models:ChannelCategory">
+                            <DataTemplate>
+                                <Border Margin="0,2" CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}" Padding="8,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Avatar with status dot -->
+                                        <Grid VerticalAlignment="Center">
+                                            <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource InputBackgroundBrush}">
+                                                <TextBlock Text="👤" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
+                                        </Grid>
+
+                                        <!-- User info -->
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+
+                                        <!-- Direct Call Button (Phone icon) -->
+                                        <Button Grid.Column="2" Width="28" Height="28" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Start Direct Call">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border CornerRadius="14" Background="{TemplateBinding Background}">
+                                                        <TextBlock Text="📞" FontSize="11" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- IF IN FELLOWSHIP MODE: CATEGORIES & CHANNELS -->
+                <StackPanel Visibility="{Binding IsInFellowshipMode, Converter={StaticResource BoolToVis}}">
+                    <ItemsControl ItemsSource="{Binding Categories}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
                                 <StackPanel Margin="0,4,0,8">
                                     <!-- Category Header -->
-                                    <Button Background="Transparent" BorderThickness="0" Padding="4,2" HorizontalAlignment="Stretch"
-                                            Click="OnCategoryHeaderClicked" Tag="{x:Bind}">
-                                        <Grid HorizontalAlignment="Stretch">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <FontIcon Glyph="&#xE70D;" FontSize="10" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,6,0" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind Name}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" />
-                                        </Grid>
+                                    <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="6,2" Cursor="Hand" Tag="{Binding}" Click="OnCategoryHeaderClicked">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="▾ " FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </StackPanel>
                                     </Button>
 
-                                    <!-- Channels in Category -->
-                                    <ItemsControl ItemsSource="{x:Bind Channels}">
+                                    <!-- Channels -->
+                                    <ItemsControl ItemsSource="{Binding Channels}">
                                         <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="models:Channel">
-                                                <StackPanel Margin="0,2">
-                                                    <!-- Channel Item Button -->
-                                                    <Button Background="Transparent" BorderThickness="0" Padding="8,6" CornerRadius="6" HorizontalAlignment="Stretch"
-                                                            Click="OnChannelClicked" Tag="{x:Bind}">
-                                                        <Grid HorizontalAlignment="Stretch">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <TextBlock Text="{x:Bind IconGlyph}" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
-                                                            <TextBlock Grid.Column="1" Text="{x:Bind Name}" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                                            
-                                                            <!-- Bitrate Badge (TeamSpeak style) -->
-                                                            <Border Grid.Column="2" Background="{StaticResource CardBackgroundBrush}" CornerRadius="3" Padding="4,1" Margin="4,0,0,0"
-                                                                    Visibility="{x:Bind IsVoice, Converter={StaticResource BoolToVis}}">
-                                                                <TextBlock Text="{x:Bind BitrateKbps}" FontSize="9" Foreground="{StaticResource TextMutedBrush}" />
-                                                            </Border>
-                                                        </Grid>
-                                                    </Button>
-
-                                                    <!-- Connected Voice Users under Voice Channel -->
-                                                    <ItemsControl ItemsSource="{x:Bind ConnectedVoiceUsers}" Margin="20,2,0,4"
-                                                                  Visibility="{x:Bind IsVoice, Converter={StaticResource BoolToVis}}">
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:User">
-                                                                <Grid Margin="0,2">
+                                            <DataTemplate>
+                                                <Button Margin="0,1" Padding="8,6" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Cursor="Hand" Tag="{Binding}" Click="OnChannelClicked">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                                <Grid>
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto" />
                                                                         <ColumnDefinition Width="*" />
                                                                         <ColumnDefinition Width="Auto" />
                                                                     </Grid.ColumnDefinitions>
 
-                                                                    <!-- Avatar with speaking ring -->
-                                                                    <Border Width="20" Height="20" CornerRadius="10"
-                                                                            BorderBrush="{StaticResource StatusOnlineBrush}" BorderThickness="1.5" Margin="0,0,6,0">
-                                                                        <Image Source="{x:Bind AvatarPath}" Stretch="UniformToFill" Width="18" Height="18" />
-                                                                    </Border>
+                                                                    <!-- Channel Icon (# for text, 🔊 for voice) -->
+                                                                    <TextBlock Text="{Binding IconGlyph}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
 
-                                                                    <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
-                                                                    <FontIcon Grid.Column="2" Glyph="&#xE720;" FontSize="10" Foreground="{StaticResource StatusOnlineBrush}" VerticalAlignment="Center" />
+                                                                    <!-- Channel Name -->
+                                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+                                                                    <!-- Bitrate or unread badge -->
+                                                                    <TextBlock Grid.Column="2" Text="{Binding BitrateDisplay}" FontSize="9" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
                                                                 </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </StackPanel>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -146,54 +130,11 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-
-                <!-- DIRECT MESSAGES LIST -->
-                <StackPanel Visibility="{x:Bind ViewModel.IsDirectMessagesSelected, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="DIRECT MESSAGES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" Margin="8,0,0,6" />
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.DirectMessageUsers, Mode=OneWay}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="models:User">
-                                <Button Background="Transparent" BorderThickness="0" Padding="8,6" CornerRadius="6" HorizontalAlignment="Stretch" Margin="0,2"
-                                        Click="OnDmUserClicked" Tag="{x:Bind}">
-                                    <Grid HorizontalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Avatar & Status -->
-                                        <Grid Margin="0,0,8,0">
-                                            <Border Width="28" Height="28" CornerRadius="14">
-                                                <Image Source="{x:Bind AvatarPath}" Stretch="UniformToFill" Width="28" Height="28" />
-                                            </Border>
-                                            <Ellipse Width="8" Height="8" Fill="{x:Bind StatusBadgeColor, Converter={StaticResource HexToBrush}}"
-                                                     HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-1,-1" Stroke="{StaticResource SidebarBackgroundBrush}" StrokeThickness="1" />
-                                        </Grid>
-
-                                        <!-- Name & Custom Status -->
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind DisplayName}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
-                                            <TextBlock Text="{x:Bind CustomStatus}" FontSize="10" Foreground="{StaticResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
-
-                                        <!-- Direct Call Shortcut Button -->
-                                        <Button Grid.Column="2" ToolTipService.ToolTip="Start Direct Call" Width="26" Height="26" Padding="0" CornerRadius="13"
-                                                Background="Transparent" BorderThickness="0" Click="OnDirectCallButtonClicked" Tag="{x:Bind}">
-                                            <FontIcon Glyph="&#xE717;" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
-                                        </Button>
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-
             </StackPanel>
         </ScrollViewer>
 
-        <!-- User Bottom Bar (TeamSpeak & Discord styled) -->
-        <Border Grid.Row="2" Background="{StaticResource TitleBarBackgroundBrush}" BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,1,0,0" Padding="10,0">
+        <!-- Bottom User Bar (Avatar + Name + Mic/Headphone/Settings Toggles) -->
+        <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="10,0">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -201,40 +142,27 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Current User Avatar & Status -->
-                <Grid Margin="0,0,8,0">
-                    <Border Width="34" Height="34" CornerRadius="17" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.5">
-                        <Image Source="{x:Bind ViewModel.CurrentUser.AvatarPath, Mode=OneWay}" Stretch="UniformToFill" Width="32" Height="32" />
-                    </Border>
-                    <Ellipse Width="9" Height="9" Fill="{StaticResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stroke="{StaticResource TitleBarBackgroundBrush}" StrokeThickness="1.5" />
-                </Grid>
+                <!-- Avatar -->
+                <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
+                    <TextBlock Text="⚡" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
 
-                <!-- User Names -->
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind ViewModel.CurrentUser.DisplayName, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{x:Bind ViewModel.CurrentUser.FullUsername, Mode=OneWay}" FontSize="10" Foreground="{StaticResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                <!-- Name & Tag -->
+                <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentUser.DisplayName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="{Binding CurrentUser.StatusText}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <!-- Audio & Settings Action Buttons -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
-                    <!-- Mic Mute Button -->
-                    <Button ToolTipService.ToolTip="Mute Microphone" Width="28" Height="28" Padding="0" CornerRadius="6"
-                            Background="Transparent" BorderThickness="0" Command="{x:Bind ViewModel.ToggleMuteCommand}">
-                        <FontIcon Glyph="&#xE720;" FontSize="13"
-                                  Foreground="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BoolToMutedColor}}" />
+                <!-- Controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Mute Mic">
+                        <TextBlock Text="🎤" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-
-                    <!-- Headphone Deafen Button -->
-                    <Button ToolTipService.ToolTip="Deafen Audio" Width="28" Height="28" Padding="0" CornerRadius="6"
-                            Background="Transparent" BorderThickness="0" Command="{x:Bind ViewModel.ToggleDeafenCommand}">
-                        <FontIcon Glyph="&#xE74F;" FontSize="13"
-                                  Foreground="{x:Bind ViewModel.IsDeafened, Mode=OneWay, Converter={StaticResource BoolToMutedColor}}" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Deafen Sound">
+                        <TextBlock Text="🎧" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
-
-                    <!-- Settings Button -->
-                    <Button ToolTipService.ToolTip="User Settings" Width="28" Height="28" Padding="0" CornerRadius="6"
-                            Background="Transparent" BorderThickness="0" Command="{x:Bind ViewModel.OpenUserSettingsCommand}">
-                        <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="User Settings">
+                        <TextBlock Text="⚙" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
             </Grid>

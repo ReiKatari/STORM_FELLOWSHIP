@@ -12,6 +12,41 @@ public partial class UserSettingsViewModel : ObservableObject
 
     public User CurrentUser => FellowshipService.Instance.CurrentUser;
 
+    public string DisplayName
+    {
+        get => CurrentUser.DisplayName;
+        set
+        {
+            CurrentUser.DisplayName = value;
+            OnPropertyChanged(nameof(DisplayName));
+        }
+    }
+
+    public string CustomStatus
+    {
+        get => CurrentUser.CustomStatus;
+        set
+        {
+            CurrentUser.CustomStatus = value;
+            OnPropertyChanged(nameof(CustomStatus));
+        }
+    }
+
+    public bool IsVadMode
+    {
+        get => !IsPushToTalk;
+        set => IsPushToTalk = !value;
+    }
+
+    public bool IsPttMode
+    {
+        get => IsPushToTalk;
+        set => IsPushToTalk = value;
+    }
+
+    public double LiveMicLevel => MicLiveLevel;
+    public string PttKeyName => PttKey;
+
     [ObservableProperty]
     private ThemeType _selectedTheme = ThemeType.StormDark;
 
@@ -26,6 +61,15 @@ public partial class UserSettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private string _pttKey = "Mouse4";
+
+    [ObservableProperty]
+    private bool _soundCuesEnabled = true;
+
+    [ObservableProperty]
+    private bool _spatialAudioEnabled = true;
+
+    [ObservableProperty]
+    private bool _noiseSuppressionEnabled = true;
 
     [ObservableProperty]
     private bool _isNoiseSuppression = true;
@@ -72,6 +116,7 @@ public partial class UserSettingsViewModel : ObservableObject
         AudioService.Instance.MicLevelChanged += (level) =>
         {
             MicLiveLevel = level;
+            OnPropertyChanged(nameof(LiveMicLevel));
         };
     }
 
@@ -96,6 +141,19 @@ public partial class UserSettingsViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    public void Close()
+    {
+        _mainVM.CloseUserSettingsDialog();
+    }
+
+    [RelayCommand]
+    public void Save()
+    {
+        _mainVM.ShowToastNotification("User settings saved successfully!");
+        _mainVM.CloseUserSettingsDialog();
+    }
+
     partial void OnVadThresholdChanged(double value)
     {
         AudioService.Instance.VadSensitivityThreshold = value;
@@ -104,6 +162,8 @@ public partial class UserSettingsViewModel : ObservableObject
     partial void OnIsPushToTalkChanged(bool value)
     {
         AudioService.Instance.IsPushToTalkEnabled = value;
+        OnPropertyChanged(nameof(IsVadMode));
+        OnPropertyChanged(nameof(IsPttMode));
     }
 
     partial void OnIsNoiseSuppressionChanged(bool value)
