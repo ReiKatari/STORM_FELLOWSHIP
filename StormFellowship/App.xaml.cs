@@ -13,8 +13,16 @@ public partial class App : Application
             try
             {
                 string log = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.log");
-                System.IO.File.WriteAllText(log, $"[FATAL] {DateTime.Now}\n{args.Exception}\nStack: {args.Exception.StackTrace}");
-                MessageBox.Show($"STORM FELLOWSHIP Error:\n{args.Exception.Message}\n\n{args.Exception.StackTrace}", "STORM FELLOWSHIP Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var sb = new System.Text.StringBuilder();
+                Exception? ex = args.Exception;
+                while (ex != null)
+                {
+                    sb.AppendLine($"[ERROR] {ex.GetType().FullName}: {ex.Message}");
+                    sb.AppendLine($"Stack:\n{ex.StackTrace}\n");
+                    ex = ex.InnerException;
+                }
+                System.IO.File.WriteAllText(log, sb.ToString());
+                MessageBox.Show(sb.ToString(), "STORM FELLOWSHIP Fatal Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch { }
         };
