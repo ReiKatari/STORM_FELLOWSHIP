@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using StormFellowship.Services;
 using StormFellowship.ViewModels;
 
@@ -13,10 +14,17 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
 
+        try
+        {
+            var iconUri = new Uri("pack://application:,,,/Assets/AppIcon.ico", UriKind.RelativeOrAbsolute);
+            Icon = BitmapFrame.Create(iconUri);
+        }
+        catch { }
+
         Loaded += (s, e) =>
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.3");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.4");
         };
 
         Closing += (s, e) =>

@@ -12,7 +12,8 @@ public class BoolToVisibilityConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool b = value is bool flag && flag;
-        if (Invert) b = !b;
+        bool invertParam = parameter is string p && p.Equals("invert", StringComparison.OrdinalIgnoreCase);
+        if (Invert ^ invertParam) b = !b;
         return b ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -26,7 +27,8 @@ public class NullToVisibilityConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool isNull = value == null;
-        if (Invert) isNull = !isNull;
+        bool invertParam = parameter is string p && p.Equals("invert", StringComparison.OrdinalIgnoreCase);
+        if (Invert ^ invertParam) isNull = !isNull;
         return isNull ? Visibility.Collapsed : Visibility.Visible;
     }
 
@@ -60,6 +62,8 @@ public class StringNotEmptyToVisibilityConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool notEmpty = value is string str && !string.IsNullOrEmpty(str);
+        bool invertParam = parameter is string p && p.Equals("invert", StringComparison.OrdinalIgnoreCase);
+        if (invertParam) notEmpty = !notEmpty;
         return notEmpty ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -82,7 +86,7 @@ public class BoolToMicIconConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool muted = value is bool b && b;
-        return muted ? "🔇" : "🎤";
+        return muted ? "🔴" : "🎙️";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
@@ -93,7 +97,7 @@ public class BoolToSoundIconConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool deafened = value is bool b && b;
-        return deafened ? "🔇" : "🎧";
+        return deafened ? "🔴" : "🎧";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

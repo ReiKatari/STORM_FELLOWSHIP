@@ -51,11 +51,6 @@ public class AudioService : IAudioService
             if (_isDeafened != value)
             {
                 _isDeafened = value;
-                // If deafened, automatically mute mic as well
-                if (value)
-                {
-                    _isMuted = true;
-                }
                 PlaySoundCue(value ? SoundCueType.Deafen : SoundCueType.Undeafen);
             }
         }

@@ -46,7 +46,7 @@
 
                                 <!-- Author Avatar -->
                                 <Border Width="38" Height="38" CornerRadius="19" Background="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,2,12,0">
-                                    <TextBlock Text="👤" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Author.AvatarGlyph}" FontSize="18" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
 
                                 <!-- Message Body -->
