@@ -16,8 +16,8 @@
             <helpers:HexToBrushConverter x:Key="HexToBrush" />
             <helpers:StringNotEmptyToVisibilityConverter x:Key="StrNotEmptyToVis" />
             <helpers:BoolToMutedColorConverter x:Key="BoolToMutedColor" />
-            <helpers:BoolToMicIconConverter x:Key="BoolToMicIcon" />
-            <helpers:BoolToSoundIconConverter x:Key="BoolToSoundIcon" />
+            <helpers:ChannelTypeToGeometryConverter x:Key="ChannelToGeo" />
+            <helpers:ChannelTypeToBrushConverter x:Key="ChannelToBrush" />
 
             <!-- Global Square Filled CheckBox Style (No checkmark glyph) -->
             <Style TargetType="CheckBox">

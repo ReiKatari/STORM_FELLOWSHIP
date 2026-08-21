@@ -81,23 +81,47 @@ public class BoolToMutedColorConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }
 
-public class BoolToMicIconConverter : IValueConverter
+public class ChannelTypeToGeometryConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool muted = value is bool b && b;
-        return muted ? "🔴" : "🎙️";
+        if (value is Models.ChannelType type && Application.Current != null)
+        {
+            string key = type switch
+            {
+                Models.ChannelType.Text => "GeoHash",
+                Models.ChannelType.Voice => "GeoSpeaker",
+                Models.ChannelType.Announcements => "GeoScanner",
+                Models.ChannelType.VoiceHub => "GeoDashboard",
+                Models.ChannelType.TemporaryVoice => "GeoMic",
+                _ => "GeoHash"
+            };
+            return Application.Current.TryFindResource(key) ?? DependencyProperty.UnsetValue;
+        }
+        return DependencyProperty.UnsetValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }
 
-public class BoolToSoundIconConverter : IValueConverter
+public class ChannelTypeToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        bool deafened = value is bool b && b;
-        return deafened ? "🔴" : "🎧";
+        if (value is Models.ChannelType type && Application.Current != null)
+        {
+            string key = type switch
+            {
+                Models.ChannelType.Text => "IconGradCyan",
+                Models.ChannelType.Voice => "IconGradEmerald",
+                Models.ChannelType.Announcements => "IconGradAmber",
+                Models.ChannelType.VoiceHub => "IconGradPurple",
+                Models.ChannelType.TemporaryVoice => "IconGradRose",
+                _ => "IconGradCyan"
+            };
+            return Application.Current.TryFindResource(key) ?? new SolidColorBrush(Colors.Cyan);
+        }
+        return new SolidColorBrush(Colors.Cyan);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

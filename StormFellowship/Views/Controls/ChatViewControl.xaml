@@ -25,27 +25,29 @@
 
                 <!-- Header Actions (Glass Bubbles Toggle, E2EE Shield, Search, Poll, MemberList) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Command="{Binding ToggleGlassBubblesCommand}" Margin="0,0,4,0" Padding="8,4" Background="{DynamicResource CardHoverBrush}" BorderThickness="0" Cursor="Hand" ToolTip="Режим Floating Glass Bubbles">
-                        <TextBlock Text="💬 Пузыри" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                    <Button Command="{Binding ToggleGlassBubblesCommand}" Margin="0,0,4,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Режим Floating Glass Bubbles">
+                        <Border Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" CornerRadius="6" Padding="8,4">
+                            <TextBlock Text="💬 Пузыри" FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
+                        </Border>
                     </Button>
                     <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenE2EEDialogCommand}" ToolTip="E2EE Сквозное шифрование (AES-256)">
-                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A34D399" BorderBrush="#3334D399" BorderThickness="1">
+                            <Path Data="{StaticResource GeoShieldLock}" Fill="{StaticResource IconGradEmerald}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                     <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenSearchCommand}" ToolTip="Поиск по сообщениям (Ctrl + F)" Margin="4,0,0,0">
-                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoSearch}" Fill="{DynamicResource TextSecondaryBrush}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A38BDF8" BorderBrush="#3338BDF8" BorderThickness="1">
+                            <Path Data="{StaticResource GeoSearch}" Fill="{StaticResource IconGradSky}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                     <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="4,0,0,0">
-                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoPoll}" Fill="{DynamicResource TextSecondaryBrush}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="28" Height="28" CornerRadius="6" Background="#1AFBBF24" BorderBrush="#33FBBF24" BorderThickness="1">
+                            <Path Data="{StaticResource GeoPoll}" Fill="{StaticResource IconGradAmber}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                     <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников" Margin="4,0,0,0">
-                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoUsers}" Fill="{DynamicResource TextSecondaryBrush}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="28" Height="28" CornerRadius="6" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1">
+                            <Path Data="{StaticResource GeoUsers}" Fill="{StaticResource IconGradPurple}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                 </StackPanel>

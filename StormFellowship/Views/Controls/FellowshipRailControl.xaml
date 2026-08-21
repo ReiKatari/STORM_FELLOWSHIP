@@ -11,22 +11,22 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Direct Messages / Home Button (Glowing Lightning) -->
-        <Button Margin="0,12,0,6" Width="44" Height="44" Background="{DynamicResource AccentBrush}" BorderThickness="0" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding SelectHomeCommand}" ToolTip="Личные сообщения">
+        <!-- Direct Messages / Home Button (SSO Gradient Lightning) -->
+        <Button Margin="0,12,0,6" Width="44" Height="44" Background="Transparent" BorderThickness="0" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding SelectHomeCommand}" ToolTip="Личные сообщения (Главная)">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="14" Background="{TemplateBinding Background}">
+                    <Border CornerRadius="12" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1.5">
                         <Border.Effect>
-                            <DropShadowEffect Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.5" />
+                            <DropShadowEffect Color="#00D2FF" BlurRadius="10" ShadowDepth="0" Opacity="0.5" />
                         </Border.Effect>
-                        <Image Source="pack://application:,,,/Assets/AppIcon.png" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
+                        <Path Data="{StaticResource GeoDashboard}" Fill="{StaticResource IconGradCyan}" Width="20" Height="20" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
             </Button.Template>
         </Button>
 
         <!-- Divider -->
-        <Border Grid.Row="1" Width="32" Height="2" Background="{DynamicResource DividerBrush}" HorizontalAlignment="Center" Margin="0,6" />
+        <Border Grid.Row="1" Width="32" Height="1.5" Background="{DynamicResource DividerBrush}" HorizontalAlignment="Center" Margin="0,6" />
 
         <!-- Fellowship Guild List & Folders -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
@@ -39,8 +39,8 @@
                                 <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Command="{Binding DataContext.ToggleFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="{Binding Name}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border CornerRadius="14" Background="#331E293B" BorderBrush="{Binding ColorHex, Converter={StaticResource HexToBrush}}" BorderThickness="1.5">
-                                                <TextBlock Text="📁" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border CornerRadius="12" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1.5">
+                                                <Path Data="{StaticResource GeoSystemTools}" Fill="{StaticResource IconGradPurple}" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                         </ControlTemplate>
                                     </Button.Template>
@@ -55,14 +55,14 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="0,4" HorizontalAlignment="Center">
-                                <Border Width="4" Height="36" CornerRadius="2" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Left" Margin="-10,0,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
+                                <Border Width="4" Height="36" CornerRadius="2" Background="{DynamicResource AccentPrimaryBrush}" HorizontalAlignment="Left" Margin="-10,0,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
 
                                 <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnFellowshipClicked" ToolTip="{Binding Name}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <Border CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
+                                            <Border CornerRadius="12" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1.5">
                                                 <Grid>
-                                                    <TextBlock Text="🛡️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    <Path Data="{StaticResource GeoShield}" Fill="{StaticResource IconGradCyan}" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                     <Border Width="18" Height="18" CornerRadius="9" Background="{DynamicResource StatusDndBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-3,-3" Visibility="{Binding HasUnread, Converter={StaticResource BoolToVis}}">
                                                         <TextBlock Text="{Binding UnreadTotal}" FontSize="9" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                     </Border>
@@ -82,8 +82,8 @@
         <Button Grid.Row="3" Margin="0,6,0,6" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding CreateFellowshipCommand}" ToolTip="Создать или войти в содружество">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="22" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
-                        <TextBlock Text="➕" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border CornerRadius="12" Background="#1A34D399" BorderBrush="#3334D399" BorderThickness="1.5">
+                        <TextBlock Text="+" FontSize="18" FontWeight="Bold" Foreground="{StaticResource IconGradEmerald}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" />
                     </Border>
                 </ControlTemplate>
             </Button.Template>
@@ -93,8 +93,8 @@
         <Button Grid.Row="4" Margin="0,0,0,12" Width="44" Height="44" HorizontalAlignment="Center" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <Border CornerRadius="22" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
-                        <TextBlock Text="⚙️" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border CornerRadius="12" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1.5">
+                        <Path Data="{StaticResource GeoSettings}" Fill="{StaticResource IconGradPurple}" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
             </Button.Template>
