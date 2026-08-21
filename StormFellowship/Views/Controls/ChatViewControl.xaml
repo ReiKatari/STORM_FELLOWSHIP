@@ -8,7 +8,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Chat Header Bar -->
+        <!-- Chat Header Bar with Glass Bubbles Toggle & Header Actions -->
         <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="16,0">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -23,8 +23,11 @@
                     <TextBlock Text="{Binding ChannelTopic}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <!-- Header Actions (E2EE Shield, Search, Poll, MemberList) with Vector Glyphs -->
+                <!-- Header Actions (Glass Bubbles Toggle, E2EE Shield, Search, Poll, MemberList) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Command="{Binding ToggleGlassBubblesCommand}" Margin="0,0,4,0" Padding="8,4" Background="{DynamicResource CardHoverBrush}" BorderThickness="0" Cursor="Hand" ToolTip="Режим Floating Glass Bubbles">
+                        <TextBlock Text="💬 Пузыри" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                    </Button>
                     <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenE2EEDialogCommand}" ToolTip="E2EE Сквозное шифрование (AES-256)">
                         <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
                             <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -49,20 +52,23 @@
             </Grid>
         </Border>
 
-        <!-- Chat Messages Scroll Area -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="16,10">
+        <!-- Chat Messages Scroll Area (Floating Glass Bubbles Design) -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="16,12">
             <ItemsControl ItemsSource="{Binding Messages}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,3" Padding="10,8" CornerRadius="10" Background="Transparent">
+                        <Border Margin="0,4" Padding="12,10" CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="1" Opacity="0.25" />
+                            </Border.Effect>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Author Avatar -->
-                                <Border Width="38" Height="38" CornerRadius="19" Background="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,2,12,0">
+                                <!-- Author Avatar with Voice Pulse Glow -->
+                                <Border Width="40" Height="40" CornerRadius="20" Background="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,2,12,0">
                                     <TextBlock Text="{Binding Author.AvatarGlyph}" FontSize="18" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
 
@@ -73,8 +79,10 @@
                                         <TextBlock Text="{Binding FormattedTime}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="8,2,0,0" />
                                     </StackPanel>
 
-                                    <!-- Content -->
-                                    <TextBlock Text="{Binding Content}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                                    <!-- Content in Glass Bubble -->
+                                    <Border Margin="0,4,0,0" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="10" Padding="10,8" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding Content}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                                    </Border>
 
                                     <!-- Interactive Poll Card if Poll is present -->
                                     <Border Margin="0,8,0,0" CornerRadius="12" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Padding="14" Visibility="{Binding IsPoll, Converter={StaticResource BoolToVis}}">
@@ -191,15 +199,12 @@
                     <!-- Text Input Box -->
                     <TextBox Grid.Column="1" Text="{Binding MessageInputText, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" FontSize="13" VerticalContentAlignment="Center" Margin="8,0" KeyDown="OnMessageInputKeyDown" />
 
-                    <!-- Actions (Poll, Emoji, Sticker, Voice Note, Send) -->
+                    <!-- Actions (Poll, Emotes/Stickers, Voice Note, Send) -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="2,0">
                             <Path Data="{StaticResource GeoPoll}" Fill="{DynamicResource TextSecondaryBrush}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Button>
-                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnEmojiButtonClicked" ToolTip="Эмодзи" Margin="2,0">
-                            <TextBlock Text="😊" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnStickerButtonClicked" ToolTip="Стикеры" Margin="2,0">
+                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenEmotePickerCommand}" ToolTip="Эмодзи и стикеры" Margin="2,0">
                             <TextBlock Text="👾" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Button>
                         <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnVoiceNoteButtonClicked" ToolTip="Голосовое сообщение" Margin="2,0">

@@ -37,9 +37,12 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Avatar -->
+                                <!-- Avatar with Voice Glow Effect -->
                                 <Grid VerticalAlignment="Center">
                                     <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource AccentBrush}">
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.45" />
+                                        </Border.Effect>
                                         <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                     <Border Width="9" Height="9" CornerRadius="4.5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />

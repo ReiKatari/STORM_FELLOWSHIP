@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using StormFellowship.Helpers;
 using StormFellowship.Services;
 using StormFellowship.ViewModels;
 
@@ -23,8 +24,15 @@ public partial class MainWindow : Window
 
         Loaded += (s, e) =>
         {
+            WindowBackdropHelper.EnableMicaBackdrop(this);
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.6");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.8");
+
+            if (DataContext is MainViewModel vm)
+            {
+                EmotePopup.EmoteSelected += (emote) => vm.SelectEmoteFromPicker(emote);
+                EmotePopup.Closed += () => vm.CloseEmotePicker();
+            }
         };
 
         Closing += (s, e) =>

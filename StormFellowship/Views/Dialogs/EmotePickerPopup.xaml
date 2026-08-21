@@ -1,0 +1,42 @@
+<UserControl x:Class="StormFellowship.Views.Dialogs.EmotePickerPopup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" CornerRadius="14" Width="320" Height="360" Padding="12">
+        <Border.Effect>
+            <DropShadowEffect Color="#00A3FF" BlurRadius="20" ShadowDepth="0" Opacity="0.3" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Margin="0,0,0,8">
+                <TextBlock Text="ЭМОДЗИ И СТИКЕРЫ" FontWeight="Black" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                <Button HorizontalAlignment="Right" Width="22" Height="22" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCloseClicked">
+                    <Path Data="{StaticResource GeoWinClose}" Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.5" Width="9" Height="9" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </Grid>
+
+            <!-- Search -->
+            <TextBox Grid.Row="1" x:Name="SearchBox" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="8,5" FontSize="11" Margin="0,0,0,8" TextChanged="OnSearchTextChanged" />
+
+            <!-- Grid of Emotes and Stickers -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="⚡ STORM СТИКЕРЫ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="2,4,0,4" />
+                    <WrapPanel x:Name="StickerWrapPanel">
+                        <!-- Populated in code-behind -->
+                    </WrapPanel>
+
+                    <TextBlock Text="😀 ПОПУЛЯРНЫЕ ЭМОДЗИ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="2,10,0,4" />
+                    <WrapPanel x:Name="EmoteWrapPanel">
+                        <!-- Populated in code-behind -->
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

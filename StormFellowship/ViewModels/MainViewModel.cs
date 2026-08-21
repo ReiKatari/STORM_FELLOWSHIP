@@ -42,6 +42,17 @@ public partial class MainViewModel : ObservableObject
     private bool _isScreenShareModalOpen;
 
     [ObservableProperty]
+    private bool _isSidebarCompact = false;
+
+    [ObservableProperty]
+    private bool _isGlassBubblesMode = true;
+
+    [ObservableProperty]
+    private bool _isEmotePickerOpen = false;
+
+    public double SidebarWidth => IsSidebarCompact ? 56.0 : 240.0;
+
+    [ObservableProperty]
     private bool _isMemberListVisible = true;
 
     [ObservableProperty]
@@ -289,6 +300,39 @@ public partial class MainViewModel : ObservableObject
         IsScreenShareModalOpen = false;
     }
 
+    [RelayCommand]
+    public void ToggleSidebarCompact()
+    {
+        IsSidebarCompact = !IsSidebarCompact;
+        OnPropertyChanged(nameof(SidebarWidth));
+        ShowToastNotification(IsSidebarCompact ? "Компактный режим панели каналов включен" : "Стандартный режим панели каналов");
+    }
+
+    [RelayCommand]
+    public void ToggleGlassBubbles()
+    {
+        IsGlassBubblesMode = !IsGlassBubblesMode;
+        ShowToastNotification(IsGlassBubblesMode ? "Режим Floating Glass Bubbles включен" : "Классический режим сообщений");
+    }
+
+    [RelayCommand]
+    public void OpenEmotePicker()
+    {
+        IsEmotePickerOpen = !IsEmotePickerOpen;
+    }
+
+    [RelayCommand]
+    public void CloseEmotePicker()
+    {
+        IsEmotePickerOpen = false;
+    }
+
+    public void SelectEmoteFromPicker(string emote)
+    {
+        ChatViewModel.MessageInputText += (string.IsNullOrEmpty(ChatViewModel.MessageInputText) ? "" : " ") + emote;
+        IsEmotePickerOpen = false;
+    }
+
     public void CloseAllModals()
     {
         IsCreateFellowshipModalOpen = false;
@@ -301,6 +345,7 @@ public partial class MainViewModel : ObservableObject
         IsSearchModalOpen = false;
         IsE2EESecurityModalOpen = false;
         IsScreenShareModalOpen = false;
+        IsEmotePickerOpen = false;
     }
 
     public void ToggleMemberList()
@@ -321,7 +366,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CheckForUpdates()
     {
-        ShowToastNotification("STORM FELLOWSHIP v0.0.6 — Установлена новейшая версия!");
+        ShowToastNotification("STORM FELLOWSHIP v0.0.8 — Установлена новейшая версия!");
     }
 
     // Fellowships & Channels Modal management
