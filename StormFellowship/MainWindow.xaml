@@ -111,6 +111,16 @@
             <dialogs:ScreenShareDialog DataContext="{Binding}" />
         </Grid>
 
+        <!-- Soundboard Dialog Layer -->
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsSoundboardModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:SoundboardDialog DataContext="{Binding}" />
+        </Grid>
+
+        <!-- Quick Switcher Command Palette (Ctrl+K) Layer -->
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsQuickSwitcherModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:QuickSwitcherDialog DataContext="{Binding}" />
+        </Grid>
+
         <!-- Emote & Sticker Picker Popup Layer -->
         <Grid Grid.RowSpan="2" Visibility="{Binding IsEmotePickerOpen, Converter={StaticResource BoolToVis}}" Background="#55000000">
             <dialogs:EmotePickerPopup HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="EmotePopup" />

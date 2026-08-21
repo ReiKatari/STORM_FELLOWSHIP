@@ -16,12 +16,31 @@
             <TextBlock Text="STORM" FontWeight="Black" FontSize="15" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
             <TextBlock Text=" FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
             <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="v0.0.8" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                <TextBlock Text="v0.0.9" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
             </Border>
         </StackPanel>
 
         <!-- Center / Right Quick Actions with Pure Vector Glyphs -->
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0" WindowChrome.IsHitTestVisibleInChrome="True">
+            <!-- Quick Switcher (Ctrl + K) -->
+            <Button Command="{Binding OpenQuickSwitcherCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Быстрый переход (Ctrl + K)">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoCommand}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Ctrl + K" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
             <!-- Game Overlay Toggle -->
             <Button Command="{Binding ToggleGameOverlayCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Игровой оверлей (Shift + ~)">
                 <Button.Template>

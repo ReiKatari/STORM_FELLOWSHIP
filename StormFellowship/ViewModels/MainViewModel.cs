@@ -50,6 +50,14 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isEmotePickerOpen = false;
 
+    [ObservableProperty]
+    private bool _isSoundboardModalOpen = false;
+
+    [ObservableProperty]
+    private bool _isQuickSwitcherModalOpen = false;
+
+    public ObservableCollection<SoundboardTrack> SoundboardTracks => SoundboardService.Instance.Tracks;
+
     public double SidebarWidth => IsSidebarCompact ? 56.0 : 240.0;
 
     [ObservableProperty]
@@ -333,6 +341,30 @@ public partial class MainViewModel : ObservableObject
         IsEmotePickerOpen = false;
     }
 
+    [RelayCommand]
+    public void OpenSoundboard()
+    {
+        IsSoundboardModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseSoundboardDialog()
+    {
+        IsSoundboardModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void OpenQuickSwitcher()
+    {
+        IsQuickSwitcherModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseQuickSwitcherDialog()
+    {
+        IsQuickSwitcherModalOpen = false;
+    }
+
     public void CloseAllModals()
     {
         IsCreateFellowshipModalOpen = false;
@@ -346,6 +378,8 @@ public partial class MainViewModel : ObservableObject
         IsE2EESecurityModalOpen = false;
         IsScreenShareModalOpen = false;
         IsEmotePickerOpen = false;
+        IsSoundboardModalOpen = false;
+        IsQuickSwitcherModalOpen = false;
     }
 
     public void ToggleMemberList()
@@ -366,7 +400,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CheckForUpdates()
     {
-        ShowToastNotification("STORM FELLOWSHIP v0.0.8 — Установлена новейшая версия!");
+        ShowToastNotification("STORM FELLOWSHIP v0.0.9 — Установлена новейшая версия!");
     }
 
     // Fellowships & Channels Modal management

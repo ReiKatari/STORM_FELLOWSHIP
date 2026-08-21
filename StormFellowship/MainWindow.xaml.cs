@@ -26,7 +26,7 @@ public partial class MainWindow : Window
         {
             WindowBackdropHelper.EnableMicaBackdrop(this);
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.8");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.9");
 
             if (DataContext is MainViewModel vm)
             {
@@ -49,6 +49,11 @@ public partial class MainWindow : Window
         if (e.Key == Key.Escape)
         {
             vm.CloseAllModals();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.K && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            vm.OpenQuickSwitcher();
             e.Handled = true;
         }
         else if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
