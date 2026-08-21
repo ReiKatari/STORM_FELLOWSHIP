@@ -26,7 +26,7 @@ public partial class MainWindow : Window
         {
             WindowBackdropHelper.EnableMicaBackdrop(this);
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.9");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.1.0");
 
             if (DataContext is MainViewModel vm)
             {

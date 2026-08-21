@@ -122,6 +122,26 @@ public partial class ChatViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void SpeakMessage(ChatMessage message)
+    {
+        if (message == null || string.IsNullOrWhiteSpace(message.Content)) return;
+        AudioService.Instance.SpeakText(message.Content);
+        _mainVM.ShowToastNotification($"🔊 Озвучивание: {message.Author.DisplayName}");
+    }
+
+    [RelayCommand]
+    public void CopyMessageText(ChatMessage message)
+    {
+        if (message == null || string.IsNullOrWhiteSpace(message.Content)) return;
+        try
+        {
+            System.Windows.Clipboard.SetText(message.Content);
+            _mainVM.ShowToastNotification("📋 Текст сообщения скопирован в буфер обмена");
+        }
+        catch { }
+    }
+
+    [RelayCommand]
     public void SendMessage()
     {
         if (string.IsNullOrWhiteSpace(MessageInputText)) return;

@@ -10,31 +10,36 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Logo & Title with Real App Icon Image -->
+        <!-- Storm Logo & Title (Matched to STORM SYSTEM OPTIMIZER Style) -->
         <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-            <Image Source="pack://application:,,,/Assets/AppIcon.png" Width="26" Height="26" Margin="0,0,10,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
-            <TextBlock Text="STORM" FontWeight="Black" FontSize="15" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
-            <TextBlock Text=" FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-            <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="v0.0.9" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+            <Border Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" CornerRadius="8" Padding="6" Margin="0,0,10,0" VerticalAlignment="Center">
+                <Path Data="{StaticResource GeoDashboard}" Fill="{StaticResource IconGradCyan}" Width="15" Height="15" Stretch="Uniform"/>
+            </Border>
+            <TextBlock Text="STORM" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource AccentPrimaryBrush}" VerticalAlignment="Center" />
+            <TextBlock Text=" FELLOWSHIP" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+            <Border Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="v0.1.0" FontSize="11" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
             </Border>
         </StackPanel>
 
-        <!-- Center / Right Quick Actions with Pure Vector Glyphs -->
+        <!-- Center / Right Quick Actions with Gradient Micro-Boxes -->
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0" WindowChrome.IsHitTestVisibleInChrome="True">
             <!-- Quick Switcher (Ctrl + K) -->
-            <Button Command="{Binding OpenQuickSwitcherCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Быстрый переход (Ctrl + K)">
+            <Button Command="{Binding OpenQuickSwitcherCommand}" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Быстрый переход (Ctrl + K)">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="{StaticResource GeoCommand}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
-                                <TextBlock Text="Ctrl + K" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                                <Border Background="#1A00D2FF" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoCommand}" Fill="{StaticResource IconGradCyan}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
+                                <TextBlock Text="Ctrl + K" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#00D2FF" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -42,19 +47,21 @@
             </Button>
 
             <!-- Game Overlay Toggle -->
-            <Button Command="{Binding ToggleGameOverlayCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Игровой оверлей (Shift + ~)">
+            <Button Command="{Binding ToggleGameOverlayCommand}" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Игровой оверлей (Shift + ~)">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="{StaticResource GeoGamepad}" Fill="{DynamicResource AccentBrush}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <Border Background="#1AC084FC" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoGamepad}" Fill="{StaticResource IconGradPurple}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
                                 <TextBlock Text="Оверлей" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
-                                <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#C084FC" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -62,19 +69,21 @@
             </Button>
 
             <!-- Search Button -->
-            <Button Command="{Binding OpenSearchDialogCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Поиск по сообщениям (Ctrl + F)">
+            <Button Command="{Binding OpenSearchDialogCommand}" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Поиск по сообщениям (Ctrl + F)">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="{StaticResource GeoSearch}" Fill="{DynamicResource TextSecondaryBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <Border Background="#1A38BDF8" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoSearch}" Fill="{StaticResource IconGradSky}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
                                 <TextBlock Text="Поиск" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
-                                <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#38BDF8" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -82,18 +91,21 @@
             </Button>
 
             <!-- E2EE Shield Indicator -->
-            <Button Command="{Binding OpenE2EESecurityDialogCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="E2EE Сквозное шифрование активно (AES-256)">
+            <Button Command="{Binding OpenE2EESecurityDialogCommand}" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="E2EE Сквозное шифрование активно (AES-256)">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource StatusOnlineBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <Border Background="#1A34D399" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoShieldLock}" Fill="{StaticResource IconGradEmerald}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
                                 <TextBlock Text="E2EE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource StatusOnlineBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#34D399" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -101,18 +113,21 @@
             </Button>
 
             <!-- Check for Updates Button -->
-            <Button Click="OnCheckUpdatesClicked" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Проверить наличие обновлений">
+            <Button Click="OnCheckUpdatesClicked" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Проверить наличие обновлений">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Path Data="{StaticResource GeoRefresh}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <Border Background="#1AFBBF24" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoRefresh}" Fill="{StaticResource IconGradAmber}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
                                 <TextBlock Text="Обновления" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#FBBF24" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -154,7 +169,7 @@
                 </Button.Template>
             </Button>
 
-            <!-- Close Button (Modern capsule with crimson glow #FF3366) -->
+            <!-- Close Button (Modern capsule with crimson glow #E11D48) -->
             <Button Width="36" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Click="OnCloseClicked" Cursor="Hand" ToolTip="Закрыть">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

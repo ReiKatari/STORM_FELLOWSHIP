@@ -444,6 +444,24 @@ public class AudioService : IDisposable
         }
     }
 
+    public void SpeakText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+        Task.Run(() =>
+        {
+            try
+            {
+                var type = Type.GetTypeFromProgID("SAPI.SpVoice");
+                if (type != null)
+                {
+                    dynamic voice = Activator.CreateInstance(type)!;
+                    voice.Speak(text, 1); // 1 = SVSFlagsAsync
+                }
+            }
+            catch { }
+        });
+    }
+
     public void Dispose()
     {
         _levelTimer.Dispose();

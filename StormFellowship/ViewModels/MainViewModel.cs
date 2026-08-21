@@ -400,7 +400,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CheckForUpdates()
     {
-        ShowToastNotification("STORM FELLOWSHIP v0.0.9 — Установлена новейшая версия!");
+        ShowToastNotification("STORM FELLOWSHIP v0.1.0 — Установлена новейшая версия!");
     }
 
     // Fellowships & Channels Modal management
