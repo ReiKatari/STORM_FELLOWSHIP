@@ -158,9 +158,12 @@
                                 <TextBlock Text="Уровень микрофона в реальном времени:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
                                 <ProgressBar Value="{Binding LiveMicLevel, Mode=OneWay}" Minimum="0" Maximum="100" Height="8" Foreground="{DynamicResource StatusOnlineBrush}" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,14" />
 
-                                <CheckBox Content="Звуковые сигналы событий" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
-                                <CheckBox Content="Пространственный 3D-звук" IsChecked="{Binding SpatialAudioEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
-                                <CheckBox Content="Интеллектуальное аппаратное шумоподавление" IsChecked="{Binding NoiseSuppressionEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                <TextBlock Text="ШУМОПОДАВЛЕНИЕ СЛЕДУЮЩЕГО ПОКОЛЕНИЯ (AI DSP):" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding NoiseModes}" SelectedItem="{Binding SelectedNoiseMode}" Margin="0,0,0,12" />
+
+                                <CheckBox Content="Звуковые сигналы событий" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                                <CheckBox Content="Пространственный 3D-звук (Spatial Proximity Audio)" IsChecked="{Binding SpatialAudioEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                                <CheckBox Content="Режим экономии ресурсов (Lite Mode для ноутбуков)" IsChecked="{Binding IsLiteMode}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,10,0" />
                             </StackPanel>
 
                             <!-- TAB 3: USER PROFILE & STATUSES -->

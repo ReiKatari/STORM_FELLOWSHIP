@@ -11,13 +11,16 @@
         <!-- Top Title & Connection Stats Banner -->
         <StackPanel HorizontalAlignment="Center" Margin="0,16,0,12">
             <TextBlock Text="{Binding CallTitle}"
-                       FontSize="26" FontWeight="Black"
+                       FontSize="24" FontWeight="Black"
                        Foreground="{DynamicResource TextPrimaryBrush}"
                        HorizontalAlignment="Center" />
-            <TextBlock Text="{Binding ConnectionStats}"
-                       FontSize="11" FontWeight="SemiBold"
-                       Foreground="{DynamicResource AccentBrush}"
-                       HorizontalAlignment="Center" Margin="0,4,0,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenE2EEDialogCommand}" ToolTip="Проверить E2EE ключи">
+                    <TextBlock Text="{Binding ConnectionStats}"
+                               FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource AccentBrush}" />
+                </Button>
+            </StackPanel>
         </StackPanel>
 
         <!-- Main Call Stage Card -->
@@ -72,21 +75,21 @@
                                 Visibility="{Binding IsVideoOn, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
 
                         <!-- Remote Participant -->
-                        <StackPanel HorizontalAlignment="Center" Width="150">
-                            <Grid Width="112" Height="112" HorizontalAlignment="Center">
-                                <Ellipse Width="112" Height="112" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
+                        <StackPanel HorizontalAlignment="Center" Width="140">
+                            <Grid Width="100" Height="100" HorizontalAlignment="Center">
+                                <Ellipse Width="100" Height="100" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
                                          Visibility="{Binding IsRemoteSpeaking, Converter={StaticResource BoolToVis}}" />
-                                <Border Width="96" Height="96" CornerRadius="48" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding RemoteAvatarGlyph}" FontSize="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Border Width="84" Height="84" CornerRadius="42" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding RemoteAvatarGlyph}" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
-                            <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="14"
+                            <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="13"
                                        Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
                         </StackPanel>
 
-                        <!-- Middle Dynamic Audio Waveform (7 Bars) & Timer -->
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="36,0" Width="120">
-                            <StackPanel Orientation="Horizontal" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <!-- Middle Dynamic Audio Waveform (7 Bars) & Timer & 3D Spatial Radar -->
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="24,0" Width="180">
+                            <StackPanel Orientation="Horizontal" Height="36" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Border Width="4" Height="{Binding Bar1Height}" CornerRadius="2" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
                                 <Border Width="4" Height="{Binding Bar2Height}" CornerRadius="2" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
                                 <Border Width="4" Height="{Binding Bar3Height}" CornerRadius="2" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
@@ -96,19 +99,30 @@
                                 <Border Width="4" Height="{Binding Bar7Height}" CornerRadius="2" Background="{DynamicResource CallWaveformActiveBrush}" VerticalAlignment="Center" Margin="2,0" />
                             </StackPanel>
 
-                            <TextBlock Text="{Binding DurationFormatted}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                            <TextBlock Text="{Binding DurationFormatted}" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
+
+                            <!-- 3D Spatial Audio Radar Mini Widget -->
+                            <Border Margin="0,6,0,0" Width="90" Height="60" CornerRadius="6" Background="#260F172A" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                <Grid>
+                                    <Ellipse Width="50" Height="50" Stroke="{DynamicResource BorderSubtleBrush}" StrokeThickness="1" StrokeDashArray="2 2" />
+                                    <Ellipse Width="6" Height="6" Fill="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Вы (Центр)" />
+                                    <Border Width="12" Height="12" CornerRadius="6" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="28,-14,0,0" ToolTip="Собеседник (3D Spatial)">
+                                        <TextBlock Text="👤" FontSize="7" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                            </Border>
                         </StackPanel>
 
                         <!-- Local Participant (You) -->
-                        <StackPanel HorizontalAlignment="Center" Width="150">
-                            <Grid Width="112" Height="112" HorizontalAlignment="Center">
-                                <Ellipse Width="112" Height="112" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
+                        <StackPanel HorizontalAlignment="Center" Width="140">
+                            <Grid Width="100" Height="100" HorizontalAlignment="Center">
+                                <Ellipse Width="100" Height="100" Stroke="{DynamicResource CallAvatarSpeakingRingBrush}" StrokeThickness="3"
                                          Visibility="{Binding IsLocalSpeaking, Converter={StaticResource BoolToVis}}" />
-                                <Border Width="96" Height="96" CornerRadius="48" Background="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding LocalAvatarGlyph}" FontSize="42" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Border Width="84" Height="84" CornerRadius="42" Background="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding LocalAvatarGlyph}" FontSize="36" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
-                            <TextBlock Text="{Binding LocalDisplayName}" FontWeight="Bold" FontSize="14"
+                            <TextBlock Text="{Binding LocalDisplayName}" FontWeight="Bold" FontSize="13"
                                        Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,8,0,0" />
                         </StackPanel>
                     </StackPanel>
@@ -158,11 +172,11 @@
                         <Grid>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock Text="🖥️" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,6" />
-                                <TextBlock Text="Трансляция рабочего стола активна" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Передача видеопотока 1920x1080 @ 60 FPS • Сверхнизкая задержка" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBlock Text="Трансляция экрана и звука приложений (WASAPI Loopback)" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+                                <TextBlock Text="Передача видеопотока 1920x1080 @ 60 FPS • E2EE Защищено" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" />
                             </StackPanel>
                             <Border Background="{DynamicResource AccentBrush}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                <TextBlock Text="SCREEN STREAM" FontSize="10" FontWeight="Bold" Foreground="#FFFFFF" />
+                                <TextBlock Text="SCREEN + AUDIO" FontSize="10" FontWeight="Bold" Foreground="#FFFFFF" />
                             </Border>
                         </Grid>
                     </Border>

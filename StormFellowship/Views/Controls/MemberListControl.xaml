@@ -19,6 +19,18 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="0,2" CornerRadius="8" Background="Transparent" Padding="6,5">
+                            <!-- Context Menu for Member (Volume, Mute for me, Priority Speaker, E2EE) -->
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="💬 Написать сообщение" Command="{Binding DataContext.MessageMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    <MenuItem Header="📞 Позвонить (Аудио)" Command="{Binding DataContext.CallMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    <Separator />
+                                    <MenuItem Header="🔇 Заглушить для меня" Command="{Binding DataContext.ToggleMuteForMeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    <MenuItem Header="📢 Приоритетный голос" Command="{Binding DataContext.TogglePrioritySpeakerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    <MenuItem Header="🔒 Проверить E2EE ключ" Command="{Binding DataContext.VerifyE2EECommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                </ContextMenu>
+                            </Border.ContextMenu>
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -33,9 +45,15 @@
                                     <Border Width="9" Height="9" CornerRadius="4.5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
                                 </Grid>
 
-                                <!-- User Name & Role -->
+                                <!-- User Name & Role Badge -->
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="100" />
+                                        <!-- Role Badge Pill -->
+                                        <Border Background="{Binding RoleColorHex, Converter={StaticResource HexToBrush}}" CornerRadius="4" Padding="4,1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding RoleName}" FontSize="8" FontWeight="Bold" Foreground="#FFFFFF" />
+                                        </Border>
+                                    </StackPanel>
                                     <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
                             </Grid>

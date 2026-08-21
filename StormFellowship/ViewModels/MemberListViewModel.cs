@@ -13,7 +13,7 @@ public partial class MemberListViewModel : ObservableObject
     public Fellowship? CurrentFellowship => FellowshipService.Instance.CurrentFellowship;
 
     public ObservableCollection<User> Members => CurrentFellowship?.Members ?? FellowshipService.Instance.DirectMessageUsers;
-    public string HeaderText => $"В СЕТИ — {OnlineMembers.Count}";
+    public string HeaderText => $"УЧАСТНИКИ — {OnlineMembers.Count}";
 
     public ObservableCollection<User> OnlineMembers { get; } = new();
     public ObservableCollection<User> OfflineMembers { get; } = new();
@@ -63,6 +63,35 @@ public partial class MemberListViewModel : ObservableObject
     public void MessageMember(User user)
     {
         FellowshipService.Instance.SelectDirectMessage(user);
-        _mainVM.ActiveView = ActiveMainView.DirectMessages;
+    }
+
+    [RelayCommand]
+    public void ToggleMuteForMe(User user)
+    {
+        if (user != null)
+        {
+            user.IsMutedForMe = !user.IsMutedForMe;
+            _mainVM.ShowToastNotification(user.IsMutedForMe
+                ? $"Пользователь {user.DisplayName} заглушен для вас"
+                : $"Звук пользователя {user.DisplayName} включен");
+        }
+    }
+
+    [RelayCommand]
+    public void TogglePrioritySpeaker(User user)
+    {
+        if (user != null)
+        {
+            user.IsPrioritySpeaker = !user.IsPrioritySpeaker;
+            _mainVM.ShowToastNotification(user.IsPrioritySpeaker
+                ? $"🎙️ {user.DisplayName} назначен приоритетным оратором"
+                : $"Приоритетный голос отключен для {user.DisplayName}");
+        }
+    }
+
+    [RelayCommand]
+    public void VerifyE2EE(User user)
+    {
+        _mainVM.OpenE2EESecurityDialog();
     }
 }

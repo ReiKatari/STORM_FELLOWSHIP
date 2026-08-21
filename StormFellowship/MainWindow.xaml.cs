@@ -24,7 +24,7 @@ public partial class MainWindow : Window
         Loaded += (s, e) =>
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.5");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.6");
         };
 
         Closing += (s, e) =>
@@ -36,20 +36,22 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (DataContext is not MainViewModel vm) return;
+
         if (e.Key == Key.Escape)
         {
-            if (DataContext is MainViewModel vm)
-            {
-                if (vm.IsCreateFellowshipModalOpen ||
-                    vm.IsFellowshipSettingsModalOpen ||
-                    vm.IsUserSettingsModalOpen ||
-                    vm.IsCreateChannelModalOpen ||
-                    vm.IsEditChannelModalOpen)
-                {
-                    vm.CloseAllModals();
-                    e.Handled = true;
-                }
-            }
+            vm.CloseAllModals();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            vm.OpenSearchDialog();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.OemTilde && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+        {
+            vm.ToggleGameOverlay();
+            e.Handled = true;
         }
     }
 }

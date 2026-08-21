@@ -6,6 +6,7 @@ namespace StormFellowship.Services;
 public interface IFellowshipService
 {
     ObservableCollection<Fellowship> Fellowships { get; }
+    ObservableCollection<FellowshipFolder> Folders { get; }
     ObservableCollection<User> DirectMessageUsers { get; }
     Fellowship? CurrentFellowship { get; set; }
     Channel? CurrentChannel { get; set; }
@@ -27,6 +28,10 @@ public interface IFellowshipService
     void UpdateChannel(string fellowshipId, string channelId, string newName, string newTopic, int bitrateKbps);
     void DeleteChannel(string fellowshipId, string channelId);
     void AddCategory(string fellowshipId, string name);
+    Role AddRole(string fellowshipId, string name, string colorHex, RolePermissions perms);
+    void UpdateRole(string fellowshipId, string roleId, string name, string colorHex, RolePermissions perms);
+    void DeleteRole(string fellowshipId, string roleId);
+    FellowshipFolder CreateFolder(string name, string colorHex);
     void SelectFellowship(Fellowship? fellowship);
     void SelectChannel(Channel? channel);
     void SelectDirectMessage(User? user);

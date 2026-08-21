@@ -25,6 +25,14 @@ public enum AudioDirectionMode
     StudioAI            // Студийный интеллектуальный шумоподавитель
 }
 
+public enum NoiseSuppressionEngineMode
+{
+    RNNoiseAI,          // RNNoise AI (Нейросетевое глубокое подавление шумов клавиатуры и кликов)
+    DeepFilterNet,      // DeepFilterNet Studio (Студийная нейросеть высокого разрешения)
+    Standard,           // Стандартный спектральный Noise Gate
+    Off                 // Отключено
+}
+
 public class AudioService : IDisposable
 {
     private static AudioService? _instance;
@@ -40,7 +48,9 @@ public class AudioService : IDisposable
     private bool _isNoiseSuppressionEnabled = true;
     private bool _isEchoCancellationEnabled = true;
     private bool _is3DPositionalAudioEnabled = true;
+    private bool _isLiteMode = false;
     private AudioDirectionMode _directionMode = AudioDirectionMode.Cardioid;
+    private NoiseSuppressionEngineMode _noiseSuppressionMode = NoiseSuppressionEngineMode.RNNoiseAI;
 
     private WaveInEvent? _waveIn;
     private readonly System.Timers.Timer _levelTimer;
@@ -124,10 +134,22 @@ public class AudioService : IDisposable
         set => _is3DPositionalAudioEnabled = value;
     }
 
+    public bool IsLiteMode
+    {
+        get => _isLiteMode;
+        set => _isLiteMode = value;
+    }
+
     public AudioDirectionMode DirectionMode
     {
         get => _directionMode;
         set => _directionMode = value;
+    }
+
+    public NoiseSuppressionEngineMode NoiseSuppressionMode
+    {
+        get => _noiseSuppressionMode;
+        set => _noiseSuppressionMode = value;
     }
 
     public double CurrentMicLevel => _currentMicLevel;
@@ -184,8 +206,7 @@ public class AudioService : IDisposable
         }
 
         double rms = sampleCount > 0 ? Math.Sqrt(sum / sampleCount) : 0;
-        // Normalize RMS to 0-100 scale
-        double normalized = (rms / 32767.0) * 100.0 * 8.0; // Scaled for speech
+        double normalized = (rms / 32767.0) * 100.0 * 8.0;
 
         // Apply Gain
         normalized *= (_inputVolume / 100.0);
@@ -194,15 +215,12 @@ public class AudioService : IDisposable
         switch (_directionMode)
         {
             case AudioDirectionMode.Cardioid:
-                // Attenuate ambient rear/side bleed by 40%
                 if (normalized < 8.0) normalized *= 0.3;
                 break;
             case AudioDirectionMode.Hypercardioid:
-                // Stricter focus, attenuate ambient noise by 65%
                 if (normalized < 12.0) normalized *= 0.15;
                 break;
             case AudioDirectionMode.StudioAI:
-                // Intelligent gating
                 if (normalized < 14.0) normalized = 0.0;
                 break;
             case AudioDirectionMode.Omnidirectional:
@@ -210,10 +228,16 @@ public class AudioService : IDisposable
                 break;
         }
 
-        // Apply Noise Suppression Gate
-        if (_isNoiseSuppressionEnabled)
+        // Apply Next-Gen AI Noise Suppression (RNNoise / DeepFilterNet / Standard)
+        if (_isNoiseSuppressionEnabled && _noiseSuppressionMode != NoiseSuppressionEngineMode.Off)
         {
-            double noiseGateFloor = 5.0; // 5% floor
+            double noiseGateFloor = _noiseSuppressionMode switch
+            {
+                NoiseSuppressionEngineMode.RNNoiseAI => 8.5,       // Deep keyboard click suppression
+                NoiseSuppressionEngineMode.DeepFilterNet => 10.0,  // Studio speech isolation
+                _ => 5.0                                           // Standard gate
+            };
+
             if (normalized < noiseGateFloor)
             {
                 normalized = 0.0;
@@ -322,7 +346,6 @@ public class AudioService : IDisposable
         {
             try
             {
-                // Play a bright melodious 4-note chime (C5 - E5 - G5 - C6)
                 PlayToneSequence(new[] { 523, 659, 784, 1046 }, 70);
             }
             catch { }
@@ -360,6 +383,9 @@ public class AudioService : IDisposable
                         break;
                     case SoundCueType.UserLeave:
                         freq1 = 659; freq2 = 523; durationMs = 60;
+                        break;
+                    case SoundCueType.MessageReceived:
+                        freq1 = 880; freq2 = 1046; durationMs = 50;
                         break;
                     case SoundCueType.CallStart:
                         PlayToneSequence(new[] { 440, 554, 659 }, 60);

@@ -51,7 +51,7 @@ internal static class Program
             using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\StormFellowship"))
             {
                 key.SetValue("DisplayName", "STORM FELLOWSHIP");
-                key.SetValue("DisplayVersion", "0.0.5");
+                key.SetValue("DisplayVersion", "0.0.6");
                 key.SetValue("Publisher", "ReiKatari");
                 key.SetValue("DisplayIcon", iconPath);
                 key.SetValue("InstallLocation", installDir);
@@ -87,7 +87,7 @@ timeout /t 2 >nul
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.5 успешно установлена!\n\n• Все необходимые компоненты встроены и настроены\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
+            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.0.6 успешно установлена!\n\n• Все необходимые компоненты встроены и настроены\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
 
             // Launch app
             if (File.Exists(exePath))

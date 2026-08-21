@@ -50,6 +50,18 @@ public partial class ChatMessage : ObservableObject
     private int _voiceNoteDurationSeconds;
 
     [ObservableProperty]
+    private string _transcriptionText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isTranscribed;
+
+    [ObservableProperty]
+    private bool _isTranscribing;
+
+    [ObservableProperty]
+    private bool _isE2EEEncrypted = true;
+
+    [ObservableProperty]
     private string _replyToAuthor = string.Empty;
 
     [ObservableProperty]
@@ -70,11 +82,16 @@ public partial class ChatMessage : ObservableObject
     [ObservableProperty]
     private bool _hasSticker;
 
+    [ObservableProperty]
+    private PollItem? _poll;
+
+    public bool IsPoll => Poll != null;
+
     public ObservableCollection<MessageReaction> Reactions { get; } = new();
 
     public string FormattedTime => Timestamp.ToString("HH:mm");
 
     public string FormattedDate => Timestamp.Date == DateTime.Today
-        ? $"Today at {Timestamp:HH:mm}"
+        ? $"Сегодня в {Timestamp:HH:mm}"
         : Timestamp.ToString("dd.MM.yyyy HH:mm");
 }

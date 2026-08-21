@@ -11,6 +11,7 @@ public partial class FellowshipRailViewModel : ObservableObject
     private readonly MainViewModel _mainVM;
 
     public ObservableCollection<Fellowship> Fellowships => FellowshipService.Instance.Fellowships;
+    public ObservableCollection<FellowshipFolder> Folders => FellowshipService.Instance.Folders;
 
     [ObservableProperty]
     private bool _isDirectMessagesSelected = false;
@@ -25,7 +26,15 @@ public partial class FellowshipRailViewModel : ObservableObject
     {
         IsDirectMessagesSelected = false;
         FellowshipService.Instance.SelectFellowship(fellowship);
-        _mainVM.ActiveView = ActiveMainView.Fellowship;
+    }
+
+    [RelayCommand]
+    public void ToggleFolder(FellowshipFolder? folder)
+    {
+        if (folder != null)
+        {
+            folder.IsExpanded = !folder.IsExpanded;
+        }
     }
 
     [RelayCommand]
@@ -40,7 +49,6 @@ public partial class FellowshipRailViewModel : ObservableObject
         IsDirectMessagesSelected = true;
         var firstDm = FellowshipService.Instance.DirectMessageUsers.FirstOrDefault();
         FellowshipService.Instance.SelectDirectMessage(firstDm);
-        _mainVM.ActiveView = ActiveMainView.DirectMessages;
     }
 
     [RelayCommand]

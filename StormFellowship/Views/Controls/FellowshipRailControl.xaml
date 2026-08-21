@@ -28,34 +28,54 @@
         <!-- Divider -->
         <Border Grid.Row="1" Width="32" Height="2" Background="{DynamicResource DividerBrush}" HorizontalAlignment="Center" Margin="0,6" />
 
-        <!-- Fellowship Guild List -->
+        <!-- Fellowship Guild List & Folders -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding Fellowships}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="0,4" HorizontalAlignment="Center">
-                            <!-- Indicator pill on active -->
-                            <Border Width="4" Height="36" CornerRadius="2" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Left" Margin="-10,0,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
+            <StackPanel>
+                <!-- Folders List -->
+                <ItemsControl ItemsSource="{Binding Folders}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,4" HorizontalAlignment="Center">
+                                <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Command="{Binding DataContext.ToggleFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" ToolTip="{Binding Name}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border CornerRadius="14" Background="#331E293B" BorderBrush="{Binding ColorHex, Converter={StaticResource HexToBrush}}" BorderThickness="1.5">
+                                                <TextBlock Text="📁" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                            <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnFellowshipClicked" ToolTip="{Binding Name}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
-                                            <Grid>
-                                                <TextBlock Text="🛡️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                <!-- Unread badge -->
-                                                <Border Width="18" Height="18" CornerRadius="9" Background="{DynamicResource StatusDndBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-3,-3" Visibility="{Binding UnreadCount, Converter={StaticResource NullToVis}}">
-                                                    <TextBlock Text="{Binding UnreadCount}" FontSize="9" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                            </Grid>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                <!-- Fellowships List -->
+                <ItemsControl ItemsSource="{Binding Fellowships}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,4" HorizontalAlignment="Center">
+                                <Border Width="4" Height="36" CornerRadius="2" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Left" Margin="-10,0,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
+
+                                <Button Width="44" Height="44" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnFellowshipClicked" ToolTip="{Binding Name}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
+                                                <Grid>
+                                                    <TextBlock Text="🛡️" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    <Border Width="18" Height="18" CornerRadius="9" Background="{DynamicResource StatusDndBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-3,-3" Visibility="{Binding HasUnread, Converter={StaticResource BoolToVis}}">
+                                                        <TextBlock Text="{Binding UnreadTotal}" FontSize="9" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
 
         <!-- Add Fellowship (+) Button -->

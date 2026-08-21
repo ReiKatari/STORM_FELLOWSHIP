@@ -23,10 +23,19 @@
                     <TextBlock Text="{Binding ChannelTopic}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <!-- Header Actions -->
+                <!-- Header Actions (E2EE Shield, Search, Poll, MemberList) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников">
-                        <TextBlock Text="👥" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenE2EEDialogCommand}" ToolTip="🔒 E2EE Сквозное шифрование (AES-256)">
+                        <TextBlock Text="🔒" FontSize="13" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenSearchCommand}" ToolTip="🔍 Поиск по сообщениям" Margin="4,0,0,0">
+                        <TextBlock Text="🔍" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="📊 Создать опрос" Margin="4,0,0,0">
+                        <TextBlock Text="📊" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников" Margin="4,0,0,0">
+                        <TextBlock Text="👥" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Button>
                 </StackPanel>
             </Grid>
@@ -59,9 +68,53 @@
                                     <!-- Content -->
                                     <TextBlock Text="{Binding Content}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" Margin="0,4,0,0" />
 
-                                    <!-- Sticker / Attachment if present -->
-                                    <Border Margin="0,6,0,0" HorizontalAlignment="Left" CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}" Padding="8" Visibility="{Binding HasAttachment, Converter={StaticResource BoolToVis}}">
-                                        <TextBlock Text="📁 [Прикрепленный файл]" FontSize="11" Foreground="{DynamicResource AccentBrush}" />
+                                    <!-- Interactive Poll Card if Poll is present -->
+                                    <Border Margin="0,8,0,0" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Padding="14" Visibility="{Binding IsPoll, Converter={StaticResource BoolToVis}}">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                                <TextBlock Text="📊" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Poll.Question}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                            </StackPanel>
+
+                                            <!-- Poll Options List -->
+                                            <ItemsControl ItemsSource="{Binding Poll.Options}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Margin="0,3" Padding="10,8" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" HorizontalContentAlignment="Stretch" Cursor="Hand" Command="{Binding DataContext.VoteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="4" />
+                                                                </Grid.RowDefinitions>
+                                                                <Grid Margin="0,0,0,4">
+                                                                    <TextBlock Text="{Binding Text}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock HorizontalAlignment="Right" Text="{Binding Percentage, StringFormat='{}{0:F0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                                                                </Grid>
+                                                                <!-- Progress Bar -->
+                                                                <ProgressBar Grid.Row="1" Value="{Binding Percentage}" Maximum="100" Height="4" Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource BorderSubtleBrush}" BorderThickness="0" />
+                                                            </Grid>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <TextBlock Text="{Binding Poll.TotalVotes, StringFormat='{}Всего голосов: {0}'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Voice Note Card with Whisper AI Transcription Button -->
+                                    <Border Margin="0,6,0,0" HorizontalAlignment="Left" CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="10" Visibility="{Binding IsVoiceNote, Converter={StaticResource BoolToVis}}">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="🎙️ Голосовое сообщение (0:05)" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                                                <Button Content="🤖 Whisper AI: Расшифровать в текст" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="8,4" FontSize="10" Cursor="Hand" Command="{Binding DataContext.TranscribeVoiceNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                            </StackPanel>
+
+                                            <!-- Transcribed Text View -->
+                                            <Border Margin="0,6,0,0" Padding="8" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="6" Visibility="{Binding IsTranscribed, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="{Binding TranscriptionText}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                                            </Border>
+                                        </StackPanel>
                                     </Border>
 
                                     <!-- Reactions Wrap -->
@@ -108,8 +161,11 @@
                     <!-- Text Input Box -->
                     <TextBox Grid.Column="1" Text="{Binding MessageInputText, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" FontSize="13" VerticalContentAlignment="Center" Margin="8,0" KeyDown="OnMessageInputKeyDown" />
 
-                    <!-- Actions (Emoji, Sticker, Voice Note, Send) -->
+                    <!-- Actions (Emoji, Sticker, Poll, Voice Note, Send) -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="2,0">
+                            <TextBlock Text="📊" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
                         <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnEmojiButtonClicked" ToolTip="Эмодзи" Margin="2,0">
                             <TextBlock Text="😊" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Button>

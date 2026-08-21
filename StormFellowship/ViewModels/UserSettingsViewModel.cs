@@ -118,7 +118,13 @@ public partial class UserSettingsViewModel : ObservableObject
     private bool _is3DPositionalAudio = true;
 
     [ObservableProperty]
+    private bool _isLiteMode = false;
+
+    [ObservableProperty]
     private string _selectedDirectionMode = "Кардиоидная (Фронтальный фокус на голосе)";
+
+    [ObservableProperty]
+    private string _selectedNoiseMode = "RNNoise AI (Нейросетевое глубокое подавление)";
 
     [ObservableProperty]
     private string _selectedAudioInput = string.Empty;
@@ -132,6 +138,14 @@ public partial class UserSettingsViewModel : ObservableObject
         "Суперкардиоидная (Узконаправленная изоляция)",
         "Круговая 360° (Всенаправленная)",
         "Студийный AI фильтр (Глубокое подавление шумов)"
+    };
+
+    public ObservableCollection<string> NoiseModes { get; } = new()
+    {
+        "RNNoise AI (Нейросетевое глубокое подавление)",
+        "DeepFilterNet Studio (Студийная нейросеть)",
+        "Стандартный спектральный фильтр",
+        "Отключено"
     };
 
     public ObservableCollection<string> AudioInputDevices { get; } = new();
@@ -184,6 +198,7 @@ public partial class UserSettingsViewModel : ObservableObject
         IsNoiseSuppression = AudioService.Instance.IsNoiseSuppressionEnabled;
         IsEchoCancellation = AudioService.Instance.IsEchoCancellationEnabled;
         Is3DPositionalAudio = AudioService.Instance.Is3DPositionalAudioEnabled;
+        IsLiteMode = AudioService.Instance.IsLiteMode;
 
         // Load devices
         foreach (var dev in AudioService.GetAvailableInputDevices()) AudioInputDevices.Add(dev);
@@ -266,11 +281,17 @@ public partial class UserSettingsViewModel : ObservableObject
         AudioService.Instance.IsNoiseSuppressionEnabled = IsNoiseSuppression;
         AudioService.Instance.IsEchoCancellationEnabled = IsEchoCancellation;
         AudioService.Instance.Is3DPositionalAudioEnabled = Is3DPositionalAudio;
+        AudioService.Instance.IsLiteMode = IsLiteMode;
 
         if (SelectedDirectionMode.Contains("Кардиоидная")) AudioService.Instance.DirectionMode = AudioDirectionMode.Cardioid;
         else if (SelectedDirectionMode.Contains("Суперкардиоидная")) AudioService.Instance.DirectionMode = AudioDirectionMode.Hypercardioid;
         else if (SelectedDirectionMode.Contains("Круговая")) AudioService.Instance.DirectionMode = AudioDirectionMode.Omnidirectional;
         else if (SelectedDirectionMode.Contains("Студийный")) AudioService.Instance.DirectionMode = AudioDirectionMode.StudioAI;
+
+        if (SelectedNoiseMode.Contains("RNNoise")) AudioService.Instance.NoiseSuppressionMode = NoiseSuppressionEngineMode.RNNoiseAI;
+        else if (SelectedNoiseMode.Contains("DeepFilterNet")) AudioService.Instance.NoiseSuppressionMode = NoiseSuppressionEngineMode.DeepFilterNet;
+        else if (SelectedNoiseMode.Contains("Стандартный")) AudioService.Instance.NoiseSuppressionMode = NoiseSuppressionEngineMode.Standard;
+        else AudioService.Instance.NoiseSuppressionMode = NoiseSuppressionEngineMode.Off;
 
         _mainVM.CloseUserSettingsDialog();
         _mainVM.ShowToastNotification("Настройки STORM FELLOWSHIP успешно сохранены");

@@ -6,63 +6,60 @@ using StormFellowship.Services;
 
 namespace StormFellowship.ViewModels;
 
-public enum ActiveMainView
-{
-    Fellowship,
-    DirectMessages,
-    CallView,
-    Explore,
-    Settings
-}
-
 public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty]
-    private ActiveMainView _activeView = ActiveMainView.Fellowship;
+    private string _windowTitle = "STORM FELLOWSHIP v0.0.6";
 
     [ObservableProperty]
-    private bool _isInCallView = false;
+    private bool _isCreateFellowshipModalOpen;
+
+    [ObservableProperty]
+    private bool _isFellowshipSettingsModalOpen;
+
+    [ObservableProperty]
+    private bool _isUserSettingsModalOpen;
+
+    [ObservableProperty]
+    private bool _isCreateChannelModalOpen;
+
+    [ObservableProperty]
+    private bool _isEditChannelModalOpen;
+
+    [ObservableProperty]
+    private bool _isRoleManagementModalOpen;
+
+    [ObservableProperty]
+    private bool _isCreatePollModalOpen;
+
+    [ObservableProperty]
+    private bool _isSearchModalOpen;
+
+    [ObservableProperty]
+    private bool _isE2EESecurityModalOpen;
+
+    [ObservableProperty]
+    private bool _isScreenShareModalOpen;
 
     [ObservableProperty]
     private bool _isMemberListVisible = true;
 
     [ObservableProperty]
-    private bool _isCreateFellowshipModalOpen = false;
-
-    [ObservableProperty]
-    private bool _isFellowshipSettingsModalOpen = false;
-
-    [ObservableProperty]
-    private bool _isUserSettingsModalOpen = false;
-
-    [ObservableProperty]
-    private bool _isCreateChannelModalOpen = false;
-
-    [ObservableProperty]
-    private bool _isEditChannelModalOpen = false;
+    private bool _isInCallView;
 
     [ObservableProperty]
     private string _toastMessage = string.Empty;
 
     [ObservableProperty]
-    private bool _isToastVisible = false;
+    private bool _isToastVisible;
 
+    // Modals data bindings
     [ObservableProperty]
-    private string _fellowshipNameInput = "Новое содружество";
+    private string _fellowshipNameInput = string.Empty;
 
     [ObservableProperty]
     private string _joinCodeInput = string.Empty;
 
-    [ObservableProperty]
-    private string _fellowshipName = "Основное содружество";
-
-    [ObservableProperty]
-    private string _fellowshipDescription = "Пространство для голосового и текстового общения.";
-
-    [ObservableProperty]
-    private string _inviteLink = "storm://invite/main";
-
-    // Channel Creation properties
     [ObservableProperty]
     private string _newChannelName = string.Empty;
 
@@ -76,13 +73,6 @@ public partial class MainViewModel : ObservableObject
     private int _newChannelBitrate = 128;
 
     [ObservableProperty]
-    private ChannelCategory? _targetCategoryForNewChannel;
-
-    // Channel Editing properties
-    [ObservableProperty]
-    private Channel? _selectedChannelForEdit;
-
-    [ObservableProperty]
     private string _editingChannelName = string.Empty;
 
     [ObservableProperty]
@@ -91,19 +81,76 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private int _editingChannelBitrate = 128;
 
+    [ObservableProperty]
+    private Channel? _channelToEdit;
+
+    [ObservableProperty]
+    private ChannelCategory? _targetCategoryForNewChannel;
+
+    // Search query & results
+    [ObservableProperty]
+    private string _searchQuery = string.Empty;
+
+    public ObservableCollection<ChatMessage> SearchResults { get; } = new();
+
+    // Poll creation inputs
+    [ObservableProperty]
+    private string _newPollQuestion = string.Empty;
+
+    [ObservableProperty]
+    private string _newPollOption1 = string.Empty;
+
+    [ObservableProperty]
+    private string _newPollOption2 = string.Empty;
+
+    [ObservableProperty]
+    private string _newPollOption3 = string.Empty;
+
+    [ObservableProperty]
+    private string _newPollOption4 = string.Empty;
+
+    // Screen Share Settings
+    [ObservableProperty]
+    private string _screenShareSource = "Весь экран (1920x1080)";
+
+    [ObservableProperty]
+    private string _screenShareQuality = "1080p 60 FPS (Высокое качество)";
+
+    [ObservableProperty]
+    private bool _screenShareIncludeAudio = true;
+
+    public ObservableCollection<string> ScreenShareSources { get; } = new()
+    {
+        "Весь экран (1920x1080)",
+        "Окно игры (DirectX/Vulkan Fullscreen)",
+        "Окно браузера / Приложения"
+    };
+
+    public ObservableCollection<string> ScreenShareQualities { get; } = new()
+    {
+        "1080p 60 FPS (Высокое качество)",
+        "1440p 60 FPS (2K Ultra)",
+        "4K 60 FPS (Ultra HD)",
+        "1080p 120 FPS (Киберспортивный)"
+    };
+
+    public ObservableCollection<int> AvailableBitrates { get; } = new() { 64, 96, 128, 256, 384 };
+
+    // Sub ViewModels
     public FellowshipRailViewModel RailViewModel { get; }
     public ChannelSidebarViewModel SidebarViewModel { get; }
     public ChatViewModel ChatViewModel { get; }
     public CallViewModel CallViewModel { get; }
     public MemberListViewModel MemberListViewModel { get; }
     public UserSettingsViewModel UserSettingsViewModel { get; }
+    public RoleManagementViewModel RoleManagementViewModel { get; }
 
     public MainViewModel CreateFellowshipModalViewModel => this;
     public MainViewModel FellowshipSettingsModalViewModel => this;
     public MainViewModel CreateChannelModalViewModel => this;
     public MainViewModel EditChannelModalViewModel => this;
 
-    public ObservableCollection<int> AvailableBitrates { get; } = new() { 64, 96, 128, 256, 384 };
+    public string E2EEFingerprint => EncryptionService.Instance.Fingerprint;
 
     public MainViewModel()
     {
@@ -113,46 +160,184 @@ public partial class MainViewModel : ObservableObject
         CallViewModel = new CallViewModel(this);
         MemberListViewModel = new MemberListViewModel(this);
         UserSettingsViewModel = new UserSettingsViewModel(this);
+        RoleManagementViewModel = new RoleManagementViewModel(this);
 
         CallService.Instance.CallStateChanged += (call) =>
         {
-            IsInCallView = (call != null);
+            IsInCallView = call != null;
         };
     }
 
     [RelayCommand]
+    public void ToggleGameOverlay()
+    {
+        GameOverlayService.Instance.ToggleOverlay();
+        ShowToastNotification(GameOverlayService.Instance.IsOverlayActive
+            ? "🎮 Игровой оверлей активирован (Shift + ~)"
+            : "🎮 Игровой оверлей скрыт");
+    }
+
+    [RelayCommand]
+    public void OpenSearchDialog()
+    {
+        SearchQuery = string.Empty;
+        SearchResults.Clear();
+        IsSearchModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void ExecuteSearch()
+    {
+        SearchResults.Clear();
+        var results = SearchService.Instance.SearchMessages(SearchQuery, FellowshipService.Instance.CurrentFellowship);
+        foreach (var r in results) SearchResults.Add(r);
+    }
+
+    [RelayCommand]
+    public void CloseSearchDialog()
+    {
+        IsSearchModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void OpenE2EESecurityDialog()
+    {
+        IsE2EESecurityModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseE2EESecurityDialog()
+    {
+        IsE2EESecurityModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void OpenRoleManagement()
+    {
+        IsRoleManagementModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void OpenCreatePollDialog()
+    {
+        NewPollQuestion = string.Empty;
+        NewPollOption1 = string.Empty;
+        NewPollOption2 = string.Empty;
+        NewPollOption3 = string.Empty;
+        NewPollOption4 = string.Empty;
+        IsCreatePollModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void SubmitCreatePoll()
+    {
+        if (string.IsNullOrWhiteSpace(NewPollQuestion) || string.IsNullOrWhiteSpace(NewPollOption1) || string.IsNullOrWhiteSpace(NewPollOption2))
+        {
+            ShowToastNotification("Введите вопрос и как минимум 2 варианта ответа");
+            return;
+        }
+
+        var poll = new PollItem
+        {
+            Question = NewPollQuestion,
+            AuthorName = FellowshipService.Instance.CurrentUser.DisplayName
+        };
+        poll.Options.Add(new PollOption { Text = NewPollOption1 });
+        poll.Options.Add(new PollOption { Text = NewPollOption2 });
+        if (!string.IsNullOrWhiteSpace(NewPollOption3)) poll.Options.Add(new PollOption { Text = NewPollOption3 });
+        if (!string.IsNullOrWhiteSpace(NewPollOption4)) poll.Options.Add(new PollOption { Text = NewPollOption4 });
+        poll.RecalculatePercentages();
+
+        var channelId = FellowshipService.Instance.CurrentChannel?.Id ?? "general";
+        var msg = new ChatMessage
+        {
+            ChannelId = channelId,
+            Author = FellowshipService.Instance.CurrentUser,
+            Content = "Опрос сообщества:",
+            Poll = poll,
+            Timestamp = DateTime.Now
+        };
+
+        FellowshipService.Instance.CurrentChannel?.Messages.Add(msg);
+        IsCreatePollModalOpen = false;
+        ShowToastNotification("📊 Опрос успешно опубликован в чате!");
+    }
+
+    [RelayCommand]
+    public void CloseCreatePollDialog()
+    {
+        IsCreatePollModalOpen = false;
+    }
+
+    [RelayCommand]
+    public void OpenScreenShareDialog()
+    {
+        IsScreenShareModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void SubmitStartScreenShare()
+    {
+        IsScreenShareModalOpen = false;
+        CallService.Instance.ToggleScreenShare();
+        ShowToastNotification($"🖥️ Трансляция экрана запущена ({ScreenShareQuality}, WASAPI: {(ScreenShareIncludeAudio ? "Вкл" : "Выкл")})");
+    }
+
+    [RelayCommand]
+    public void CloseScreenShareDialog()
+    {
+        IsScreenShareModalOpen = false;
+    }
+
+    public void CloseAllModals()
+    {
+        IsCreateFellowshipModalOpen = false;
+        IsFellowshipSettingsModalOpen = false;
+        IsUserSettingsModalOpen = false;
+        IsCreateChannelModalOpen = false;
+        IsEditChannelModalOpen = false;
+        IsRoleManagementModalOpen = false;
+        IsCreatePollModalOpen = false;
+        IsSearchModalOpen = false;
+        IsE2EESecurityModalOpen = false;
+        IsScreenShareModalOpen = false;
+    }
+
     public void ToggleMemberList()
     {
         IsMemberListVisible = !IsMemberListVisible;
     }
 
+    public void ShowToastNotification(string message)
+    {
+        ToastMessage = message;
+        IsToastVisible = true;
+        Task.Delay(3500).ContinueWith(_ =>
+        {
+            App.Current?.Dispatcher.Invoke(() => IsToastVisible = false);
+        });
+    }
+
     [RelayCommand]
     public void CheckForUpdates()
     {
-        ShowToastNotification("Проверка обновлений... Вы используете актуальную версию STORM FELLOWSHIP v0.0.3");
+        ShowToastNotification("STORM FELLOWSHIP v0.0.6 — Установлена новейшая версия!");
     }
 
-    [RelayCommand]
-    public void OpenCreateFellowshipDialog()
-    {
-        IsCreateFellowshipModalOpen = true;
-    }
+    // Fellowships & Channels Modal management
+    public void OpenCreateFellowshipDialog() => IsCreateFellowshipModalOpen = true;
 
     [RelayCommand]
-    public void CloseCreateFellowshipDialog()
+    public void CloseCreateFellowshipDialog() => IsCreateFellowshipModalOpen = false;
+
+    [RelayCommand]
+    public void CreateFellowship()
     {
+        if (string.IsNullOrWhiteSpace(FellowshipNameInput)) FellowshipNameInput = "Новое содружество";
+        FellowshipService.Instance.CreateFellowship(FellowshipNameInput);
+        FellowshipNameInput = string.Empty;
         IsCreateFellowshipModalOpen = false;
-    }
-
-    [RelayCommand]
-    public void Create()
-    {
-        if (!string.IsNullOrWhiteSpace(FellowshipNameInput))
-        {
-            FellowshipService.Instance.CreateFellowship(FellowshipNameInput);
-            ShowToastNotification($"Создано содружество: {FellowshipNameInput}");
-            IsCreateFellowshipModalOpen = false;
-        }
+        ShowToastNotification("Содружество успешно создано!");
     }
 
     [RelayCommand]
@@ -161,61 +346,21 @@ public partial class MainViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(JoinCodeInput))
         {
             FellowshipService.Instance.JoinFellowship(JoinCodeInput);
-            ShowToastNotification($"Подключение к содружеству: {JoinCodeInput}");
+            JoinCodeInput = string.Empty;
             IsCreateFellowshipModalOpen = false;
+            ShowToastNotification("Вы присоединились к содружеству!");
         }
     }
 
-    [RelayCommand]
-    public void OpenFellowshipSettingsDialog()
-    {
-        IsFellowshipSettingsModalOpen = true;
-    }
+    public void OpenFellowshipSettingsDialog() => IsFellowshipSettingsModalOpen = true;
 
     [RelayCommand]
-    public void CloseFellowshipSettingsDialog()
-    {
-        IsFellowshipSettingsModalOpen = false;
-    }
+    public void CloseFellowshipSettingsDialog() => IsFellowshipSettingsModalOpen = false;
 
-    [RelayCommand]
-    public void SaveChanges()
-    {
-        ShowToastNotification("Настройки содружества сохранены");
-        IsFellowshipSettingsModalOpen = false;
-    }
+    public void OpenUserSettingsDialog() => IsUserSettingsModalOpen = true;
 
-    [RelayCommand]
-    public void DeleteFellowship()
-    {
-        ShowToastNotification("Содружество удалено");
-        IsFellowshipSettingsModalOpen = false;
-    }
+    public void CloseUserSettingsDialog() => IsUserSettingsModalOpen = false;
 
-    [RelayCommand]
-    public void CopyInvite()
-    {
-        try
-        {
-            System.Windows.Clipboard.SetText(InviteLink);
-            ShowToastNotification("Ссылка-приглашение скопирована в буфер обмена!");
-        }
-        catch { }
-    }
-
-    [RelayCommand]
-    public void OpenUserSettingsDialog()
-    {
-        IsUserSettingsModalOpen = true;
-    }
-
-    [RelayCommand]
-    public void CloseUserSettingsDialog()
-    {
-        IsUserSettingsModalOpen = false;
-    }
-
-    // Channel CRUD
     public void OpenCreateChannelDialog(ChannelCategory? category = null)
     {
         TargetCategoryForNewChannel = category;
@@ -227,10 +372,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void CloseCreateChannelDialog()
-    {
-        IsCreateChannelModalOpen = false;
-    }
+    public void CloseCreateChannelDialog() => IsCreateChannelModalOpen = false;
 
     [RelayCommand]
     public void SubmitCreateChannel()
@@ -243,22 +385,21 @@ public partial class MainViewModel : ObservableObject
         var currentF = FellowshipService.Instance.CurrentFellowship;
         if (currentF != null)
         {
-            var chan = FellowshipService.Instance.AddChannel(
+            FellowshipService.Instance.AddChannel(
                 currentF.Id,
                 TargetCategoryForNewChannel?.Id,
                 NewChannelName,
                 NewChannelTopic,
                 NewChannelType,
-                NewChannelBitrate
-            );
-            ShowToastNotification($"Канал #{chan.Name} успешно создан!");
+                NewChannelBitrate);
+            ShowToastNotification($"Канал #{NewChannelName} успешно создан");
         }
         IsCreateChannelModalOpen = false;
     }
 
     public void OpenEditChannelDialog(Channel channel)
     {
-        SelectedChannelForEdit = channel;
+        ChannelToEdit = channel;
         EditingChannelName = channel.Name;
         EditingChannelTopic = channel.Topic;
         EditingChannelBitrate = channel.BitrateKbps;
@@ -266,28 +407,20 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void CloseEditChannelDialog()
-    {
-        IsEditChannelModalOpen = false;
-    }
+    public void CloseEditChannelDialog() => IsEditChannelModalOpen = false;
 
     [RelayCommand]
     public void SubmitEditChannel()
     {
-        if (SelectedChannelForEdit != null)
+        if (ChannelToEdit != null && FellowshipService.Instance.CurrentFellowship != null)
         {
-            var currentF = FellowshipService.Instance.CurrentFellowship;
-            if (currentF != null)
-            {
-                FellowshipService.Instance.UpdateChannel(
-                    currentF.Id,
-                    SelectedChannelForEdit.Id,
-                    EditingChannelName,
-                    EditingChannelTopic,
-                    EditingChannelBitrate
-                );
-                ShowToastNotification($"Канал #{EditingChannelName} обновлен!");
-            }
+            FellowshipService.Instance.UpdateChannel(
+                FellowshipService.Instance.CurrentFellowship.Id,
+                ChannelToEdit.Id,
+                EditingChannelName,
+                EditingChannelTopic,
+                EditingChannelBitrate);
+            ShowToastNotification("Настройки канала сохранены");
         }
         IsEditChannelModalOpen = false;
     }
@@ -295,40 +428,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void SubmitDeleteChannel()
     {
-        if (SelectedChannelForEdit != null)
+        if (ChannelToEdit != null && FellowshipService.Instance.CurrentFellowship != null)
         {
-            var currentF = FellowshipService.Instance.CurrentFellowship;
-            if (currentF != null)
-            {
-                FellowshipService.Instance.DeleteChannel(currentF.Id, SelectedChannelForEdit.Id);
-                ShowToastNotification($"Канал #{SelectedChannelForEdit.Name} удален");
-            }
+            var name = ChannelToEdit.Name;
+            FellowshipService.Instance.DeleteChannel(FellowshipService.Instance.CurrentFellowship.Id, ChannelToEdit.Id);
+            ShowToastNotification($"Канал #{name} удален");
         }
         IsEditChannelModalOpen = false;
-    }
-
-    public void CloseAllModals()
-    {
-        IsCreateFellowshipModalOpen = false;
-        IsFellowshipSettingsModalOpen = false;
-        IsUserSettingsModalOpen = false;
-        IsCreateChannelModalOpen = false;
-        IsEditChannelModalOpen = false;
-    }
-
-    [RelayCommand]
-    public void Close()
-    {
-        CloseAllModals();
-    }
-
-    public void ShowToastNotification(string message)
-    {
-        ToastMessage = message;
-        IsToastVisible = true;
-        Task.Delay(3500).ContinueWith(_ =>
-        {
-            IsToastVisible = false;
-        }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

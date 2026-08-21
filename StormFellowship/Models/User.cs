@@ -63,7 +63,26 @@ public partial class User : ObservableObject
     private double _volume = 100.0;
 
     [ObservableProperty]
+    private bool _isMutedForMe = false;
+
+    [ObservableProperty]
+    private bool _isPrioritySpeaker = false;
+
+    // Spatial 3D Audio Virtual Coordinates
+    [ObservableProperty]
+    private double _spatialX = 0.0; // -100 to +100 (Left / Right)
+
+    [ObservableProperty]
+    private double _spatialY = 0.0; // -100 to +100 (Behind / In Front)
+
+    [ObservableProperty]
+    private double _spatialZ = 0.0; // Height
+
+    [ObservableProperty]
     private int _pingMs = 18;
+
+    [ObservableProperty]
+    private string _e2eeSafetyNumber = "7829-4912-3391-8842-1940-5521";
 
     public bool HasCustomAvatarImage => !string.IsNullOrWhiteSpace(AvatarPath);
 

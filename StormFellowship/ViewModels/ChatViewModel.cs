@@ -54,8 +54,8 @@ public partial class ChatViewModel : ObservableObject
         : (CurrentChannel != null ? $"{CurrentChannel.Name}" : "общий");
 
     public string HeaderTopic => IsDirectMessages
-        ? (CurrentDmUser?.CustomStatus ?? "Личная переписка")
-        : (CurrentChannel?.Topic ?? "Основной чат содружества");
+        ? (CurrentDmUser?.CustomStatus ?? "Личная переписка • E2EE Защищено")
+        : (CurrentChannel?.Topic ?? "Основной чат содружества • E2EE Защищено");
 
     public ChatViewModel(MainViewModel mainVM)
     {
@@ -88,6 +88,37 @@ public partial class ChatViewModel : ObservableObject
     public void ToggleMemberList()
     {
         _mainVM.ToggleMemberList();
+    }
+
+    [RelayCommand]
+    public void OpenSearch()
+    {
+        _mainVM.OpenSearchDialog();
+    }
+
+    [RelayCommand]
+    public void OpenCreatePoll()
+    {
+        _mainVM.OpenCreatePollDialog();
+    }
+
+    [RelayCommand]
+    public void OpenE2EEDialog()
+    {
+        _mainVM.OpenE2EESecurityDialog();
+    }
+
+    [RelayCommand]
+    public async Task TranscribeVoiceNote(ChatMessage message)
+    {
+        if (message == null || message.IsTranscribing) return;
+        message.IsTranscribing = true;
+        _mainVM.ShowToastNotification("🤖 Whisper AI: Обработка нейросетью...");
+        var text = await WhisperTranscriptionService.Instance.TranscribeAudioAsync(message.Id, message.VoiceNoteDurationSeconds);
+        message.TranscriptionText = text;
+        message.IsTranscribed = true;
+        message.IsTranscribing = false;
+        _mainVM.ShowToastNotification("🤖 Whisper AI: Текст успешно расшифрован!");
     }
 
     [RelayCommand]

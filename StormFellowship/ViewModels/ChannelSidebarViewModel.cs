@@ -82,7 +82,6 @@ public partial class ChannelSidebarViewModel : ObservableObject
         else
         {
             FellowshipService.Instance.SelectChannel(channel);
-            _mainVM.ActiveView = ActiveMainView.Fellowship;
         }
     }
 
@@ -90,7 +89,6 @@ public partial class ChannelSidebarViewModel : ObservableObject
     public void SelectDmUser(User? user)
     {
         FellowshipService.Instance.SelectDirectMessage(user);
-        _mainVM.ActiveView = ActiveMainView.DirectMessages;
     }
 
     [RelayCommand]

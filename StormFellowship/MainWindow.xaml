@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
         xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
-        Title="STORM FELLOWSHIP v0.0.5"
+        Title="STORM FELLOWSHIP v0.0.6"
         Icon="pack://application:,,,/Assets/AppIcon.ico"
         Width="1280" Height="800"
         MinWidth="960" MinHeight="600"
@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- 1. Left Icon Rail (Fellowships + DMs) -->
+            <!-- 1. Left Icon Rail (Fellowships + Folders + DMs) -->
             <controls:FellowshipRailControl x:Name="FellowshipRail" Grid.Column="0" DataContext="{Binding RailViewModel}" />
 
             <!-- 2. Channel & DM Sidebar -->
@@ -85,6 +85,26 @@
 
         <Grid Grid.RowSpan="2" Visibility="{Binding IsEditChannelModalOpen, Converter={StaticResource BoolToVis}}">
             <dialogs:EditChannelDialog DataContext="{Binding EditChannelModalViewModel}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsRoleManagementModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:RoleManagementDialog DataContext="{Binding RoleManagementViewModel}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsCreatePollModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:CreatePollDialog DataContext="{Binding}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsSearchModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:SearchDialog DataContext="{Binding}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsE2EESecurityModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:E2EESecurityDialog DataContext="{Binding}" />
+        </Grid>
+
+        <Grid Grid.RowSpan="2" Visibility="{Binding IsScreenShareModalOpen, Converter={StaticResource BoolToVis}}">
+            <dialogs:ScreenShareDialog DataContext="{Binding}" />
         </Grid>
     </Grid>
 </Window>

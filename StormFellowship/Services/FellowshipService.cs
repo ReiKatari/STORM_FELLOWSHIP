@@ -9,6 +9,7 @@ public class FellowshipService : IFellowshipService
     public static FellowshipService Instance => _instance ??= new FellowshipService();
 
     public ObservableCollection<Fellowship> Fellowships { get; } = new();
+    public ObservableCollection<FellowshipFolder> Folders { get; } = new();
     public ObservableCollection<User> DirectMessageUsers { get; } = new();
 
     public Fellowship? CurrentFellowship { get; set; }
@@ -53,74 +54,101 @@ public class FellowshipService : IFellowshipService
             IsSelected = true
         };
 
-        mainFellowship.Members.Add(CurrentUser);
+        // Seed Roles
+        mainFellowship.Roles.Add(new Role { Name = "Создатель", ColorHex = "#00A3FF", Permissions = (RolePermissions)0x3FFF, Priority = 100 });
+        mainFellowship.Roles.Add(new Role { Name = "Модератор", ColorHex = "#22C55E", Permissions = RolePermissions.SendMessages | RolePermissions.AttachFiles | RolePermissions.ConnectVoice | RolePermissions.Speak | RolePermissions.PrioritySpeaker | RolePermissions.MuteMembers, Priority = 80 });
+        mainFellowship.Roles.Add(new Role { Name = "Оратор", ColorHex = "#F59E0B", Permissions = RolePermissions.SendMessages | RolePermissions.ConnectVoice | RolePermissions.Speak | RolePermissions.PrioritySpeaker, Priority = 60 });
+        mainFellowship.Roles.Add(new Role { Name = "Участник", ColorHex = "#94A3B8", Permissions = RolePermissions.SendMessages | RolePermissions.AttachFiles | RolePermissions.ConnectVoice | RolePermissions.Speak, Priority = 10 });
 
-        // Text Channels Category
-        var textCat = new ChannelCategory { Id = "cat_text", Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
-        var genChan = new Channel
+        // Add Categories
+        var textCategory = new ChannelCategory { Id = "cat_text", Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
+        var voiceCategory = new ChannelCategory { Id = "cat_voice", Name = "ГОЛОСОВЫЕ КАНАЛЫ" };
+
+        var generalChannel = new Channel
         {
             Id = "chan_general",
             Name = "общий",
-            Topic = "Основной текстовый чат для общения.",
+            Topic = "Основной чат содружества",
             Type = ChannelType.Text
         };
-        var newsChan = new Channel
+
+        var newsChannel = new Channel
         {
             Id = "chan_news",
             Name = "новости",
-            Topic = "Объявления и важная информация.",
+            Topic = "Официальные объявления",
             Type = ChannelType.Announcements
         };
 
-        textCat.Channels.Add(genChan);
-        textCat.Channels.Add(newsChan);
-
-        // Voice Channels Category
-        var voiceCat = new ChannelCategory { Id = "cat_voice", Name = "ГОЛОСОВЫЕ КАНАЛЫ" };
-        var voice1 = new Channel
+        var voiceChannel1 = new Channel
         {
-            Id = "voice_1",
+            Id = "chan_voice_1",
             Name = "Голосовой 1",
-            Topic = "Основная голосовая комната 128 Кбит/с",
+            Topic = "Основная комната",
             Type = ChannelType.Voice,
             BitrateKbps = 128
         };
-        var voice2 = new Channel
+
+        var voiceHub = new Channel
         {
-            Id = "voice_2",
-            Name = "Голосовой 2",
-            Topic = "Дополнительная голосовая комната 128 Кбит/с",
-            Type = ChannelType.Voice,
+            Id = "chan_voice_hub",
+            Name = "⚡ Создать комнату",
+            Topic = "Автоматическое создание персональной комнаты",
+            Type = ChannelType.VoiceHub,
             BitrateKbps = 128
         };
 
-        voiceCat.Channels.Add(voice1);
-        voiceCat.Channels.Add(voice2);
+        textCategory.Channels.Add(generalChannel);
+        textCategory.Channels.Add(newsChannel);
+        voiceCategory.Channels.Add(voiceChannel1);
+        voiceCategory.Channels.Add(voiceHub);
 
-        mainFellowship.Categories.Add(textCat);
-        mainFellowship.Categories.Add(voiceCat);
+        mainFellowship.Categories.Add(textCategory);
+        mainFellowship.Categories.Add(voiceCategory);
 
-        // Clean initial welcome message
+        mainFellowship.Members.Add(CurrentUser);
+        Fellowships.Add(mainFellowship);
+
+        // Seed Sample Folder
+        var gamingFolder = new FellowshipFolder { Name = "Игры и Сообщества", ColorHex = "#A855F7" };
+        Folders.Add(gamingFolder);
+
+        // Seed Sample Welcome Message with Poll
         var welcomeMsg = new ChatMessage
         {
-            Id = "m1",
-            ChannelId = genChan.Id,
             Author = CurrentUser,
-            Content = "⚡ **Добро пожаловать в STORM FELLOWSHIP v0.0.3!**\nСоздавайте каналы, настраивайте содружество и пользуйтесь голосовой связью с высоким качеством звука.",
-            Timestamp = DateTime.Now,
-            IsPinned = true
+            Content = "Добро пожаловать в STORM FELLOWSHIP v0.0.6! ⚡ Все модули активны: игровой оверлей, E2EE, Whisper AI, 3D звук и опрос.",
+            Timestamp = DateTime.Now
         };
-        welcomeMsg.Reactions.Add(new MessageReaction { EmojiCode = ":storm_bolt:", EmojiSymbol = "⚡", Count = 1, HasReacted = true });
-        genChan.Messages.Add(welcomeMsg);
+        generalChannel.Messages.Add(welcomeMsg);
 
-        Fellowships.Add(mainFellowship);
-        CurrentFellowship = mainFellowship;
-        CurrentChannel = genChan;
+        // Sample Interactive Poll
+        var samplePoll = new PollItem
+        {
+            Question = "Какой режим связи вы используете чаще всего?",
+            AuthorName = CurrentUser.DisplayName
+        };
+        samplePoll.Options.Add(new PollOption { Text = "🎙️ Голосовые каналы со сверхнизкой задержкой", VotesCount = 4, Percentage = 57.0 });
+        samplePoll.Options.Add(new PollOption { Text = "💬 Текстовые чаты с опросами и стикерами", VotesCount = 2, Percentage = 29.0 });
+        samplePoll.Options.Add(new PollOption { Text = "📹 HD видеосозвоны и стриминг экрана", VotesCount = 1, Percentage = 14.0 });
+        samplePoll.RecalculatePercentages();
+
+        var pollMsg = new ChatMessage
+        {
+            Author = CurrentUser,
+            Content = "Опрос сообщества:",
+            Poll = samplePoll,
+            Timestamp = DateTime.Now
+        };
+        generalChannel.Messages.Add(pollMsg);
+
+        SelectFellowship(mainFellowship);
+        SelectChannel(generalChannel);
     }
 
     public Fellowship CreateFellowship(string name)
     {
-        return CreateFellowship(name, "Содружество, созданное пользователем " + CurrentUser.DisplayName);
+        return CreateFellowship(name, "Новое содружество", "ms-appx:///Assets/Logo.png");
     }
 
     public Fellowship CreateFellowship(string name, string description, string iconUrl = "")
@@ -134,12 +162,11 @@ public class FellowshipService : IFellowshipService
         };
 
         var textCat = new ChannelCategory { Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
-        var genChan = new Channel { Name = "общий", Topic = "Основной текстовый чат", Type = ChannelType.Text };
-        textCat.Channels.Add(genChan);
-
         var voiceCat = new ChannelCategory { Name = "ГОЛОСОВЫЕ КАНАЛЫ" };
-        var genVoice = new Channel { Name = "Голосовой 1", Topic = "Основная комната", Type = ChannelType.Voice, BitrateKbps = 128 };
-        voiceCat.Channels.Add(genVoice);
+
+        textCat.Channels.Add(new Channel { Name = "общий", Type = ChannelType.Text });
+        voiceCat.Channels.Add(new Channel { Name = "Голосовой 1", Type = ChannelType.Voice, BitrateKbps = 128 });
+        voiceCat.Channels.Add(new Channel { Name = "⚡ Создать комнату", Type = ChannelType.VoiceHub, BitrateKbps = 128 });
 
         f.Categories.Add(textCat);
         f.Categories.Add(voiceCat);
@@ -238,13 +265,9 @@ public class FellowshipService : IFellowshipService
             var chan = cat.Channels.FirstOrDefault(c => c.Id == channelId);
             if (chan != null)
             {
-                chan.Name = newName.Trim().ToLower().Replace(" ", "-");
+                chan.Name = newName;
                 chan.Topic = newTopic;
                 chan.BitrateKbps = bitrateKbps;
-                if (CurrentChannel?.Id == channelId)
-                {
-                    CurrentChannelChanged?.Invoke(chan);
-                }
                 break;
             }
         }
@@ -263,8 +286,7 @@ public class FellowshipService : IFellowshipService
                 cat.Channels.Remove(chan);
                 if (CurrentChannel?.Id == channelId)
                 {
-                    CurrentChannel = f.Categories.SelectMany(c => c.Channels).FirstOrDefault();
-                    CurrentChannelChanged?.Invoke(CurrentChannel);
+                    SelectChannel(f.Categories.FirstOrDefault()?.Channels.FirstOrDefault());
                 }
                 break;
             }
@@ -276,24 +298,57 @@ public class FellowshipService : IFellowshipService
         var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
         if (f == null) return;
 
-        var cat = new ChannelCategory { Name = name.ToUpper() };
+        var cat = new ChannelCategory { Name = name.ToUpperInvariant() };
         f.Categories.Add(cat);
+    }
+
+    public Role AddRole(string fellowshipId, string name, string colorHex, RolePermissions perms)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
+        var role = new Role { Name = name, ColorHex = colorHex, Permissions = perms };
+        f?.Roles.Add(role);
+        return role;
+    }
+
+    public void UpdateRole(string fellowshipId, string roleId, string name, string colorHex, RolePermissions perms)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
+        var role = f?.Roles.FirstOrDefault(r => r.Id == roleId);
+        if (role != null)
+        {
+            role.Name = name;
+            role.ColorHex = colorHex;
+            role.Permissions = perms;
+        }
+    }
+
+    public void DeleteRole(string fellowshipId, string roleId)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId) ?? CurrentFellowship;
+        var role = f?.Roles.FirstOrDefault(r => r.Id == roleId);
+        if (role != null)
+        {
+            f?.Roles.Remove(role);
+        }
+    }
+
+    public FellowshipFolder CreateFolder(string name, string colorHex)
+    {
+        var folder = new FellowshipFolder { Name = name, ColorHex = colorHex };
+        Folders.Add(folder);
+        return folder;
     }
 
     public void SelectFellowship(Fellowship? fellowship)
     {
-        foreach (var f in Fellowships) f.IsSelected = (f == fellowship);
-        IsDirectMessagesSelected = (fellowship == null);
+        IsDirectMessagesSelected = false;
+        foreach (var f in Fellowships) f.IsSelected = false;
 
         CurrentFellowship = fellowship;
-        CurrentDmUser = null;
-        if (fellowship != null)
+        if (CurrentFellowship != null)
         {
-            CurrentChannel = fellowship.Categories.SelectMany(c => c.Channels).FirstOrDefault(c => c.IsText);
-        }
-        else
-        {
-            CurrentChannel = null;
+            CurrentFellowship.IsSelected = true;
+            CurrentChannel = CurrentFellowship.Categories.FirstOrDefault()?.Channels.FirstOrDefault();
         }
 
         CurrentFellowshipChanged?.Invoke(CurrentFellowship);
@@ -302,23 +357,52 @@ public class FellowshipService : IFellowshipService
 
     public void SelectChannel(Channel? channel)
     {
-        CurrentChannel = channel;
-        if (channel != null && channel.UnreadCount > 0)
+        if (channel == null) return;
+
+        // Dynamic Voice Hub Logic
+        if (channel.IsVoiceHub && CurrentFellowship != null)
         {
-            channel.UnreadCount = 0;
+            var voiceCat = CurrentFellowship.Categories.FirstOrDefault(c => c.Channels.Contains(channel));
+            if (voiceCat != null)
+            {
+                var tempChan = new Channel
+                {
+                    Name = $"🔊 Комната {CurrentUser.DisplayName}",
+                    Topic = "Временная комната (авто-удаление)",
+                    Type = ChannelType.TemporaryVoice,
+                    IsTemporary = true,
+                    OwnerUserId = CurrentUser.Id,
+                    BitrateKbps = 128
+                };
+                tempChan.ConnectedVoiceUsers.Add(CurrentUser);
+                voiceCat.Channels.Insert(voiceCat.Channels.IndexOf(channel) + 1, tempChan);
+                CurrentChannel = tempChan;
+                CurrentChannelChanged?.Invoke(CurrentChannel);
+                CallService.Instance.JoinVoiceChannel(tempChan);
+                return;
+            }
         }
-        CurrentChannelChanged?.Invoke(channel);
+
+        CurrentChannel = channel;
+        CurrentChannelChanged?.Invoke(CurrentChannel);
+
+        if (channel.IsVoice)
+        {
+            CallService.Instance.JoinVoiceChannel(channel);
+        }
     }
 
     public void SelectDirectMessage(User? user)
     {
-        foreach (var f in Fellowships) f.IsSelected = false;
         IsDirectMessagesSelected = true;
-        CurrentFellowship = null;
+        foreach (var f in Fellowships) f.IsSelected = false;
+
         CurrentDmUser = user;
+        CurrentFellowship = null;
         CurrentChannel = null;
 
+        CurrentDmUserChanged?.Invoke(CurrentDmUser);
         CurrentFellowshipChanged?.Invoke(null);
-        CurrentDmUserChanged?.Invoke(user);
+        CurrentChannelChanged?.Invoke(null);
     }
 }

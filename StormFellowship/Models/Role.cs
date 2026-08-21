@@ -28,7 +28,7 @@ public partial class Role : ObservableObject
     private string _id = Guid.NewGuid().ToString();
 
     [ObservableProperty]
-    private string _name = "Member";
+    private string _name = "Участник";
 
     [ObservableProperty]
     private string _colorHex = "#94A3B8";
@@ -41,4 +41,9 @@ public partial class Role : ObservableObject
 
     [ObservableProperty]
     private bool _isHoisted = true;
+
+    [ObservableProperty]
+    private bool _isMentionable = true;
+
+    public bool HasPermission(RolePermissions perm) => (Permissions & perm) == perm;
 }
