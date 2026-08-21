@@ -157,6 +157,10 @@
                                 <TextBlock Text="УРОВЕНЬ МИКРОФОНА (VU-METER):" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
                                 <ProgressBar Value="{Binding LiveMicLevel, Mode=OneWay}" Minimum="0" Maximum="100" Height="8" Foreground="{DynamicResource StatusOnlineBrush}" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,14" />
 
+                                <!-- Voice FX Presets & Equalizer -->
+                                <TextBlock Text="ГОЛОСОВОЙ ЭКВАЛАЙЗЕР И FX ПРЕСЕТЫ:" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding FxPresets}" SelectedItem="{Binding SelectedFxPreset}" Margin="0,0,0,12" />
+
                                 <!-- Next-Gen AI Noise Suppression -->
                                 <TextBlock Text="ШУМОПОДАВЛЕНИЕ СЛЕДУЮЩЕГО ПОКОЛЕНИЯ (AI DSP):" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
                                 <ComboBox ItemsSource="{Binding NoiseModes}" SelectedItem="{Binding SelectedNoiseMode}" Margin="0,0,0,12" />

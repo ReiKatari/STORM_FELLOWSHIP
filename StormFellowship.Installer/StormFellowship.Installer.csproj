@@ -3,15 +3,15 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>StormFellowship.Installer</RootNamespace>
-    <ApplicationIcon>..\StormFellowship\Assets\AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.1.0</Version>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.1.1</Version>
+    <AssemblyVersion>0.1.1.0</AssemblyVersion>
+    <FileVersion>0.1.1.0</FileVersion>
     <Product>STORM FELLOWSHIP Installer</Product>
     <Company>STORM FELLOWSHIP</Company>
     <Authors>ReiKatari</Authors>
-    <Description>Setup wizard for STORM FELLOWSHIP v0.1.0</Description>
+    <Description>Setup wizard for STORM FELLOWSHIP v0.1.1</Description>
   </PropertyGroup>
 </Project>

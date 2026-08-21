@@ -166,6 +166,18 @@ public partial class UserSettingsViewModel : ObservableObject
         "Отключено"
     };
 
+    public ObservableCollection<string> FxPresets { get; } = new()
+    {
+        "Студийный баланс (Нейтральный чистый голос)",
+        "Глубокий бас (Radio Broadcast / Deep Voice)",
+        "Кристальный голос (Treble Boost / Максимальная четкость)",
+        "Киберспортивный (Фокус на тиммейтах, отсечение фона)",
+        "Теплый ламповый звук"
+    };
+
+    [ObservableProperty]
+    private string _selectedFxPreset = "Студийный баланс (Нейтральный чистый голос)";
+
     public ObservableCollection<string> AudioInputDevices { get; } = new();
     public ObservableCollection<string> AudioOutputDevices { get; } = new();
 

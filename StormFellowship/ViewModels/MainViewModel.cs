@@ -9,7 +9,7 @@ namespace StormFellowship.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _windowTitle = "STORM FELLOWSHIP v0.0.6";
+    private string _windowTitle = "STORM FELLOWSHIP v0.1.1";
 
     [ObservableProperty]
     private bool _isCreateFellowshipModalOpen;

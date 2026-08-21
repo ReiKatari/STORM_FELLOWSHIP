@@ -33,6 +33,15 @@ public enum NoiseSuppressionEngineMode
     Off                 // Отключено
 }
 
+public enum AudioFxPreset
+{
+    StudioBalance,   // Студийный баланс (Чистый нейтральный)
+    DeepBass,        // Глубокий бас (Radio Broadcast / Deep Voice)
+    CrispVoice,      // Кристальный голос (Treble Boost / Максимальная разборчивость)
+    EsportsFocus,    // Киберспортивный (Фокус на тиммейтах, срез низких частот)
+    WarmWarmth       // Теплый ламповый звук
+}
+
 public class AudioService : IDisposable
 {
     private static AudioService? _instance;
@@ -51,6 +60,7 @@ public class AudioService : IDisposable
     private bool _isLiteMode = false;
     private AudioDirectionMode _directionMode = AudioDirectionMode.Cardioid;
     private NoiseSuppressionEngineMode _noiseSuppressionMode = NoiseSuppressionEngineMode.RNNoiseAI;
+    private AudioFxPreset _fxPreset = AudioFxPreset.StudioBalance;
 
     private WaveInEvent? _waveIn;
     private readonly System.Timers.Timer _levelTimer;
@@ -59,6 +69,18 @@ public class AudioService : IDisposable
 
     public event Action<double>? MicLevelChanged;
     public event Action<bool>? SpeakingStateChanged;
+    public event Action<string, string>? LiveSubtitleReceived;
+
+    public AudioFxPreset FxPreset
+    {
+        get => _fxPreset;
+        set => _fxPreset = value;
+    }
+
+    public void PushLiveSubtitle(string speaker, string text)
+    {
+        LiveSubtitleReceived?.Invoke(speaker, text);
+    }
 
     public bool IsMuted
     {

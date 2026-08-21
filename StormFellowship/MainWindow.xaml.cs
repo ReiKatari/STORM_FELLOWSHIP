@@ -17,8 +17,8 @@ public partial class MainWindow : Window
 
         try
         {
-            var iconUri = new Uri("pack://application:,,,/Assets/AppIcon.ico", UriKind.RelativeOrAbsolute);
-            Icon = BitmapFrame.Create(iconUri);
+            var iconUri = new Uri("pack://application:,,,/Assets/AppIcon.png", UriKind.RelativeOrAbsolute);
+            Icon = new BitmapImage(iconUri);
         }
         catch { }
 
@@ -26,7 +26,7 @@ public partial class MainWindow : Window
         {
             WindowBackdropHelper.EnableMicaBackdrop(this);
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.1.0");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.1.1");
 
             if (DataContext is MainViewModel vm)
             {

@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%20Windows%2011-0078D4?style=for-the-badge&logo=windows" />
   <img src="https://img.shields.io/badge/Framework-.NET%208%20LTS%20%2F%20WPF%20Fluent-00D2FF?style=for-the-badge&logo=windows-terminal" />
   <img src="https://img.shields.io/badge/Language-C%23%20%2F%20.NET-7928CA?style=for-the-badge&logo=c-sharp" />
-  <img src="https://img.shields.io/badge/Version-v0.1.0-10B981?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Version-v0.1.1-10B981?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" />
 </p>
 
@@ -20,13 +20,15 @@
 
 ## ⚡ О проекте
 
-**STORM FELLOWSHIP v0.1.0** — это передовой клиент для командного, игрового и персонального общения, разработанный на базе высокопроизводительного рантайма **.NET 8 LTS** с современным интерфейсом **Fluent Glassmorphism** и глубокой интеграцией Windows 11 DWM.
+**STORM FELLOWSHIP v0.1.1** — это передовой клиент для командного, игрового и персонального общения, разработанный на базе высокопроизводительного рантайма **.NET 8 LTS** с современным интерфейсом **Fluent Glassmorphism** и глубокой интеграцией Windows 11 DWM.
 
-### 🌟 Ключевые возможности версии 0.1.0:
-1. 🎨 **Единый графический стиль STORM SYSTEM OPTIMIZER**:
+### 🌟 Ключевые возможности версии 0.1.1:
+1. 🎨 **Единый графический стиль STORM SYSTEM OPTIMIZER и отображение иконки приложения**:
+   - Настоящая иконка приложения высокого разрешения (`AppIcon.png`) отображается в шапке, боковом рейле, панели задач, меню Alt+Tab и трее.
    - Градиентные микро-контейнеры для иконок (`IconGradCyan`, `IconGradPurple`, `IconGradEmerald`, `IconGradAmber`, `IconGradSky`) с неоновыми полупрозрачными подложками (`#1A00D2FF`).
-   - Исправлено отображение иконки приложения в окнах, панели задач, трее и заголовках.
-2. 🔊 **Встроенный голосовой синтезатор Text-to-Speech (TTS)**:
+2. 🎚️ **Голосовой эквалайзер и Audio FX пресеты**:
+   - Выбор студийных звуковых профилей: *Студийный баланс, Глубокий бас (Radio/Deep Voice), Кристальный голос (Treble Boost), Киберспортивный фокус, Теплый ламповый звук*.
+3. 🔊 **Встроенный голосовой синтезатор Text-to-Speech (TTS)**:
    - Озвучивание любого сообщения в чате по правому клику мыши («🔊 Озвучить сообщение»).
 3. 📐 **Идеальная симметрия окон участников в звонке**:
    - Окна «Собеседник» и «Пользователь (Вы)» имеют абсолютно равные пропорции (`280x220`), одинаковые аватары (`84x84`), одинаковые шрифты и отступы.
