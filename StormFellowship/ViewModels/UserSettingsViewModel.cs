@@ -8,6 +8,7 @@ using StormFellowship.Services;
 namespace StormFellowship.ViewModels;
 
 public record StatusPresetItem(string Icon, string Title);
+public record AccentColorItem(string Name, string Hex);
 
 public partial class UserSettingsViewModel : ObservableObject
 {
@@ -132,6 +133,23 @@ public partial class UserSettingsViewModel : ObservableObject
     [ObservableProperty]
     private string _selectedAudioOutput = string.Empty;
 
+    [ObservableProperty]
+    private string _profileBannerHex = "#00A3FF";
+
+    [ObservableProperty]
+    private string _selectedAccentColor = "#00A3FF";
+
+    public ObservableCollection<AccentColorItem> AccentColorPalette { get; } = new()
+    {
+        new("Cyber Cyan", "#00E5FF"),
+        new("Electric Blue", "#00A3FF"),
+        new("Neon Purple", "#A855F7"),
+        new("Emerald Green", "#10B981"),
+        new("Sunset Amber", "#F59E0B"),
+        new("Crimson Rose", "#F43F5E"),
+        new("Platinum White", "#E2E8F0")
+    };
+
     public ObservableCollection<string> DirectionModes { get; } = new()
     {
         "Кардиоидная (Фронтальный фокус на голосе)",
@@ -211,6 +229,17 @@ public partial class UserSettingsViewModel : ObservableObject
             MicLiveLevel = level;
             OnPropertyChanged(nameof(LiveMicLevel));
         };
+    }
+
+    [RelayCommand]
+    public void SelectAccentColor(AccentColorItem item)
+    {
+        if (item != null)
+        {
+            SelectedAccentColor = item.Hex;
+            ProfileBannerHex = item.Hex;
+            _mainVM.ShowToastNotification($"Акцентный цвет: {item.Name} ({item.Hex})");
+        }
     }
 
     [RelayCommand]

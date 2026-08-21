@@ -6,7 +6,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="54" />
+            <RowDefinition Height="58" />
         </Grid.RowDefinitions>
 
         <!-- Sidebar Header (Fellowship Title or Direct Messages) -->
@@ -19,13 +19,17 @@
 
                 <TextBlock Text="{Binding FellowshipTitle}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
 
-                <!-- Action buttons -->
+                <!-- Action buttons (Create Channel, Fellowship Settings) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreateChannelCommand}" ToolTip="Создать канал">
-                        <TextBlock Text="➕" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreateChannelCommand}" ToolTip="Создать канал" Margin="0,0,2,0">
+                        <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
+                            <TextBlock Text="+" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
+                        </Border>
                     </Button>
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenFellowshipSettingsCommand}" ToolTip="Настройки содружества">
-                        <TextBlock Text="⚙️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenFellowshipSettingsCommand}" ToolTip="Настройки содружества">
+                        <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoGear}" Fill="{DynamicResource TextSecondaryBrush}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -36,12 +40,12 @@
             <StackPanel>
                 <!-- IF IN HOME/DM MODE: DIRECT MESSAGES LIST -->
                 <StackPanel Visibility="{Binding IsInDmMode, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="ЛИЧНЫЕ СООБЩЕНИЯ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="8,4,0,8" />
+                    <TextBlock Text="ЛИЧНЫЕ СООБЩЕНИЯ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="8,4,0,8" />
 
                     <ItemsControl ItemsSource="{Binding DmUsers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,2" CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}" Padding="8,6">
+                                <Border Margin="0,2" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" Padding="8,6">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -51,8 +55,8 @@
 
                                         <!-- Avatar with status dot -->
                                         <Grid VerticalAlignment="Center">
-                                            <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource InputBackgroundBrush}">
-                                                <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
+                                                <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                             <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
                                         </Grid>
@@ -63,12 +67,12 @@
                                             <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
 
-                                        <!-- Direct Call Button (Phone icon) -->
+                                        <!-- Direct Call Button -->
                                         <Button Grid.Column="2" Width="28" Height="28" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Начать прямой вызов">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
                                                     <Border CornerRadius="14" Background="{TemplateBinding Background}">
-                                                        <TextBlock Text="📞" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        <Path Data="{StaticResource GeoSpeaker}" Fill="#FFFFFF" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                     </Border>
                                                 </ControlTemplate>
                                             </Button.Template>
@@ -95,11 +99,11 @@
                                         <Button Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Left" Padding="6,2" Cursor="Hand" Tag="{Binding}" Click="OnCategoryHeaderClicked">
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="▾ " FontSize="10" Foreground="{DynamicResource AccentBrush}" />
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
                                             </StackPanel>
                                         </Button>
                                         <Button Grid.Column="1" Width="20" Height="20" Background="Transparent" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnAddChannelToCategoryClicked" ToolTip="Добавить канал в категорию">
-                                            <TextBlock Text="➕" FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <TextBlock Text="+" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Button>
                                     </Grid>
 
@@ -118,7 +122,7 @@
                                                     </Button.ContextMenu>
                                                     <Button.Template>
                                                         <ControlTemplate TargetType="Button">
-                                                            <Border CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                            <Border CornerRadius="8" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
                                                                 <Grid>
                                                                     <Grid.ColumnDefinitions>
                                                                         <ColumnDefinition Width="Auto" />
@@ -126,7 +130,7 @@
                                                                         <ColumnDefinition Width="Auto" />
                                                                     </Grid.ColumnDefinitions>
 
-                                                                    <!-- Channel Icon (# for text, 🔊 for voice) -->
+                                                                    <!-- Channel Icon -->
                                                                     <TextBlock Text="{Binding IconGlyph}" FontSize="13" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
 
                                                                     <!-- Channel Name -->
@@ -160,7 +164,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Avatar -->
-                <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
+                <Border Width="36" Height="36" CornerRadius="18" Background="{DynamicResource AccentBrush}">
                     <TextBlock Text="{Binding CurrentUser.AvatarGlyph}" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
 
@@ -170,16 +174,27 @@
                     <TextBlock Text="{Binding CurrentUser.CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
 
-                <!-- Controls with Dynamic Colorful Material Icons and Tooltips -->
+                <!-- Controls with Vector Glyphs -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="{Binding MicTooltip}">
-                        <TextBlock Text="{Binding MicIcon}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <!-- Mic Button -->
+                    <Button Width="28" Height="28" Margin="1,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="{Binding MicTooltip}">
+                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoMic}" Fill="{Binding IsMicMuted, Converter={StaticResource BoolToMutedColor}}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="{Binding SoundTooltip}">
-                        <TextBlock Text="{Binding SoundIcon}" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <!-- Headphones Button -->
+                    <Button Width="28" Height="28" Margin="1,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="{Binding SoundTooltip}">
+                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoHeadphones}" Fill="{Binding IsDeafened, Converter={StaticResource BoolToMutedColor}}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
-                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
-                        <TextBlock Text="⚙️" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    <!-- Settings Button -->
+                    <Button Width="28" Height="28" Margin="1,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
+                        <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoGear}" Fill="{DynamicResource TextSecondaryBrush}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
                 </StackPanel>
             </Grid>

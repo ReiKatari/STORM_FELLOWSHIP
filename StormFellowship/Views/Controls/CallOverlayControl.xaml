@@ -192,7 +192,7 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="22" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="{Binding IsMicMuted, Converter={StaticResource BoolToMicIcon}}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Path Data="{StaticResource GeoMic}" Fill="{Binding IsMicMuted, Converter={StaticResource BoolToMutedColor}}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -203,7 +203,7 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="22" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="{Binding IsDeafened, Converter={StaticResource BoolToSoundIcon}}" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Path Data="{StaticResource GeoHeadphones}" Fill="{Binding IsDeafened, Converter={StaticResource BoolToMutedColor}}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -213,8 +213,8 @@
                         <Button Width="44" Height="44" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Камера" Margin="4,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border CornerRadius="10" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <TextBlock Text="📹" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border CornerRadius="12" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Path Data="{StaticResource GeoVideo}" Fill="{DynamicResource AccentBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -224,8 +224,8 @@
                         <Button Width="44" Height="44" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleScreenShareCommand}" ToolTip="Демонстрация экрана" Margin="4,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border CornerRadius="10" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="🖥️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border CornerRadius="12" Background="{TemplateBinding Background}">
+                                        <Path Data="{StaticResource GeoScreenShare}" Fill="{DynamicResource TextPrimaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>
@@ -236,7 +236,7 @@
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="22" Background="{TemplateBinding Background}">
-                                        <TextBlock Text="📵" FontSize="18" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Path Data="{StaticResource GeoPhoneEnd}" Fill="#FFFFFF" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
                                 </ControlTemplate>
                             </Button.Template>

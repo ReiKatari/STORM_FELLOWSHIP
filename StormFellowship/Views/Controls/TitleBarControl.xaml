@@ -15,54 +15,100 @@
             <Image Source="pack://application:,,,/Assets/AppIcon.png" Width="26" Height="26" Margin="0,0,10,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
             <TextBlock Text="STORM" FontWeight="Black" FontSize="15" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
             <TextBlock Text=" FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-            <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="v0.0.6" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+            <Border Background="{DynamicResource AccentMutedBrush}" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="v0.0.7" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
             </Border>
         </StackPanel>
 
-        <!-- Center / Right Quick Actions (Overlay, Search, E2EE, Updates) -->
+        <!-- Center / Right Quick Actions with Pure Vector Glyphs -->
         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0" WindowChrome.IsHitTestVisibleInChrome="True">
             <!-- Game Overlay Toggle -->
-            <Button Command="{Binding ToggleGameOverlayCommand}" Margin="3,0" Padding="10,5" FontSize="11" FontWeight="SemiBold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Игровой оверлей (Shift + ~)">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🎮" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="Оверлей" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-                </StackPanel>
+            <Button Command="{Binding ToggleGameOverlayCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Игровой оверлей (Shift + ~)">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoGamepad}" Fill="{DynamicResource AccentBrush}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Оверлей" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
 
             <!-- Search Button -->
-            <Button Command="{Binding OpenSearchDialogCommand}" Margin="3,0" Padding="10,5" FontSize="11" FontWeight="SemiBold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Поиск по сообщениям (Ctrl + F)">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🔍" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="Поиск" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-                </StackPanel>
+            <Button Command="{Binding OpenSearchDialogCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Поиск по сообщениям (Ctrl + F)">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoSearch}" Fill="{DynamicResource TextSecondaryBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Поиск" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
 
             <!-- E2EE Shield Indicator -->
-            <Button Command="{Binding OpenE2EESecurityDialogCommand}" Margin="3,0" Padding="10,5" FontSize="11" FontWeight="SemiBold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource StatusOnlineBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="E2EE Сквозное шифрование активно">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🔒" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="E2EE" FontSize="11" Foreground="{DynamicResource StatusOnlineBrush}" VerticalAlignment="Center" />
-                </StackPanel>
+            <Button Command="{Binding OpenE2EESecurityDialogCommand}" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="E2EE Сквозное шифрование активно (AES-256)">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource StatusOnlineBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="E2EE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource StatusOnlineBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
 
             <!-- Check for Updates Button -->
-            <Button Click="OnCheckUpdatesClicked" Margin="3,0" Padding="10,5" FontSize="11" FontWeight="SemiBold" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Проверить наличие обновлений">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="↺" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
-                    <TextBlock Text="Обновления" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-                </StackPanel>
+            <Button Click="OnCheckUpdatesClicked" Margin="4,0" Padding="12,6" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Проверить наличие обновлений">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoRefresh}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Обновления" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
             </Button>
         </StackPanel>
 
-        <!-- High-Contrast Vector Window System Buttons -->
-        <StackPanel Grid.Column="3" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
-            <!-- Minimize -->
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMinimizeClicked" Cursor="Hand" ToolTip="Свернуть">
+        <!-- Ultra-Modern Rounded Window Control Capsules -->
+        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" WindowChrome.IsHitTestVisibleInChrome="True">
+            <!-- Minimize Button -->
+            <Button Width="36" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Click="OnMinimizeClicked" Cursor="Hand" ToolTip="Свернуть">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="BtnBorder" Background="Transparent">
-                            <Rectangle Width="11" Height="1.5" Fill="#E2E8F0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="BtnBorder" CornerRadius="8" Background="Transparent" Width="36" Height="30">
+                            <Rectangle Width="10" Height="2" Fill="#E2E8F0" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -73,12 +119,12 @@
                 </Button.Template>
             </Button>
 
-            <!-- Maximize / Restore -->
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnMaximizeRestoreClicked" Cursor="Hand" ToolTip="Развернуть / Восстановить">
+            <!-- Maximize / Restore Button -->
+            <Button Width="36" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Click="OnMaximizeRestoreClicked" Cursor="Hand" ToolTip="Развернуть / Восстановить">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="BtnBorder" Background="Transparent">
-                            <Border Width="11" Height="11" BorderBrush="#E2E8F0" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="BtnBorder" CornerRadius="8" Background="Transparent" Width="36" Height="30">
+                            <Border Width="10" Height="10" BorderBrush="#E2E8F0" BorderThickness="1.8" CornerRadius="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -89,12 +135,12 @@
                 </Button.Template>
             </Button>
 
-            <!-- Close Button (High contrast white with vibrant red hover) -->
-            <Button Width="46" Height="48" Background="Transparent" BorderThickness="0" Click="OnCloseClicked" Cursor="Hand" ToolTip="Закрыть">
+            <!-- Close Button (Modern capsule with crimson glow #FF3366) -->
+            <Button Width="36" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Click="OnCloseClicked" Cursor="Hand" ToolTip="Закрыть">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="BtnBorder" Background="Transparent">
-                            <TextBlock Text="✕" FontSize="13" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="BtnBorder" CornerRadius="8" Background="Transparent" Width="36" Height="30">
+                            <Path Data="{StaticResource GeoWinClose}" Stroke="#FFFFFF" StrokeThickness="1.8" Width="10" Height="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
