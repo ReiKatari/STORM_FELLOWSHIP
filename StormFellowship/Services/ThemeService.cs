@@ -30,8 +30,17 @@ public class ThemeService : IThemeService
             var dict = new ResourceDictionary { Source = new Uri(themeFile, UriKind.RelativeOrAbsolute) };
             if (Application.Current != null)
             {
-                Application.Current.Resources.MergedDictionaries.Clear();
-                Application.Current.Resources.MergedDictionaries.Add(dict);
+                var merged = Application.Current.Resources.MergedDictionaries;
+                var existingTheme = merged.FirstOrDefault(d => d.Source != null && d.Source.OriginalString.Contains("Theme"));
+                if (existingTheme != null)
+                {
+                    int index = merged.IndexOf(existingTheme);
+                    merged[index] = dict;
+                }
+                else
+                {
+                    merged.Insert(0, dict);
+                }
             }
         }
         catch

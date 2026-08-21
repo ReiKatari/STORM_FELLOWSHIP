@@ -34,35 +34,57 @@ public partial class UserSettingsDialog : UserControl
         TabProfileContent.Visibility = Visibility.Collapsed;
         TabHotkeysContent.Visibility = Visibility.Collapsed;
         TabAboutContent.Visibility = Visibility.Collapsed;
+
+        var transparentBrush = System.Windows.Media.Brushes.Transparent;
+        BtnTabThemes.Background = transparentBrush;
+        BtnTabAudio.Background = transparentBrush;
+        BtnTabProfile.Background = transparentBrush;
+        BtnTabHotkeys.Background = transparentBrush;
+        BtnTabAbout.Background = transparentBrush;
+    }
+
+    private void SetActiveButton(Button btn)
+    {
+        try
+        {
+            btn.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x2A, 0x00, 0xD2, 0xFF));
+            btn.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x66, 0x00, 0xD2, 0xFF));
+        }
+        catch { }
     }
 
     private void OnTabThemesClicked(object sender, RoutedEventArgs e)
     {
         HideAllTabs();
+        SetActiveButton(BtnTabThemes);
         TabThemesContent.Visibility = Visibility.Visible;
     }
 
     private void OnTabAudioClicked(object sender, RoutedEventArgs e)
     {
         HideAllTabs();
+        SetActiveButton(BtnTabAudio);
         TabAudioContent.Visibility = Visibility.Visible;
     }
 
     private void OnTabProfileClicked(object sender, RoutedEventArgs e)
     {
         HideAllTabs();
+        SetActiveButton(BtnTabProfile);
         TabProfileContent.Visibility = Visibility.Visible;
     }
 
     private void OnTabHotkeysClicked(object sender, RoutedEventArgs e)
     {
         HideAllTabs();
+        SetActiveButton(BtnTabHotkeys);
         TabHotkeysContent.Visibility = Visibility.Visible;
     }
 
     private void OnTabAboutClicked(object sender, RoutedEventArgs e)
     {
         HideAllTabs();
+        SetActiveButton(BtnTabAbout);
         TabAboutContent.Visibility = Visibility.Visible;
     }
 
