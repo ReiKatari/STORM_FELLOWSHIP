@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 using StormFellowship.Models;
 
 namespace StormFellowship.Services;
@@ -31,119 +33,115 @@ public class FellowshipService : IFellowshipService
             Username = "user",
             DisplayName = "Пользователь",
             Tag = "0001",
-            AvatarGlyph = "⚡",
+            AvatarGlyph = "GeoLightning",
             Status = UserStatus.Online,
             CustomStatus = "В сети",
             RoleName = "Создатель",
-            RoleColorHex = "#00A3FF"
+            RoleColorHex = "#3B82F6"
         };
 
+        LoadUserProfile();
         SeedData();
+    }
+
+    private static string GetUserProfileFilePath()
+    {
+        string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StormFellowship");
+        Directory.CreateDirectory(dir);
+        return Path.Combine(dir, "user_profile.json");
+    }
+
+    public void SaveUserProfile()
+    {
+        try
+        {
+            var data = new
+            {
+                DisplayName = CurrentUser.DisplayName,
+                CustomStatus = CurrentUser.CustomStatus,
+                AvatarPath = CurrentUser.AvatarPath,
+                AvatarGlyph = CurrentUser.AvatarGlyph,
+                RoleColorHex = CurrentUser.RoleColorHex,
+                Username = CurrentUser.Username,
+                Tag = CurrentUser.Tag
+            };
+            string json = System.Text.Json.JsonSerializer.Serialize(data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(GetUserProfileFilePath(), json);
+        }
+        catch { }
+    }
+
+    public void LoadUserProfile()
+    {
+        try
+        {
+            string path = GetUserProfileFilePath();
+            if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);
+                using var doc = System.Text.Json.JsonDocument.Parse(json);
+                var root = doc.RootElement;
+                if (root.TryGetProperty("DisplayName", out var dn) && !string.IsNullOrWhiteSpace(dn.GetString()))
+                    CurrentUser.DisplayName = dn.GetString()!;
+                if (root.TryGetProperty("CustomStatus", out var cs))
+                    CurrentUser.CustomStatus = cs.GetString() ?? "В сети";
+                if (root.TryGetProperty("AvatarPath", out var ap))
+                    CurrentUser.AvatarPath = ap.GetString() ?? string.Empty;
+                if (root.TryGetProperty("AvatarGlyph", out var ag) && !string.IsNullOrWhiteSpace(ag.GetString()))
+                    CurrentUser.AvatarGlyph = ag.GetString()!;
+                if (root.TryGetProperty("RoleColorHex", out var rc) && !string.IsNullOrWhiteSpace(rc.GetString()))
+                    CurrentUser.RoleColorHex = rc.GetString()!;
+            }
+        }
+        catch { }
+    }
+
+    private readonly Dictionary<string, ObservableCollection<ChatMessage>> _dmMessageStore = new();
+
+    public ObservableCollection<ChatMessage> GetDirectMessages(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId)) userId = "user_bot";
+        if (!_dmMessageStore.TryGetValue(userId, out var list))
+        {
+            list = new ObservableCollection<ChatMessage>();
+            _dmMessageStore[userId] = list;
+        }
+        return list;
     }
 
     private void SeedData()
     {
-        var mainFellowship = new Fellowship
+        Fellowships.Clear();
+        Folders.Clear();
+        DirectMessageUsers.Clear();
+
+        var botUser = new User
         {
-            Id = "guild_main",
-            Name = "Основное содружество",
-            Tag = "STORM",
-            Description = "Пространство для голосового и текстового общения.",
-            IconUrl = "ms-appx:///Assets/Logo.png",
-            OwnerId = CurrentUser.Id,
-            IsSelected = true
+            Id = "user_bot",
+            Username = "storm_ai",
+            DisplayName = "STORM Bot",
+            Tag = "0000",
+            AvatarGlyph = "🤖",
+            Status = UserStatus.Online,
+            CustomStatus = "⚡ AI Ассистент и Саундборд",
+            RoleName = "Бот",
+            RoleColorHex = "#00D2FF"
         };
 
-        // Seed Roles
-        mainFellowship.Roles.Add(new Role { Name = "Создатель", ColorHex = "#00A3FF", Permissions = (RolePermissions)0x3FFF, Priority = 100 });
-        mainFellowship.Roles.Add(new Role { Name = "Модератор", ColorHex = "#22C55E", Permissions = RolePermissions.SendMessages | RolePermissions.AttachFiles | RolePermissions.ConnectVoice | RolePermissions.Speak | RolePermissions.PrioritySpeaker | RolePermissions.MuteMembers, Priority = 80 });
-        mainFellowship.Roles.Add(new Role { Name = "Оратор", ColorHex = "#F59E0B", Permissions = RolePermissions.SendMessages | RolePermissions.ConnectVoice | RolePermissions.Speak | RolePermissions.PrioritySpeaker, Priority = 60 });
-        mainFellowship.Roles.Add(new Role { Name = "Участник", ColorHex = "#94A3B8", Permissions = RolePermissions.SendMessages | RolePermissions.AttachFiles | RolePermissions.ConnectVoice | RolePermissions.Speak, Priority = 10 });
+        DirectMessageUsers.Add(botUser);
 
-        // Add Categories
-        var textCategory = new ChannelCategory { Id = "cat_text", Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
-        var voiceCategory = new ChannelCategory { Id = "cat_voice", Name = "ГОЛОСОВЫЕ КАНАЛЫ" };
-
-        var generalChannel = new Channel
+        var botChat = GetDirectMessages(botUser.Id);
+        if (botChat.Count == 0)
         {
-            Id = "chan_general",
-            Name = "общий",
-            Topic = "Основной чат содружества",
-            Type = ChannelType.Text
-        };
+            botChat.Add(new ChatMessage
+            {
+                Author = botUser,
+                Content = "Привет! Я STORM Bot — твой AI-ассистент. Ты можешь общаться со мной здесь, создавать содружества, настраивать папки и использовать саундборд!",
+                Timestamp = DateTime.Now
+            });
+        }
 
-        var newsChannel = new Channel
-        {
-            Id = "chan_news",
-            Name = "новости",
-            Topic = "Официальные объявления",
-            Type = ChannelType.Announcements
-        };
-
-        var voiceChannel1 = new Channel
-        {
-            Id = "chan_voice_1",
-            Name = "Голосовой 1",
-            Topic = "Основная комната",
-            Type = ChannelType.Voice,
-            BitrateKbps = 128
-        };
-
-        var voiceHub = new Channel
-        {
-            Id = "chan_voice_hub",
-            Name = "⚡ Создать комнату",
-            Topic = "Автоматическое создание персональной комнаты",
-            Type = ChannelType.VoiceHub,
-            BitrateKbps = 128
-        };
-
-        textCategory.Channels.Add(generalChannel);
-        textCategory.Channels.Add(newsChannel);
-        voiceCategory.Channels.Add(voiceChannel1);
-        voiceCategory.Channels.Add(voiceHub);
-
-        mainFellowship.Categories.Add(textCategory);
-        mainFellowship.Categories.Add(voiceCategory);
-
-        mainFellowship.Members.Add(CurrentUser);
-        Fellowships.Add(mainFellowship);
-
-        // Seed Sample Folder
-        var gamingFolder = new FellowshipFolder { Name = "Игры и Сообщества", ColorHex = "#A855F7" };
-        Folders.Add(gamingFolder);
-
-        // Seed Sample Welcome Message with Poll
-        var welcomeMsg = new ChatMessage
-        {
-            Author = CurrentUser,
-            Content = "Добро пожаловать в STORM FELLOWSHIP v0.0.6! ⚡ Все модули активны: игровой оверлей, E2EE, Whisper AI, 3D звук и опрос.",
-            Timestamp = DateTime.Now
-        };
-        generalChannel.Messages.Add(welcomeMsg);
-
-        // Sample Interactive Poll
-        var samplePoll = new PollItem
-        {
-            Question = "Какой режим связи вы используете чаще всего?",
-            AuthorName = CurrentUser.DisplayName
-        };
-        samplePoll.Options.Add(new PollOption { Text = "🎙️ Голосовые каналы со сверхнизкой задержкой", VotesCount = 4, Percentage = 57.0 });
-        samplePoll.Options.Add(new PollOption { Text = "💬 Текстовые чаты с опросами и стикерами", VotesCount = 2, Percentage = 29.0 });
-        samplePoll.Options.Add(new PollOption { Text = "📹 HD видеосозвоны и стриминг экрана", VotesCount = 1, Percentage = 14.0 });
-        samplePoll.RecalculatePercentages();
-
-        var pollMsg = new ChatMessage
-        {
-            Author = CurrentUser,
-            Content = "Опрос сообщества:",
-            Poll = samplePoll,
-            Timestamp = DateTime.Now
-        };
-        generalChannel.Messages.Add(pollMsg);
-
-        SelectFellowship(mainFellowship);
-        SelectChannel(generalChannel);
+        SelectDirectMessage(botUser);
     }
 
     public Fellowship CreateFellowship(string name)
@@ -164,9 +162,9 @@ public class FellowshipService : IFellowshipService
         var textCat = new ChannelCategory { Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
         var voiceCat = new ChannelCategory { Name = "ГОЛОСОВЫЕ КАНАЛЫ" };
 
-        textCat.Channels.Add(new Channel { Name = "общий", Type = ChannelType.Text });
+        textCat.Channels.Add(new Channel { Name = "Общий", Type = ChannelType.Text });
         voiceCat.Channels.Add(new Channel { Name = "Голосовой 1", Type = ChannelType.Voice, BitrateKbps = 128 });
-        voiceCat.Channels.Add(new Channel { Name = "⚡ Создать комнату", Type = ChannelType.VoiceHub, BitrateKbps = 128 });
+        voiceCat.Channels.Add(new Channel { Name = "Создать комнату", Type = ChannelType.VoiceHub, BitrateKbps = 128 });
 
         f.Categories.Add(textCat);
         f.Categories.Add(voiceCat);
@@ -179,26 +177,56 @@ public class FellowshipService : IFellowshipService
 
     public Fellowship? JoinFellowship(string inviteCode)
     {
-        var existing = Fellowships.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(inviteCode)) return null;
+
+        string cleanCode = inviteCode.Replace("storm://invite/", "").Replace("storm://join/", "").Trim();
+
+        var existing = Fellowships.FirstOrDefault(f => f.Id.Equals(cleanCode, StringComparison.OrdinalIgnoreCase) || f.Name.Contains(cleanCode, StringComparison.OrdinalIgnoreCase));
         if (existing != null)
         {
+            if (!existing.Members.Any(m => m.Id == CurrentUser.Id))
+            {
+                existing.Members.Add(CurrentUser);
+            }
             SelectFellowship(existing);
+            return existing;
         }
-        return existing;
+
+        // Create joined fellowship from invite code
+        string fellowshipName = cleanCode.Length > 8 ? $"Содружество #{cleanCode[..6].ToUpper()}" : $"Содружество {cleanCode}";
+        var newFellowship = new Fellowship
+        {
+            Id = cleanCode,
+            Name = fellowshipName,
+            Description = $"Подключено по ссылке-приглашению: {inviteCode}",
+            IconUrl = "pack://application:,,,/Assets/AppIcon.png",
+            OwnerId = "remote_host"
+        };
+
+        var textCat = new ChannelCategory { Name = "ТЕКСТОВЫЕ КАНАЛЫ" };
+        var voiceCat = new ChannelCategory { Name = "ГОЛОСОВЫЕ КАНАЛЫ (OPUS HD)" };
+
+        var generalChan = new Channel { Name = "общий", Type = ChannelType.Text, Topic = "Канал связи участников содружества" };
+        generalChan.Messages.Add(new ChatMessage
+        {
+            Author = new User { DisplayName = "STORM System", Username = "system", RoleName = "Система", RoleColorHex = "#3B82F6", AvatarGlyph = "GeoShield" },
+            Content = $"👋 Добро пожаловать! Вы успешно присоединились к «{fellowshipName}» по ссылке-приглашению.",
+            Timestamp = DateTime.Now
+        });
+
+        textCat.Channels.Add(generalChan);
+        voiceCat.Channels.Add(new Channel { Name = "Голосовой 1", Type = ChannelType.Voice, BitrateKbps = 256 });
+        voiceCat.Channels.Add(new Channel { Name = "Игровая комната", Type = ChannelType.Voice, BitrateKbps = 384 });
+
+        newFellowship.Categories.Add(textCat);
+        newFellowship.Categories.Add(voiceCat);
+        newFellowship.Members.Add(CurrentUser);
+
+        Fellowships.Add(newFellowship);
+        SelectFellowship(newFellowship);
+        return newFellowship;
     }
 
-    public void DeleteFellowship(string fellowshipId)
-    {
-        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId);
-        if (f != null)
-        {
-            Fellowships.Remove(f);
-            if (CurrentFellowship?.Id == fellowshipId)
-            {
-                SelectFellowship(Fellowships.FirstOrDefault());
-            }
-        }
-    }
 
     public void RenameFellowship(string fellowshipId, string newName, string newDescription)
     {
@@ -404,5 +432,92 @@ public class FellowshipService : IFellowshipService
         CurrentDmUserChanged?.Invoke(CurrentDmUser);
         CurrentFellowshipChanged?.Invoke(null);
         CurrentChannelChanged?.Invoke(null);
+    }
+
+    public FellowshipFolder CreateFolder(string name, string icon = "📁", string colorHex = "#00A3FF")
+    {
+        var folder = new FellowshipFolder
+        {
+            Name = string.IsNullOrWhiteSpace(name) ? "Новая папка" : name,
+            Icon = string.IsNullOrWhiteSpace(icon) ? "📁" : icon,
+            ColorHex = string.IsNullOrWhiteSpace(colorHex) ? "#00A3FF" : colorHex,
+            IsExpanded = true
+        };
+        Folders.Add(folder);
+        return folder;
+    }
+
+    public void DeleteFolder(FellowshipFolder folder)
+    {
+        foreach (var f in folder.Fellowships.ToList())
+        {
+            if (!Fellowships.Contains(f))
+            {
+                Fellowships.Add(f);
+            }
+        }
+        folder.Fellowships.Clear();
+        Folders.Remove(folder);
+    }
+
+    public void DeleteFellowship(string fellowshipId)
+    {
+        var f = Fellowships.FirstOrDefault(x => x.Id == fellowshipId);
+        if (f != null)
+        {
+            Fellowships.Remove(f);
+        }
+
+        foreach (var folder in Folders)
+        {
+            var nested = folder.Fellowships.FirstOrDefault(x => x.Id == fellowshipId);
+            if (nested != null)
+            {
+                folder.Fellowships.Remove(nested);
+            }
+        }
+
+        if (CurrentFellowship?.Id == fellowshipId)
+        {
+            var nextF = Fellowships.FirstOrDefault() ?? Folders.SelectMany(x => x.Fellowships).FirstOrDefault();
+            SelectFellowship(nextF);
+        }
+    }
+
+    public void MoveFellowshipToFolder(Fellowship fellowship, FellowshipFolder targetFolder)
+    {
+        if (fellowship == null || targetFolder == null) return;
+
+        if (Fellowships.Contains(fellowship))
+        {
+            Fellowships.Remove(fellowship);
+        }
+
+        foreach (var fld in Folders)
+        {
+            if (fld != targetFolder && fld.Fellowships.Contains(fellowship))
+            {
+                fld.Fellowships.Remove(fellowship);
+            }
+        }
+
+        if (!targetFolder.Fellowships.Contains(fellowship))
+        {
+            targetFolder.Fellowships.Add(fellowship);
+        }
+        targetFolder.IsExpanded = true;
+    }
+
+    public void RemoveFellowshipFromFolder(Fellowship fellowship, FellowshipFolder folder)
+    {
+        if (fellowship == null || folder == null) return;
+        if (folder.Fellowships.Contains(fellowship))
+        {
+            folder.Fellowships.Remove(fellowship);
+        }
+        if (!Fellowships.Contains(fellowship))
+        {
+            Fellowships.Add(fellowship);
+        }
     }
 }

@@ -83,6 +83,65 @@ public partial class ChatMessage : ObservableObject
     private bool _hasSticker;
 
     [ObservableProperty]
+    private bool _isTranslated;
+
+    [ObservableProperty]
+    private string _translatedText = string.Empty;
+
+    [ObservableProperty]
+    private string _targetLangCode = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasCodeBlock;
+
+    [ObservableProperty]
+    private string _codeLanguage = "C#";
+
+    [ObservableProperty]
+    private string _codeContent = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasSpoiler;
+
+    [ObservableProperty]
+    private string _spoilerText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isSpoilerRevealed;
+
+    [ObservableProperty]
+    private bool _isVoicePlaying;
+
+    [ObservableProperty]
+    private double _voicePlaybackProgress;
+
+    [ObservableProperty]
+    private double _voicePlaybackSpeed = 1.0;
+
+    public ObservableCollection<double> VoiceWaveformBands { get; } = new();
+
+    [ObservableProperty]
+    private bool _hasThread;
+
+    [ObservableProperty]
+    private int _threadReplyCount = 0;
+
+    [ObservableProperty]
+    private string _threadLastReplyTime = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasFileAttachment;
+
+    [ObservableProperty]
+    private string _fileName = string.Empty;
+
+    [ObservableProperty]
+    private string _fileSizeFormatted = string.Empty;
+
+    [ObservableProperty]
+    private string _fileExtension = string.Empty;
+
+    [ObservableProperty]
     private PollItem? _poll;
 
     public bool IsPoll => Poll != null;

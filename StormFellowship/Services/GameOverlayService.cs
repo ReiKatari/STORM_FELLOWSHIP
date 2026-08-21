@@ -35,6 +35,11 @@ public class GameOverlayService
                 _overlayWindow.Closed += (s, e) => _overlayWindow = null;
             }
 
+            if (_overlayWindow.DataContext is StormFellowship.ViewModels.GameOverlayViewModel vm)
+            {
+                vm.RefreshProperties();
+            }
+
             _overlayWindow.Show();
             OverlayStateChanged?.Invoke(true);
         }

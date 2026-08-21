@@ -7,7 +7,8 @@ using StormFellowship.Services;
 
 namespace StormFellowship.ViewModels;
 
-public record StatusPresetItem(string Icon, string Title);
+public record StatusPresetItem(string IconGeo, string Title, string ColorHex);
+public record AvatarPresetItem(string IconGeo, string Name, string ColorHex);
 public record AccentColorItem(string Name, string Hex);
 
 public partial class UserSettingsViewModel : ObservableObject
@@ -23,6 +24,7 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             CurrentUser.DisplayName = value;
             OnPropertyChanged(nameof(DisplayName));
+            FellowshipService.Instance.SaveUserProfile();
         }
     }
 
@@ -33,6 +35,7 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             CurrentUser.CustomStatus = value;
             OnPropertyChanged(nameof(CustomStatus));
+            FellowshipService.Instance.SaveUserProfile();
         }
     }
 
@@ -43,6 +46,7 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             CurrentUser.AvatarGlyph = value;
             OnPropertyChanged(nameof(AvatarGlyph));
+            FellowshipService.Instance.SaveUserProfile();
         }
     }
 
@@ -54,10 +58,24 @@ public partial class UserSettingsViewModel : ObservableObject
             CurrentUser.AvatarPath = value;
             OnPropertyChanged(nameof(AvatarPath));
             OnPropertyChanged(nameof(HasCustomAvatar));
+            FellowshipService.Instance.SaveUserProfile();
         }
     }
 
     public bool HasCustomAvatar => !string.IsNullOrWhiteSpace(CurrentUser.AvatarPath);
+
+    public bool IsMicMonitoringLoopbackEnabled
+    {
+        get => AudioService.Instance.IsMicMonitoringLoopbackEnabled;
+        set
+        {
+            AudioService.Instance.IsMicMonitoringLoopbackEnabled = value;
+            OnPropertyChanged(nameof(IsMicMonitoringLoopbackEnabled));
+            _mainVM.ShowToastNotification(value 
+                ? "🎙️ Мониторинг голоса включен: говорите в микрофон!" 
+                : "🔇 Мониторинг голоса отключен");
+        }
+    }
 
     public bool IsVadMode
     {
@@ -175,46 +193,156 @@ public partial class UserSettingsViewModel : ObservableObject
         "Теплый ламповый звук"
     };
 
+    public List<VoiceChangerPreset> VoiceChangerPresets => AudioService.Instance.VoiceChangerPresets;
+
+    public VoiceChangerPreset SelectedVoiceChangerPreset
+    {
+        get => AudioService.Instance.SelectedVoicePreset;
+        set
+        {
+            AudioService.Instance.SelectedVoicePreset = value;
+            OnPropertyChanged(nameof(SelectedVoiceChangerPreset));
+            _mainVM.ShowToastNotification($"🎙️ Эффект изменения голоса: {value.Icon} {value.Name}");
+        }
+    }
+
+    [RelayCommand]
+    public void PreviewVoiceChanger(VoiceChangerPreset? preset)
+    {
+        var target = preset ?? SelectedVoiceChangerPreset;
+        if (target != null)
+        {
+            AudioService.Instance.PreviewVoicePreset(target);
+            _mainVM.ShowToastNotification($"🔊 Тест пресета: {target.Icon} {target.Name}");
+        }
+    }
+
     [ObservableProperty]
     private string _selectedFxPreset = "Студийный баланс (Нейтральный чистый голос)";
 
     public ObservableCollection<string> AudioInputDevices { get; } = new();
     public ObservableCollection<string> AudioOutputDevices { get; } = new();
 
-    public ObservableCollection<string> AvatarPresets { get; } = new()
+    public ObservableCollection<AvatarPresetItem> AvatarPresets { get; } = new()
     {
-        "⚡", "🛡️", "👑", "🐺", "🦅", "🐉", "⚔️", "🌌",
-        "🚀", "💎", "🐱", "🦊", "🐯", "🐼", "🦁", "🤖",
-        "🎮", "🎧", "🏆", "🔥", "🔮", "🎯", "🌟", "✨"
+        new("GeoLightning", "Молния", "#3B82F6"),
+        new("GeoShield", "Щит", "#10B981"),
+        new("GeoCrown", "Корона", "#F59E0B"),
+        new("GeoGamepad", "Гейминг", "#8B5CF6"),
+        new("GeoRocket", "Ракета", "#EC4899"),
+        new("GeoDiamond", "Алмаз", "#06B6D4"),
+        new("GeoFire", "Огонь", "#EF4444"),
+        new("GeoStar", "Звезда", "#FBBF24"),
+        new("GeoBot", "Киборг", "#6366F1"),
+        new("GeoSwords", "Битва", "#14B8A6"),
+        new("GeoHeadphones", "Аудио", "#A855F7"),
+        new("GeoTrophy", "Трофей", "#EAB308")
     };
 
     public ObservableCollection<StatusPresetItem> StatusPresets { get; } = new()
     {
-        new("🎮", "Играет в игру"),
-        new("🎧", "Слушает музыку"),
-        new("💻", "Программирует"),
-        new("🚀", "На созвоне"),
-        new("⚔️", "В рейде"),
-        new("🏆", "На турнире"),
-        new("⚡", "Заряжен энергией"),
-        new("🛡️", "На страже содружества"),
-        new("☕", "Пьет кофе"),
-        new("🍕", "На перекусе"),
-        new("💤", "Спит / Отдыхает"),
-        new("🏖️", "В отпуске"),
-        new("✈️", "В путешествии"),
-        new("🎬", "Смотрит фильм"),
-        new("🎯", "В прицеле"),
-        new("🔥", "В огне / Продуктивность"),
-        new("🌊", "На своей волне"),
-        new("🕹️", "Ведет стрим"),
-        new("🏋️", "В спортзале"),
-        new("🎤", "Записывает подкаст"),
-        new("🤖", "Автоответчик"),
-        new("📚", "Учится / Читает"),
-        new("🧠", "В размышлениях"),
-        new("🎨", "Создает дизайн")
+        new("GeoGamepad", "Играет в игру", "#3B82F6"),
+        new("GeoHeadphones", "Слушает музыку", "#8B5CF6"),
+        new("GeoLightning", "В фокусе / Кодит", "#F59E0B"),
+        new("GeoMic", "На созвоне", "#10B981"),
+        new("GeoSwords", "В рейде / Турнир", "#EF4444"),
+        new("GeoTrophy", "Побеждает", "#EAB308"),
+        new("GeoShield", "На страже содружества", "#06B6D4"),
+        new("GeoStar", "Создает контент", "#EC4899"),
+        new("GeoBot", "Автоответчик", "#6366F1"),
+        new("GeoEye", "Смотрит трансляцию", "#14B8A6"),
+        new("GeoSearch", "В поисках тимейтов", "#38BDF8"),
+        new("GeoSave", "Работает над проектом", "#84CC16")
     };
+
+    public bool IsAvxDspActive => AvxDspService.IsAvx2Supported;
+    public string DspInstructionSet => AvxDspService.CpuInstructionSet;
+
+    [ObservableProperty]
+    private bool _isAudioDuckingEnabled = true;
+
+    [ObservableProperty]
+    private double _duckingPercent = 40.0;
+
+    [ObservableProperty]
+    private double _smartKeySuppression = 85.0;
+
+    [ObservableProperty]
+    private double _smartBreathSuppression = 90.0;
+
+    [ObservableProperty]
+    private bool _isAdaptiveMeshEnabled = true;
+
+    [ObservableProperty]
+    private int _selectedMaxBitrate = 384;
+
+    public ObservableCollection<int> BitrateOptions { get; } = new() { 64, 128, 192, 256, 384, 510 };
+
+    public ObservableCollection<SupportedLanguage> AvailableLanguages => TranslationService.Instance.AvailableLanguages;
+
+    public SupportedLanguage SelectedLanguage
+    {
+        get => TranslationService.Instance.TargetLanguage;
+        set
+        {
+            TranslationService.Instance.TargetLanguage = value;
+            OnPropertyChanged(nameof(SelectedLanguage));
+            _mainVM.ShowToastNotification($"🌍 Язык перевода: {value.FlagEmoji} {value.Name}");
+        }
+    }
+
+    [ObservableProperty]
+    private bool _isAutoTranslateChat = false;
+
+    [RelayCommand]
+    public async Task ExportBackup()
+    {
+        try
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Экспорт резервной копии STORM FELLOWSHIP",
+                Filter = "STORM Backup (*.stormbackup)|*.stormbackup",
+                FileName = $"StormBackup_{DateTime.Now:yyyyMMdd_HHmm}.stormbackup"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                await BackupSyncService.Instance.ExportBackupAsync(dialog.FileName);
+                _mainVM.ShowToastNotification("💾 Резервная копия .stormbackup успешно создана!");
+            }
+        }
+        catch (Exception ex)
+        {
+            _mainVM.ShowToastNotification($"Ошибка экспорта: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    public async Task ImportBackup()
+    {
+        try
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Восстановление из резервной копии STORM FELLOWSHIP",
+                Filter = "STORM Backup (*.stormbackup)|*.stormbackup"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                bool ok = await BackupSyncService.Instance.ImportBackupAsync(dialog.FileName);
+                if (ok)
+                {
+                    _mainVM.ShowToastNotification("✅ Настройки и профиль успешно восстановлены!");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _mainVM.ShowToastNotification($"Ошибка восстановления: {ex.Message}");
+        }
+    }
 
     public UserSettingsViewModel(MainViewModel mainVM)
     {
@@ -250,21 +378,25 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             SelectedAccentColor = item.Hex;
             ProfileBannerHex = item.Hex;
-            _mainVM.ShowToastNotification($"Акцентный цвет: {item.Name} ({item.Hex})");
+            ThemeService.Instance.SetAccentColor(item.Hex);
+            _mainVM.ShowToastNotification($"🎨 Акцентный цвет изменен: {item.Name} ({item.Hex})");
         }
     }
 
     [RelayCommand]
-    public void SelectAvatarPreset(string glyph)
+    public void SelectAvatarPreset(AvatarPresetItem preset)
     {
-        AvatarGlyph = glyph;
+        if (preset == null) return;
+        AvatarGlyph = preset.IconGeo;
         AvatarPath = string.Empty;
-        CurrentUser.AvatarGlyph = glyph;
+        CurrentUser.AvatarGlyph = preset.IconGeo;
         CurrentUser.AvatarPath = string.Empty;
         OnPropertyChanged(nameof(AvatarGlyph));
         OnPropertyChanged(nameof(AvatarPath));
         OnPropertyChanged(nameof(HasCustomAvatar));
-        _mainVM.ShowToastNotification($"Аватар изменен на {glyph}");
+        FellowshipService.Instance.SaveUserProfile();
+        _mainVM.RefreshUserProfileBindings();
+        _mainVM.ShowToastNotification($"Аватар изменен на векторный символ «{preset.Name}»");
     }
 
     [RelayCommand]
@@ -285,7 +417,9 @@ public partial class UserSettingsViewModel : ObservableObject
                 CurrentUser.AvatarPath = dialog.FileName;
                 OnPropertyChanged(nameof(AvatarPath));
                 OnPropertyChanged(nameof(HasCustomAvatar));
-                _mainVM.ShowToastNotification("Пользовательский аватар успешно загружен!");
+                FellowshipService.Instance.SaveUserProfile();
+                _mainVM.RefreshUserProfileBindings();
+                _mainVM.ShowToastNotification("Пользовательский аватар успешно сохранен и применен!");
             }
         }
         catch (Exception ex)
@@ -295,12 +429,27 @@ public partial class UserSettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void ResetCustomAvatar()
+    {
+        AvatarPath = string.Empty;
+        CurrentUser.AvatarPath = string.Empty;
+        OnPropertyChanged(nameof(AvatarPath));
+        OnPropertyChanged(nameof(HasCustomAvatar));
+        FellowshipService.Instance.SaveUserProfile();
+        _mainVM.RefreshUserProfileBindings();
+        _mainVM.ShowToastNotification("Аватар сброшен на иконку по умолчанию");
+    }
+
+    [RelayCommand]
     public void SelectStatusPreset(StatusPresetItem preset)
     {
-        CustomStatus = $"{preset.Icon} {preset.Title}";
+        if (preset == null) return;
+        CustomStatus = preset.Title;
         CurrentUser.CustomStatus = CustomStatus;
         OnPropertyChanged(nameof(CustomStatus));
-        _mainVM.ShowToastNotification($"Статус обновлен: {preset.Icon} {preset.Title}");
+        FellowshipService.Instance.SaveUserProfile();
+        _mainVM.RefreshUserProfileBindings();
+        _mainVM.ShowToastNotification($"Статус обновлен: {preset.Title}");
     }
 
     [RelayCommand]

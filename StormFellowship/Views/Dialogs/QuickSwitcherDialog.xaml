@@ -41,8 +41,9 @@
                 <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="16,0" CornerRadius="0,0,16,16">
                     <Grid VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="⚡ Навигация: " FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
-                            <TextBlock Text="Каналы (#), Голосовые комнаты (🔊), Личные сообщения, Настройки" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <Path Data="{StaticResource GeoLightning}" Fill="{StaticResource IconGradCyan}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Навигация: " FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
+                            <TextBlock Text="Текстовые каналы (#), Голосовые комнаты, Личные сообщения, Настройки" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" />
                         </StackPanel>
                     </Grid>
                 </Border>

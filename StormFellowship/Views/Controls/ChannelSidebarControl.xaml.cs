@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using StormFellowship.Models;
+using StormFellowship.Services;
 using StormFellowship.ViewModels;
 
 namespace StormFellowship.Views.Controls;
@@ -57,6 +58,22 @@ public partial class ChannelSidebarControl : UserControl
         if (sender is Button btn && btn.Tag is User user && DataContext is ChannelSidebarViewModel vm)
         {
             vm.StartDirectCallWithUser(user);
+        }
+    }
+
+    private void OnDirectVideoCallButtonClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is User user)
+        {
+            CallService.Instance.StartDirectCall(user, isVideo: true);
+        }
+    }
+
+    private void OnDmUserClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is User user)
+        {
+            FellowshipService.Instance.SelectDirectMessage(user);
         }
     }
 }

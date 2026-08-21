@@ -75,7 +75,9 @@ public class BoolToMutedColorConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool muted = value is bool b && b;
-        return muted ? new SolidColorBrush(Color.FromRgb(239, 68, 68)) : new SolidColorBrush(Color.FromRgb(148, 163, 184));
+        return muted
+            ? new SolidColorBrush(Color.FromRgb(239, 68, 68))   // Vivid Red for Muted
+            : new SolidColorBrush(Color.FromRgb(0, 229, 255));   // Electric Cyan for Active
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
@@ -122,6 +124,55 @@ public class ChannelTypeToBrushConverter : IValueConverter
             return Application.Current.TryFindResource(key) ?? new SolidColorBrush(Colors.Cyan);
         }
         return new SolidColorBrush(Colors.Cyan);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+}
+
+public class GeoKeyToGeometryConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string key && !string.IsNullOrWhiteSpace(key) && Application.Current != null)
+        {
+            // Direct key lookup
+            var res = Application.Current.TryFindResource(key);
+            if (res != null) return res;
+
+            // Map emoji / symbols to vector geometry resource keys
+            string mappedKey = key.Trim() switch
+            {
+                "📁" => "GeoFolder",
+                "🎮" => "GeoGamepad",
+                "⚡" => "GeoLightning",
+                "🔥" => "GeoFire",
+                "🛡️" or "🛡" => "GeoShield",
+                "🚀" => "GeoRocket",
+                "🎯" => "GeoTarget",
+                "👑" => "GeoCrown",
+                "💎" => "GeoDiamond",
+                "🏆" => "GeoTrophy",
+                "🎧" => "GeoHeadphones",
+                "🌟" or "⭐" => "GeoStar",
+                "🤖" => "GeoBot",
+                "🍕" => "GeoPizza",
+                "⚔️" or "⚔" => "GeoSwords",
+                "🍿" => "GeoPopcorn",
+                "👤" or "👥" => "GeoUser",
+                "🎤" => "GeoMic",
+                "📹" or "🎥" => "GeoVideo",
+                "🔔" => "GeoBell",
+                "💬" => "GeoChat",
+                "⚙️" or "⚙" => "GeoGear",
+                "🔊" or "🔉" => "GeoSpeaker",
+                "📌" => "GeoPin",
+                _ => "GeoUser"
+            };
+
+            var mappedRes = Application.Current.TryFindResource(mappedKey);
+            if (mappedRes != null) return mappedRes;
+        }
+        return Application.Current?.TryFindResource("GeoUser") ?? DependencyProperty.UnsetValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

@@ -17,8 +17,8 @@
             </Border>
             <TextBlock Text="STORM" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource AccentPrimaryBrush}" VerticalAlignment="Center" />
             <TextBlock Text=" FELLOWSHIP" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-            <Border Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="v0.1.1" FontSize="11" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
+            <Border Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1" CornerRadius="8" Padding="7,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="v0.2.2" FontSize="11" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
             </Border>
         </StackPanel>
 
@@ -84,6 +84,28 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
                                 <Setter TargetName="Pill" Property="BorderBrush" Value="#38BDF8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- Cloud Account Button -->
+            <Button Command="{Binding OpenAuthDialogCommand}" Margin="4,0" Padding="10,5" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Облачный аккаунт и синхронизация">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Pill" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Background="#1A00D2FF" CornerRadius="4" Padding="3" Margin="0,0,6,0">
+                                    <Path Data="{StaticResource GeoCloudSync}" Fill="{StaticResource IconGradCyan}" Width="11" Height="11" Stretch="Uniform" VerticalAlignment="Center" />
+                                </Border>
+                                <TextBlock Text="Облако" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Pill" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                <Setter TargetName="Pill" Property="BorderBrush" Value="#00D2FF" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

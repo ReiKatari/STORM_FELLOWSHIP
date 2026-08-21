@@ -31,7 +31,7 @@
                 <Grid>
                     <Button Content="Удалить содружество" HorizontalAlignment="Left" Background="Transparent" Foreground="{DynamicResource StatusDndBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding DeleteFellowshipCommand}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="Отмена" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand" Command="{Binding CloseCommand}" />
+                        <Button Content="Отмена" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand" Command="{Binding CloseFellowshipSettingsDialogCommand}" />
                         <Button Content="Сохранить" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="18,8" Cursor="Hand" Command="{Binding SaveChangesCommand}" />
                     </StackPanel>
                 </Grid>

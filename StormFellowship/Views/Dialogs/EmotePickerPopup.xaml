@@ -26,12 +26,18 @@
             <!-- Grid of Emotes and Stickers -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock Text="⚡ STORM СТИКЕРЫ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="2,4,0,4" />
+                    <StackPanel Orientation="Horizontal" Margin="2,4,0,4">
+                        <Path Data="{StaticResource GeoLightning}" Fill="{StaticResource IconGradCyan}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                        <TextBlock Text="STORM СТИКЕРЫ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                    </StackPanel>
                     <WrapPanel x:Name="StickerWrapPanel">
                         <!-- Populated in code-behind -->
                     </WrapPanel>
 
-                    <TextBlock Text="😀 ПОПУЛЯРНЫЕ ЭМОДЗИ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="2,10,0,4" />
+                    <StackPanel Orientation="Horizontal" Margin="2,10,0,4">
+                        <Path Data="{StaticResource GeoSmile}" Fill="{StaticResource IconGradPurple}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                        <TextBlock Text="ПОПУЛЯРНЫЕ ЭМОДЗИ" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                    </StackPanel>
                     <WrapPanel x:Name="EmoteWrapPanel">
                         <!-- Populated in code-behind -->
                     </WrapPanel>

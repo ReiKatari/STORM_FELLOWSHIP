@@ -32,6 +32,7 @@ public partial class CallViewModel : ObservableObject
     public bool IsDeafened => AudioService.Instance.IsDeafened;
     public bool IsVideoOn => ActiveCall?.IsVideoOn ?? false;
     public bool IsScreenSharing => ActiveCall?.IsScreenSharing ?? false;
+    public System.Windows.Media.ImageSource? CameraFrame => CameraService.Instance.CurrentFrame;
 
     public double CallVolume
     {
@@ -109,14 +110,19 @@ public partial class CallViewModel : ObservableObject
             IsLocalSpeaking = speaking;
             LocalGlowRadius = speaking ? 26.0 : 8.0;
         };
+
+        CameraService.Instance.FrameUpdated += (frame) =>
+        {
+            OnPropertyChanged(nameof(CameraFrame));
+        };
     }
 
     private void OnAnimTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (ActiveCall == null) return;
 
-        IsRemoteSpeaking = _random.NextDouble() > 0.3;
-        RemoteGlowRadius = IsRemoteSpeaking ? _random.Next(16, 32) : 6.0;
+        IsRemoteSpeaking = false;
+        RemoteGlowRadius = 8.0;
 
         // Update Sparkline
         int newPing = Math.Clamp((ActiveCall.PingMs) + _random.Next(-2, 3), 10, 28);
@@ -150,6 +156,7 @@ public partial class CallViewModel : ObservableObject
         OnPropertyChanged(nameof(IsMicMuted));
         OnPropertyChanged(nameof(IsDeafened));
         OnPropertyChanged(nameof(IsVideoOn));
+        OnPropertyChanged(nameof(CameraFrame));
         OnPropertyChanged(nameof(IsScreenSharing));
         OnPropertyChanged(nameof(CallVolume));
         OnPropertyChanged(nameof(ConnectionStats));
@@ -171,10 +178,26 @@ public partial class CallViewModel : ObservableObject
         RefreshAll();
     }
 
+    public List<VoiceChangerPreset> VoicePresets => AudioService.Instance.VoiceChangerPresets;
+
+    public VoiceChangerPreset SelectedVoicePreset
+    {
+        get => AudioService.Instance.SelectedVoicePreset;
+        set
+        {
+            AudioService.Instance.SelectedVoicePreset = value;
+            AudioService.Instance.PreviewVoicePreset(value);
+            OnPropertyChanged(nameof(SelectedVoicePreset));
+            _mainVM.ShowToastNotification($"🎙️ Эффект изменения голоса: {value.Icon} {value.Name}");
+        }
+    }
+
     [RelayCommand]
     public void ToggleVideo()
     {
         CallService.Instance.ToggleVideo();
+        AudioService.Instance.PlaySoundCue(IsVideoOn ? SoundCueType.Unmute : SoundCueType.Mute);
+        _mainVM.ShowToastNotification(IsVideoOn ? "📹 Камера включена (1080p 60 FPS HD Stream)" : "📹 Камера выключена");
         RefreshAll();
     }
 

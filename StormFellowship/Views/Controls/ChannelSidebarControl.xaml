@@ -17,9 +17,9 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Command="{Binding ToggleSidebarCompactCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Компактный / Обычный режим" Margin="0,0,8,0">
-                        <Border Width="24" Height="24" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoGamepad}" Fill="{DynamicResource AccentBrush}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Command="{Binding ToggleSidebarCompactCommand}" Style="{StaticResource IconButtonStyle}" ToolTip="Компактный / Обычный режим" Margin="0,0,8,0">
+                        <Border Width="26" Height="26" CornerRadius="8" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoGamepad}" Fill="{StaticResource IconGradCyan}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                     <TextBlock Text="{Binding FellowshipTitle}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
@@ -27,14 +27,14 @@
 
                 <!-- Action buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreateChannelCommand}" ToolTip="Создать канал" Margin="0,0,2,0">
-                        <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <TextBlock Text="+" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
+                    <Button Width="28" Height="28" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenCreateChannelCommand}" ToolTip="Создать канал" Margin="0,0,3,0">
+                        <Border Width="26" Height="26" CornerRadius="8" Background="#2634D399" BorderBrush="#4D34D399" BorderThickness="1">
+                            <TextBlock Text="+" FontSize="14" FontWeight="Bold" Foreground="{StaticResource IconGradEmerald}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
                         </Border>
                     </Button>
-                    <Button Width="26" Height="26" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenFellowshipSettingsCommand}" ToolTip="Настройки содружества">
-                        <Border Width="22" Height="22" CornerRadius="6" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoGear}" Fill="{DynamicResource TextSecondaryBrush}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="28" Height="28" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenFellowshipSettingsCommand}" ToolTip="Настройки содружества">
+                        <Border Width="26" Height="26" CornerRadius="8" Background="#26C084FC" BorderBrush="#4DC084FC" BorderThickness="1">
+                            <Path Data="{StaticResource GeoGear}" Fill="{StaticResource IconGradPurple}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                 </StackPanel>
@@ -51,40 +51,45 @@
                     <ItemsControl ItemsSource="{Binding DmUsers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,2" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" Padding="8,6">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                                <Button Style="{StaticResource IconButtonStyle}" Tag="{Binding}" Click="OnDmUserClicked" Margin="0,2" HorizontalContentAlignment="Stretch">
+                                    <Border CornerRadius="12" Background="{DynamicResource CardBackgroundBrush}" Padding="8,6" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                        <!-- Avatar with status dot -->
-                                        <Grid VerticalAlignment="Center">
-                                            <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
-                                                <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            </Border>
-                                            <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
-                                        </Grid>
+                                            <!-- Avatar with status dot -->
+                                            <Grid VerticalAlignment="Center">
+                                                <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}">
+                                                    <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
+                                            </Grid>
 
-                                        <!-- User info -->
-                                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
+                                            <!-- User info -->
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
 
-                                        <!-- Direct Call Button -->
-                                        <Button Grid.Column="2" Width="28" Height="28" Background="Transparent" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Начать прямой вызов">
-                                            <Button.Template>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border CornerRadius="8" Background="#1A34D399" BorderBrush="#3334D399" BorderThickness="1">
-                                                        <Path Data="{StaticResource GeoSpeaker}" Fill="{StaticResource IconGradEmerald}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <!-- Direct Call & Video Call Buttons -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                                <Button Width="28" Height="28" Style="{StaticResource IconButtonStyle}" Tag="{Binding}" Click="OnDirectCallButtonClicked" ToolTip="Голосовой вызов" Margin="0,0,4,0">
+                                                    <Border CornerRadius="8" Background="#1A34D399" BorderBrush="#3334D399" BorderThickness="1" Width="26" Height="26">
+                                                        <Path Data="{StaticResource GeoSpeaker}" Fill="{StaticResource IconGradEmerald}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                     </Border>
-                                                </ControlTemplate>
-                                            </Button.Template>
-                                        </Button>
-                                    </Grid>
-                                </Border>
+                                                </Button>
+                                                <Button Width="28" Height="28" Style="{StaticResource IconButtonStyle}" Tag="{Binding}" Click="OnDirectVideoCallButtonClicked" ToolTip="Видеозвонок HD">
+                                                    <Border CornerRadius="8" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" Width="26" Height="26">
+                                                        <Path Data="{StaticResource GeoVideo}" Fill="{StaticResource IconGradCyan}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -108,8 +113,8 @@
                                                 <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" />
                                             </StackPanel>
                                         </Button>
-                                        <Button Grid.Column="1" Width="20" Height="20" Background="Transparent" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnAddChannelToCategoryClicked" ToolTip="Добавить канал в категорию">
-                                            <TextBlock Text="+" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Button Grid.Column="1" Width="20" Height="20" Style="{StaticResource IconButtonStyle}" Tag="{Binding}" Click="OnAddChannelToCategoryClicked" ToolTip="Добавить канал в категорию">
+                                            <TextBlock Text="+" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Button>
                                     </Grid>
 
@@ -121,9 +126,9 @@
                                                     <!-- Right-Click Context Menu -->
                                                     <Button.ContextMenu>
                                                         <ContextMenu>
-                                                            <MenuItem Header="✏️ Настройка канала" Tag="{Binding}" Click="OnContextEditChannelClicked" />
+                                                            <MenuItem Header="Настройка канала" Tag="{Binding}" Click="OnContextEditChannelClicked" />
                                                             <Separator />
-                                                            <MenuItem Header="🗑️ Удалить канал" Foreground="#EF4444" Tag="{Binding}" Click="OnContextDeleteChannelClicked" />
+                                                            <MenuItem Header="Удалить канал" Foreground="#EF4444" Tag="{Binding}" Click="OnContextDeleteChannelClicked" />
                                                         </ContextMenu>
                                                     </Button.ContextMenu>
                                                     <Button.Template>
@@ -166,45 +171,59 @@
         <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="10,0">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Avatar with Voice Pulse Glow -->
-                <Border Width="36" Height="36" CornerRadius="18" Background="{DynamicResource AccentBrush}">
-                    <Border.Effect>
-                        <DropShadowEffect Color="#00A3FF" BlurRadius="10" ShadowDepth="0" Opacity="0.4" />
-                    </Border.Effect>
-                    <TextBlock Text="{Binding CurrentUser.AvatarGlyph}" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
+                <!-- Clickable User Profile Area (Opens Quick Profile & Status Card) -->
+                <Button Style="{StaticResource IconButtonStyle}" Command="{Binding OpenUserProfileQuickCardCommand}" ToolTip="Быстрый профиль и смена статуса">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Avatar with Voice Pulse Glow & Image Support -->
+                        <Grid Width="36" Height="36">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="{StaticResource IconGradCyan}" Visibility="{Binding CurrentUser.HasCustomAvatarImage, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#00A3FF" BlurRadius="10" ShadowDepth="0" Opacity="0.4" />
+                                </Border.Effect>
+                                <Path Data="{Binding CurrentUser.AvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <Border Width="36" Height="36" CornerRadius="18" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Visibility="{Binding CurrentUser.HasCustomAvatarImage, Converter={StaticResource BoolToVis}}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#00A3FF" BlurRadius="10" ShadowDepth="0" Opacity="0.4" />
+                                </Border.Effect>
+                                <Border.Background>
+                                    <ImageBrush ImageSource="{Binding CurrentUser.AvatarPath}" Stretch="UniformToFill" />
+                                </Border.Background>
+                            </Border>
+                        </Grid>
 
-                <!-- Name & Status -->
-                <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding CurrentUser.DisplayName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                    <TextBlock Text="{Binding CurrentUser.CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
-                </StackPanel>
+                        <!-- Name & Status -->
+                        <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CurrentUser.DisplayName}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="110" />
+                            <TextBlock Text="{Binding CurrentUser.CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" MaxWidth="110" />
+                        </StackPanel>
+                    </StackPanel>
+                </Button>
 
                 <!-- Controls with Vector Glyphs & Glowing Containers -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <!-- Mic Button -->
-                    <Button Width="30" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="{Binding MicTooltip}">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1">
-                            <Path Data="{StaticResource GeoMic}" Fill="{Binding IsMicMuted, Converter={StaticResource BoolToMutedColor}}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="30" Height="30" Margin="2,0" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleMuteCommand}" ToolTip="{Binding MicTooltip}">
+                        <Border Width="28" Height="28" CornerRadius="8" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoMic}" Fill="{Binding IsMuted, Converter={StaticResource BoolToMutedColor}}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
 
                     <!-- Headphones Button -->
-                    <Button Width="30" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="{Binding SoundTooltip}">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1">
-                            <Path Data="{StaticResource GeoHeadphones}" Fill="{Binding IsDeafened, Converter={StaticResource BoolToMutedColor}}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="30" Height="30" Margin="2,0" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleDeafenCommand}" ToolTip="{Binding SoundTooltip}">
+                        <Border Width="28" Height="28" CornerRadius="8" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoHeadphones}" Fill="{Binding IsDeafened, Converter={StaticResource BoolToMutedColor}}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
 
-                    <!-- Settings Button -->
-                    <Button Width="30" Height="30" Margin="2,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenUserSettingsCommand}" ToolTip="Настройки пользователя">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1">
-                            <Path Data="{StaticResource GeoGear}" Fill="{StaticResource IconGradPurple}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <!-- System Settings Button -->
+                    <Button Width="30" Height="30" Margin="2,0" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenUserSettingsCommand}" ToolTip="Системные настройки (звук, темы, горячие клавиши)">
+                        <Border Width="28" Height="28" CornerRadius="8" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1">
+                            <Path Data="{StaticResource GeoGear}" Fill="{StaticResource IconGradPurple}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                 </StackPanel>

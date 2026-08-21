@@ -1,36 +1,41 @@
 <UserControl x:Class="StormFellowship.Views.Dialogs.SoundboardDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Backdrop Overlay -->
-    <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}" MouseDown="OnBackdropMouseDown">
-        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" CornerRadius="16" Width="540" Height="420" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
+    <!-- Backdrop Overlay (Click to close) -->
+    <Grid Background="#85000000" MouseDown="OnBackdropMouseDown">
+        <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" CornerRadius="20" Width="640" MaxHeight="660" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="22" MouseDown="OnDialogCardMouseDown">
             <Border.Effect>
-                <DropShadowEffect Color="#00A3FF" BlurRadius="24" ShadowDepth="0" Opacity="0.3" />
+                <DropShadowEffect Color="#00D2FF" BlurRadius="36" ShadowDepth="8" Opacity="0.25" />
             </Border.Effect>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="50" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
-                <Border Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="18,0" CornerRadius="16,16,0,0">
-                    <Grid VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Path Data="{StaticResource GeoSoundboard}" Fill="{DynamicResource AccentBrush}" Width="16" Height="16" Stretch="Uniform" Margin="0,0,10,0" VerticalAlignment="Center" />
-                            <TextBlock Text="СТУДИЙНЫЙ САУНДБОРД (SOUNDBOARD FX)" FontWeight="Black" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                <Grid Margin="0,0,0,16">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="44" Height="44" CornerRadius="14" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1.5" Margin="0,0,14,0">
+                            <Path Data="{StaticResource GeoSoundboard}" Fill="{StaticResource IconGradCyan}" Width="22" Height="22" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="ИНТЕРАКТИВНЫЙ САУНДБОРД (24 FX)" FontWeight="Black" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,2" />
+                            <TextBlock Text="Мгновенное воспроизведение звуков в голосовой канал и звонок" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
                         </StackPanel>
+                    </StackPanel>
 
-                        <!-- Close Button -->
-                        <Button HorizontalAlignment="Right" Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnCloseClicked" ToolTip="Закрыть (ESC)">
-                            <Path Data="{StaticResource GeoWinClose}" Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.8" Width="10" Height="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                    </Grid>
-                </Border>
+                    <!-- Close Button -->
+                    <Button HorizontalAlignment="Right" Style="{StaticResource IconButtonStyle}" Click="OnCloseClicked" ToolTip="Закрыть (Esc)">
+                        <Border Width="30" Height="30" CornerRadius="15" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoClose}" Fill="{DynamicResource TextSecondaryBrush}" Width="11" Height="11" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Button>
+                </Grid>
 
                 <!-- Soundboard Buttons Grid -->
-                <ScrollViewer Grid.Row="1" Padding="18,14" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
                     <ItemsControl ItemsSource="{Binding SoundboardTracks}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -39,45 +44,54 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Margin="5" Padding="12,10" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.2" Cursor="Hand" Tag="{Binding}" Click="OnTrackClicked">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="BtnBorder" CornerRadius="10" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{Binding Icon}" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0" />
-                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                                                        <TextBlock Text="{Binding Category}" FontSize="9" Foreground="{DynamicResource TextMutedBrush}" />
-                                                    </StackPanel>
-                                                    <TextBlock Grid.Column="2" Text="{Binding DurationSec, StringFormat='{}{0:F1}s'}" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
-                                                </Grid>
+                                <Button Margin="4" Padding="0" Background="Transparent" BorderThickness="0" Cursor="Hand" Tag="{Binding}" Click="OnTrackClicked">
+                                    <Border CornerRadius="12" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="12,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Vector Icon Capsule with Glowing Color -->
+                                            <Border Width="36" Height="36" CornerRadius="10" Background="{Binding ColorHex, Converter={StaticResource HexToBrush}}" Margin="0,0,10,0" Opacity="0.9">
+                                                <Path Data="{Binding IconGeo, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource CardHoverBrush}" />
-                                                    <Setter TargetName="BtnBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
+
+                                            <!-- Title and Category -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Category}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0" />
+                                            </StackPanel>
+
+                                            <!-- Duration badge & Play indicator -->
+                                            <Border Grid.Column="2" Background="#1A00D2FF" CornerRadius="6" Padding="6,3" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="▶ " FontSize="8" Foreground="{StaticResource IconGradCyan}" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding DurationSec, StringFormat='{}{0:F1}s'}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
 
-                <!-- Footer -->
-                <Border Grid.Row="2" Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="18,0" CornerRadius="0,0,16,16">
-                    <Grid VerticalAlignment="Center">
-                        <TextBlock Text="⚡ Звуковые эффекты передаются всем участникам звонка в высоком качестве (Opus HD)" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
-                        <Button HorizontalAlignment="Right" Content="Закрыть" Click="OnCloseClicked" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="16,6" Cursor="Hand" FontSize="11" />
-                    </Grid>
-                </Border>
+                <!-- Footer Actions with Cancel/Close -->
+                <Grid Grid.Row="2">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="{StaticResource GeoLightning}" Fill="{StaticResource IconGradCyan}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                        <TextBlock Text="Звуки передаются в 128 kbps Opus HD формате" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    
+                    <Button HorizontalAlignment="Right" Style="{StaticResource IconButtonStyle}" Click="OnCloseClicked">
+                        <Border Background="{DynamicResource CardHoverBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="18,10">
+                            <TextBlock Text="Закрыть (Esc)" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </Border>
+                    </Button>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

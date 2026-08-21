@@ -49,8 +49,35 @@ public partial class ChatViewControl : UserControl
 
     private void OnAttachButtonClicked(object sender, RoutedEventArgs e)
     {
-        var channelId = (DataContext as ChatViewModel)?.CurrentChannel?.Id ?? "general";
-        Services.ChatService.Instance.SendMessage(channelId, "Прикрепленный файл:", attachmentUrl: "ms-appx:///Assets/Logo.png");
+        if (DataContext is ChatViewModel vm)
+        {
+            vm.AttachFile();
+        }
+    }
+
+    private void OnChatDragOver(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            e.Effects = DragDropEffects.Copy;
+            e.Handled = true;
+        }
+    }
+
+    private void OnChatDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length > 0 && DataContext is ChatViewModel vm)
+            {
+                foreach (var file in files)
+                {
+                    vm.ProcessFileAttachment(file);
+                }
+            }
+            e.Handled = true;
+        }
     }
 
     private void OnReactionBadgeClicked(object sender, RoutedEventArgs e)

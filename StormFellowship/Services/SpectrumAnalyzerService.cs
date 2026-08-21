@@ -31,35 +31,35 @@ public class SpectrumAnalyzerService
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        bool isSpeaking = CallService.Instance.IsInCall || AudioService.Instance.IsSpeaking;
+        bool isSpeaking = AudioService.Instance.IsSpeaking;
+        double levelRatio = AudioService.Instance.CurrentMicLevel / 100.0;
 
         // Generate target amplitudes with frequency weighting
         for (int i = 0; i < BandCount; i++)
         {
-            if (isSpeaking)
+            if (isSpeaking && levelRatio > 0.05)
             {
                 // Acoustic human voice curve: peaks around bands 4-16 (150Hz - 3kHz)
                 double voiceWeight = Math.Sin((double)i / BandCount * Math.PI);
-                double baseAmp = voiceWeight * 42.0;
-                double jitter = _random.NextDouble() * 16.0;
-                _targetBands[i] = Math.Clamp(baseAmp + jitter, 4.0, 52.0);
+                double baseAmp = voiceWeight * 45.0 * levelRatio;
+                _targetBands[i] = Math.Clamp(baseAmp + 2.0, 2.0, 52.0);
             }
             else
             {
-                _targetBands[i] = 4.0 + (_random.NextDouble() * 2.0);
+                _targetBands[i] = 2.0;
             }
 
             // Smooth physics interpolation (Fast attack, smooth decay)
             if (_targetBands[i] > _currentBands[i])
             {
-                _currentBands[i] += (_targetBands[i] - _currentBands[i]) * 0.45; // Fast rise
+                _currentBands[i] += (_targetBands[i] - _currentBands[i]) * 0.50; // Fast rise
             }
             else
             {
-                _currentBands[i] -= (_currentBands[i] - _targetBands[i]) * 0.22; // Smooth fall-off
+                _currentBands[i] -= (_currentBands[i] - _targetBands[i]) * 0.25; // Smooth fall-off
             }
 
-            _currentBands[i] = Math.Max(4.0, _currentBands[i]);
+            _currentBands[i] = Math.Max(2.0, _currentBands[i]);
         }
 
         var result = (double[])_currentBands.Clone();

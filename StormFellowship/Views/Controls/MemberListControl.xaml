@@ -18,49 +18,73 @@
             <ItemsControl ItemsSource="{Binding Members}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="0,2" CornerRadius="8" Background="Transparent" Padding="6,5">
-                            <!-- Context Menu for Member (Volume, Mute for me, Priority Speaker, E2EE) -->
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="💬 Написать сообщение" Command="{Binding DataContext.MessageMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="📞 Позвонить (Аудио)" Command="{Binding DataContext.CallMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <Separator />
-                                    <MenuItem Header="🔇 Заглушить для меня" Command="{Binding DataContext.ToggleMuteForMeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="📢 Приоритетный голос" Command="{Binding DataContext.TogglePrioritySpeakerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="🔒 Проверить E2EE ключ" Command="{Binding DataContext.VerifyE2EECommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
+                        <Button Background="Transparent" BorderThickness="0" Margin="0,2" Padding="6,5" Cursor="Hand" HorizontalContentAlignment="Stretch"
+                                Command="{Binding DataContext.MessageMemberCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            <!-- Context Menu for Member (Volume, Mute for me, Priority Speaker, E2EE, Role, Kick, Ban) -->
+                            <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Написать личное сообщение" Command="{Binding PlacementTarget.Tag.MessageMemberCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <MenuItem Header="Позвонить (Голосовой вызов)" Command="{Binding PlacementTarget.Tag.CallMemberCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <MenuItem Header="Начать видеозвонок HD" Command="{Binding PlacementTarget.Tag.VideoCallMemberCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <Separator />
+                                        <MenuItem Header="Заглушить для меня" Command="{Binding PlacementTarget.Tag.ToggleMuteForMeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <MenuItem Header="Приоритетный оратор" Command="{Binding PlacementTarget.Tag.TogglePrioritySpeakerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <MenuItem Header="Проверить E2EE ключ" Command="{Binding PlacementTarget.Tag.VerifyE2EECommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <Separator />
+                                        <MenuItem Header="Исключить из содружества" Foreground="#F59E0B" Command="{Binding PlacementTarget.Tag.KickMemberCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                        <MenuItem Header="Заблокировать пользователя" Foreground="#EF4444" Command="{Binding PlacementTarget.Tag.BanMemberCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                    </ContextMenu>
+                            </Button.ContextMenu>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="MemberCard" CornerRadius="8" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                                            <!-- Avatar with Voice Glow Effect & Custom Image Support -->
+                                            <Grid VerticalAlignment="Center">
+                                                <Border Width="32" Height="32" CornerRadius="16" Background="{StaticResource IconGradCyan}" Visibility="{Binding HasCustomAvatarImage, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.45" />
+                                                    </Border.Effect>
+                                                    <Path Data="{Binding AvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <Border Width="32" Height="32" CornerRadius="16" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Visibility="{Binding HasCustomAvatarImage, Converter={StaticResource BoolToVis}}">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.45" />
+                                                    </Border.Effect>
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding AvatarPath}" Stretch="UniformToFill" />
+                                                    </Border.Background>
+                                                </Border>
+                                                <Border Width="9" Height="9" CornerRadius="4.5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
+                                            </Grid>
 
-                                <!-- Avatar with Voice Glow Effect -->
-                                <Grid VerticalAlignment="Center">
-                                    <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource AccentBrush}">
-                                        <Border.Effect>
-                                            <DropShadowEffect Color="#00E5FF" BlurRadius="8" ShadowDepth="0" Opacity="0.45" />
-                                        </Border.Effect>
-                                        <TextBlock Text="{Binding AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <!-- User Name & Role Badge -->
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="100" />
+                                                    <!-- Role Badge Pill -->
+                                                    <Border Background="{Binding RoleColorHex, Converter={StaticResource HexToBrush}}" CornerRadius="4" Padding="4,1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding RoleName}" FontSize="8" FontWeight="Bold" Foreground="#FFFFFF" />
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </Grid>
                                     </Border>
-                                    <Border Width="9" Height="9" CornerRadius="4.5" Background="{DynamicResource StatusOnlineBrush}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="{DynamicResource SidebarBackgroundBrush}" BorderThickness="1.5" />
-                                </Grid>
-
-                                <!-- User Name & Role Badge -->
-                                <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="100" />
-                                        <!-- Role Badge Pill -->
-                                        <Border Background="{Binding RoleColorHex, Converter={StaticResource HexToBrush}}" CornerRadius="4" Padding="4,1" Margin="6,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding RoleName}" FontSize="8" FontWeight="Bold" Foreground="#FFFFFF" />
-                                        </Border>
-                                    </StackPanel>
-                                    <TextBlock Text="{Binding CustomStatus}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" />
-                                </StackPanel>
-                            </Grid>
-                        </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="MemberCard" Property="Background" Value="{DynamicResource CardHoverBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

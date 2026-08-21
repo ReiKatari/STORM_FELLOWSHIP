@@ -90,9 +90,9 @@ public partial class UserSettingsDialog : UserControl
 
     private void OnAvatarPresetClicked(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is string glyph && DataContext is UserSettingsViewModel vm)
+        if (sender is Button btn && btn.Tag is AvatarPresetItem item && DataContext is UserSettingsViewModel vm)
         {
-            vm.SelectAvatarPreset(glyph);
+            vm.SelectAvatarPreset(item);
         }
     }
 
@@ -107,20 +107,24 @@ public partial class UserSettingsDialog : UserControl
     private void OnThemeDarkClicked(object sender, RoutedEventArgs e)
     {
         ThemeService.Instance.SetTheme(ThemeType.StormDark);
+        if (DataContext is UserSettingsViewModel vm) vm.SelectedTheme = ThemeType.StormDark;
     }
 
     private void OnThemeNightClicked(object sender, RoutedEventArgs e)
     {
         ThemeService.Instance.SetTheme(ThemeType.StormNight);
+        if (DataContext is UserSettingsViewModel vm) vm.SelectedTheme = ThemeType.StormNight;
     }
 
     private void OnThemeDayClicked(object sender, RoutedEventArgs e)
     {
         ThemeService.Instance.SetTheme(ThemeType.StormDay);
+        if (DataContext is UserSettingsViewModel vm) vm.SelectedTheme = ThemeType.StormDay;
     }
 
     private void OnThemeMidnightClicked(object sender, RoutedEventArgs e)
     {
         ThemeService.Instance.SetTheme(ThemeType.StormMidnight);
+        if (DataContext is UserSettingsViewModel vm) vm.SelectedTheme = ThemeType.StormMidnight;
     }
 }

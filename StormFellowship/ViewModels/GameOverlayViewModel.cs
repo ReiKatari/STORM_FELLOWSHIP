@@ -43,10 +43,25 @@ public partial class GameOverlayViewModel : ObservableObject
             OnPropertyChanged(nameof(RecentChatMessages));
         };
 
+        FellowshipService.Instance.CurrentFellowshipChanged += (f) =>
+        {
+            OnPropertyChanged(nameof(SpeakingParticipants));
+        };
+
         AudioService.Instance.SpeakingStateChanged += (s) =>
         {
             OnPropertyChanged(nameof(SpeakingParticipants));
         };
+    }
+
+    public void RefreshProperties()
+    {
+        OnPropertyChanged(nameof(CurrentUser));
+        OnPropertyChanged(nameof(SpeakingParticipants));
+        OnPropertyChanged(nameof(CurrentChannel));
+        OnPropertyChanged(nameof(RecentChatMessages));
+        OnPropertyChanged(nameof(IsMicMuted));
+        OnPropertyChanged(nameof(IsDeafened));
     }
 
     [RelayCommand]
@@ -79,6 +94,24 @@ public partial class GameOverlayViewModel : ObservableObject
         CurrentChannel.Messages.Add(msg);
         QuickMessageText = string.Empty;
         OnPropertyChanged(nameof(RecentChatMessages));
+    }
+
+    [ObservableProperty]
+    private User? _selectedParticipant;
+
+    [RelayCommand]
+    public void SelectParticipant(User? user)
+    {
+        SelectedParticipant = user;
+    }
+
+    [RelayCommand]
+    public void MuteParticipantForMe(User? user)
+    {
+        if (user != null)
+        {
+            user.IsMutedForMe = !user.IsMutedForMe;
+        }
     }
 
     [RelayCommand]

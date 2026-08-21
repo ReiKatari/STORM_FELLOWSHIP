@@ -1,6 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Shapes;
 
 namespace StormFellowship.Views.Dialogs;
 
@@ -9,18 +12,29 @@ public partial class EmotePickerPopup : UserControl
     public event Action<string>? EmoteSelected;
     public event Action? Closed;
 
-    private static readonly string[] Stickers = new[]
+    // Sticker data: (label, background gradient start, background gradient end, glow color)
+    private static readonly (string Label, string Bg1, string Bg2, string Glow)[] Stickers = new[]
     {
-        "⚡ STORM BOOST", "🛡️ DEFENDER", "👑 CHAMPION", "🔥 ON FIRE",
-        "🎯 HEADSHOT", "🚀 TO THE MOON", "⚔️ GG WP", "👾 CYBER STORM",
-        "💎 DIAMOND", "🏆 VICTORY", "🎧 PRO GAMER", "🌟 LEGENDARY"
+        ("⚡ STORM BOOST",  "#00D2FF", "#0284C7", "#00D2FF"),
+        ("🛡️ DEFENDER",     "#34D399", "#059669", "#34D399"),
+        ("👑 CHAMPION",     "#FBBF24", "#D97706", "#FBBF24"),
+        ("🔥 ON FIRE",      "#FB7185", "#E11D48", "#FB7185"),
+        ("🎯 HEADSHOT",     "#EF4444", "#B91C1C", "#EF4444"),
+        ("🚀 TO THE MOON",  "#A855F7", "#7E22CE", "#A855F7"),
+        ("⚔️ GG WP",        "#38BDF8", "#1D4ED8", "#38BDF8"),
+        ("👾 CYBER STORM",  "#C084FC", "#7E22CE", "#C084FC"),
+        ("💎 DIAMOND",      "#67E8F9", "#06B6D4", "#67E8F9"),
+        ("🏆 VICTORY",      "#FCD34D", "#F59E0B", "#FCD34D"),
+        ("🎧 PRO GAMER",    "#818CF8", "#6366F1", "#818CF8"),
+        ("🌟 LEGENDARY",    "#F472B6", "#EC4899", "#F472B6"),
     };
 
     private static readonly string[] Emotes = new[]
     {
         "😀", "😎", "🔥", "🚀", "⚡", "✨", "🎉", "❤️",
         "👍", "👏", "👑", "💪", "🧠", "🎯", "💎", "🎮",
-        "🍕", "☕", "🛡️", "⚔️", "🏆", "🌟", "👾", "🤖"
+        "🍕", "☕", "🛡️", "⚔️", "🏆", "🌟", "👾", "🤖",
+        "😂", "🥳", "😡", "💀", "🫡", "🤝", "💯", "🔔"
     };
 
     public EmotePickerPopup()
@@ -34,50 +48,95 @@ public partial class EmotePickerPopup : UserControl
         StickerWrapPanel.Children.Clear();
         EmoteWrapPanel.Children.Clear();
 
-        foreach (var sticker in Stickers)
+        foreach (var (label, bg1, bg2, glow) in Stickers)
         {
-            if (!string.IsNullOrEmpty(query) && !sticker.Contains(query, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(query) && !label.Contains(query, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            var btn = new Button
+            var gradBrush = new LinearGradientBrush(
+                (Color)ColorConverter.ConvertFromString(bg1),
+                (Color)ColorConverter.ConvertFromString(bg2),
+                45.0);
+
+            var glowColor = (Color)ColorConverter.ConvertFromString(glow);
+
+            var textBlock = new TextBlock
             {
-                Content = sticker,
-                Margin = new Thickness(0, 0, 4, 4),
-                Padding = new Thickness(8, 4, 8, 4),
+                Text = label,
                 FontSize = 10,
-                FontWeight = FontWeights.Bold,
-                Background = (Brush)FindResource("CardHoverBrush"),
-                Foreground = (Brush)FindResource("AccentBrush"),
-                BorderThickness = new Thickness(0),
-                Cursor = System.Windows.Input.Cursors.Hand,
-                Tag = sticker
+                FontWeight = FontWeights.ExtraBold,
+                Foreground = Brushes.White,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontFamily = new FontFamily("Segoe UI Emoji, Segoe UI, sans-serif")
             };
-            btn.Click += (s, e) =>
+
+            var border = new Border
             {
-                EmoteSelected?.Invoke(sticker);
+                Background = gradBrush,
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(10, 5, 10, 5),
+                Margin = new Thickness(0, 0, 4, 4),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Effect = new DropShadowEffect
+                {
+                    Color = glowColor,
+                    BlurRadius = 10,
+                    ShadowDepth = 0,
+                    Opacity = 0.5
+                },
+                Child = textBlock
             };
-            StickerWrapPanel.Children.Add(btn);
+
+            border.MouseLeftButtonUp += (s, e) =>
+            {
+                EmoteSelected?.Invoke(label);
+            };
+
+            StickerWrapPanel.Children.Add(border);
         }
 
         foreach (var emote in Emotes)
         {
-            var btn = new Button
+            if (!string.IsNullOrEmpty(query) && !emote.Contains(query, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var textBlock = new TextBlock
             {
-                Content = emote,
-                Width = 32,
-                Height = 32,
-                Margin = new Thickness(0, 0, 4, 4),
-                FontSize = 14,
-                Background = (Brush)FindResource("InputBackgroundBrush"),
-                BorderThickness = new Thickness(0),
-                Cursor = System.Windows.Input.Cursors.Hand,
-                Tag = emote
+                Text = emote,
+                FontSize = 20,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontFamily = new FontFamily("Segoe UI Emoji")
             };
-            btn.Click += (s, e) =>
+
+            var border = new Border
+            {
+                Width = 38,
+                Height = 38,
+                CornerRadius = new CornerRadius(8),
+                Background = Brushes.Transparent,
+                Margin = new Thickness(1),
+                Cursor = System.Windows.Input.Cursors.Hand,
+                Child = textBlock,
+                ToolTip = emote
+            };
+
+            border.MouseEnter += (s, e) =>
+            {
+                if (s is Border b) b.Background = (Brush)FindResource("CardHoverBrush");
+            };
+            border.MouseLeave += (s, e) =>
+            {
+                if (s is Border b) b.Background = Brushes.Transparent;
+            };
+
+            border.MouseLeftButtonUp += (s, e) =>
             {
                 EmoteSelected?.Invoke(emote);
             };
-            EmoteWrapPanel.Children.Add(btn);
+
+            EmoteWrapPanel.Children.Add(border);
         }
     }
 

@@ -13,6 +13,11 @@ public partial class PollOption : ObservableObject
     private string _text = string.Empty;
 
     [ObservableProperty]
+    private string _imageUrl = string.Empty;
+
+    public bool HasImage => !string.IsNullOrWhiteSpace(ImageUrl);
+
+    [ObservableProperty]
     private int _votesCount = 0;
 
     [ObservableProperty]
@@ -33,6 +38,11 @@ public partial class PollItem : ObservableObject
     private string _question = string.Empty;
 
     [ObservableProperty]
+    private string _questionImageUrl = string.Empty;
+
+    public bool HasQuestionImage => !string.IsNullOrWhiteSpace(QuestionImageUrl);
+
+    [ObservableProperty]
     private int _totalVotes = 0;
 
     [ObservableProperty]
@@ -40,6 +50,9 @@ public partial class PollItem : ObservableObject
 
     [ObservableProperty]
     private bool _allowMultipleAnswers = false;
+
+    [ObservableProperty]
+    private bool _isAnonymous = false;
 
     [ObservableProperty]
     private DateTime _createdAt = DateTime.Now;
@@ -86,5 +99,11 @@ public partial class PollItem : ObservableObject
         }
 
         RecalculatePercentages();
+    }
+
+    [RelayCommand]
+    public void ToggleClose()
+    {
+        IsClosed = !IsClosed;
     }
 }

@@ -2,42 +2,65 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Backdrop Overlay -->
-    <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}" MouseDown="OnBackdropMouseDown">
-        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="640" Height="480" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
+    <Grid Background="#85000000" MouseDown="OnBackdropMouseDown">
+        <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" CornerRadius="20" Width="640" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="20" MouseDown="OnDialogCardMouseDown">
+            <Border.Effect>
+                <DropShadowEffect Color="#00D2FF" BlurRadius="36" ShadowDepth="8" Opacity="0.25" />
+            </Border.Effect>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="46" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Search Input Bar -->
-                <Border Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="16,10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,8" FontSize="13" KeyDown="OnSearchKeyDown" />
-                        <Button Grid.Column="1" Content="🔍 Поиск" Command="{Binding ExecuteSearchCommand}" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Margin="8,0,0,0" Padding="14,0" Cursor="Hand" />
-                    </Grid>
-                </Border>
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="12,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Data="{StaticResource GeoSearch}" Fill="{DynamicResource TextMutedBrush}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" KeyDown="OnSearchKeyDown" />
+                        </Grid>
+                    </Border>
+
+                    <Button Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource IconButtonStyle}" Command="{Binding ExecuteSearchCommand}">
+                        <Border Background="{StaticResource IconGradCyan}" CornerRadius="10" Padding="16,8">
+                            <TextBlock Text="Искать" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" />
+                        </Border>
+                    </Button>
+
+                    <Button Grid.Column="2" Margin="8,0,0,0" Style="{StaticResource IconButtonStyle}" Command="{Binding CloseSearchDialogCommand}" ToolTip="Закрыть (Esc)">
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource CardHoverBrush}">
+                            <Path Data="{StaticResource GeoClose}" Fill="{DynamicResource TextSecondaryBrush}" Width="11" Height="11" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Button>
+                </Grid>
 
                 <!-- Search Results List -->
-                <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="1" Padding="0,0,0,10" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock Text="РЕЗУЛЬТАТЫ ПОИСКА" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" />
+                        <TextBlock Text="РЕЗУЛЬТАТЫ ПОИСКА" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="2,0,0,8" />
                         <ItemsControl ItemsSource="{Binding SearchResults}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,4" Padding="10" CornerRadius="8" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                                    <Border Margin="0,3" Padding="12" CornerRadius="12" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource AccentBrush}" Margin="0,0,10,0" VerticalAlignment="Top">
-                                                <TextBlock Text="{Binding Author.AvatarGlyph}" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}" Margin="0,0,10,0" VerticalAlignment="Top">
+                                                <TextBlock Text="{Binding Author.DisplayName, StringFormat='{}{0:1}'}" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                             <StackPanel Grid.Column="1">
                                                 <StackPanel Orientation="Horizontal">
@@ -55,12 +78,14 @@
                 </ScrollViewer>
 
                 <!-- Footer -->
-                <Border Grid.Row="2" Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="16,0">
-                    <Grid VerticalAlignment="Center">
-                        <TextBlock Text="Нажмите Enter для быстрого поиска • ESC для закрытия" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
-                        <Button Content="Закрыть" HorizontalAlignment="Right" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding CloseSearchDialogCommand}" />
-                    </Grid>
-                </Border>
+                <Grid Grid.Row="2" Margin="0,8,0,0">
+                    <TextBlock Text="Enter для поиска • ESC для закрытия" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                    <Button HorizontalAlignment="Right" Style="{StaticResource IconButtonStyle}" Command="{Binding CloseSearchDialogCommand}">
+                        <Border Background="{DynamicResource CardHoverBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="14,8">
+                            <TextBlock Text="Закрыть (Esc)" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </Border>
+                    </Button>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

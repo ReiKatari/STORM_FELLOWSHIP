@@ -50,4 +50,26 @@ public class ThemeService : IThemeService
 
         ThemeChanged?.Invoke(theme);
     }
+
+    public void SetAccentColor(string hex)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(hex)) return;
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex);
+            var accentBrush = new System.Windows.Media.SolidColorBrush(color);
+            var hoverColor = System.Windows.Media.Color.FromArgb(0xFF, (byte)Math.Min(255, color.R + 35), (byte)Math.Min(255, color.G + 35), (byte)Math.Min(255, color.B + 35));
+            var hoverBrush = new System.Windows.Media.SolidColorBrush(hoverColor);
+            var glowBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x40, color.R, color.G, color.B));
+
+            if (Application.Current != null)
+            {
+                Application.Current.Resources["AccentBrush"] = accentBrush;
+                Application.Current.Resources["AccentPrimaryBrush"] = accentBrush;
+                Application.Current.Resources["AccentHoverBrush"] = hoverBrush;
+                Application.Current.Resources["AccentGlowBrush"] = glowBrush;
+            }
+        }
+        catch { }
+    }
 }

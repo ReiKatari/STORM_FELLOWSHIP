@@ -31,87 +31,145 @@
                 </Grid.RowDefinitions>
 
                 <!-- 1. Top Call Header (Title, Connection Quality Sparkline, Volume, E2EE Shield) -->
-                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="20,0" CornerRadius="20,20,0,0">
+                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="16,0" CornerRadius="20,20,0,0">
                     <Grid VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Call Title & Security Indicator -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CallTitle}" FontWeight="Black" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
-                            <Border Width="1" Height="14" Background="{DynamicResource DividerBrush}" Margin="12,0" VerticalAlignment="Center" />
-                            
-                            <!-- E2EE Link Button -->
-                            <Button Command="{Binding OpenE2EEDialogCommand}" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Проверить E2EE ключи">
-                                <StackPanel Orientation="Horizontal">
-                                    <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource StatusOnlineBrush}" Width="12" Height="12" Stretch="Uniform" Margin="0,0,5,0" VerticalAlignment="Center" />
-                                    <TextBlock Text="🔒 E2EE Защищено" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource StatusOnlineBrush}" VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
+                        <!-- Call Title with Vector Speaker Icon -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                            <Border Width="24" Height="24" CornerRadius="6" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" Margin="0,0,8,0">
+                                <Path Data="{StaticResource GeoSpeaker}" Fill="{StaticResource IconGradCyan}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="{Binding CallTitle}" FontWeight="Black" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" MaxWidth="190" TextTrimming="CharacterEllipsis" />
                         </StackPanel>
 
+                        <!-- E2EE Link Button -->
+                        <Button Grid.Column="1" Command="{Binding OpenE2EEDialogCommand}" Background="#1A22C55E" BorderBrush="#3322C55E" BorderThickness="1" Padding="8,4" Cursor="Hand" ToolTip="Проверить E2EE ключи">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource StatusOnlineBrush}" Width="11" Height="11" Stretch="Uniform" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="E2EE Защищено" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource StatusOnlineBrush}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
                         <!-- Live Network Sparkline Micro-Chart -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
-                            <TextBlock Text="Пинг:" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
-                            <Border Width="100" Height="22" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="4" Padding="2">
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                            <TextBlock Text="Пинг:" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <Border Width="85" Height="22" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="4" Padding="2">
                                 <Polyline Points="{Binding SparklinePoints}" Stroke="{DynamicResource AccentBrush}" StrokeThickness="1.8" VerticalAlignment="Center" />
                             </Border>
                         </StackPanel>
 
                         <!-- Volume Slider -->
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
                             <Path Data="{StaticResource GeoSpeaker}" Fill="{DynamicResource TextSecondaryBrush}" Width="13" Height="13" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
-                            <Slider Width="90" Minimum="0" Maximum="200" Value="{Binding CallVolume}" VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding CallVolume, StringFormat='{}{0:0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            <Slider Width="80" Minimum="0" Maximum="200" Value="{Binding CallVolume}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding CallVolume, StringFormat='{}{0:0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="6,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- 2. Middle Participant Avatars Stage: 100% PERFECT SYMMETRIC DIMENSIONS -->
+                <!-- 2. Middle Participant Stage: 100% PERFECT SYMMETRIC DIMENSIONS -->
                 <Grid Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <StackPanel HorizontalAlignment="Center">
-                        <!-- Symmetrical Avatars Row: Identical Width="280", Height="220" -->
-                        <UniformGrid Columns="2" HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <!-- Symmetrical Avatars Row: Identical Width="290", Height="230" -->
+                        <UniformGrid Columns="2" HorizontalAlignment="Center" Margin="0,0,0,16">
                             <!-- Remote Participant Card (Symmetrical) -->
-                            <Border Width="280" Height="220" CornerRadius="18" Background="{DynamicResource InputBackgroundBrush}" Padding="24,18" Margin="12,0" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
+                            <Border Width="290" Height="230" CornerRadius="18" Background="{DynamicResource InputBackgroundBrush}" Padding="20" Margin="10,0" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
                                 <Border.Effect>
                                     <DropShadowEffect Color="#00E5FF" BlurRadius="{Binding RemoteGlowRadius}" ShadowDepth="0" Opacity="0.8" />
                                 </Border.Effect>
                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Border Width="84" Height="84" CornerRadius="42" Background="{DynamicResource AccentBrush}" Margin="0,0,0,12" HorizontalAlignment="Center">
-                                            <TextBlock Text="{Binding RemoteAvatarGlyph}" FontSize="40" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border Width="84" Height="84" CornerRadius="42" Background="{StaticResource IconGradCyan}" Margin="0,0,0,12" HorizontalAlignment="Center">
+                                            <Path Data="{Binding RemoteAvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="36" Height="36" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
-                                        <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="230" />
-                                        <TextBlock Text="{Binding RemoteCustomStatus}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" MaxWidth="230" />
+                                        <TextBlock Text="{Binding RemoteDisplayName}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="240" />
+                                        <TextBlock Text="{Binding RemoteCustomStatus}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" MaxWidth="240" />
                                     </StackPanel>
                                 </Grid>
                             </Border>
 
-                            <!-- Local Participant Card (Symmetrical - Exact Same Size & Layout) -->
-                            <Border Width="280" Height="220" CornerRadius="18" Background="{DynamicResource InputBackgroundBrush}" Padding="24,18" Margin="12,0" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5">
+                            <!-- Local Participant Card (Switches to Live HD Camera View when IsVideoOn is True) -->
+                            <Border Width="290" Height="230" CornerRadius="18" Background="{DynamicResource InputBackgroundBrush}" Padding="0" Margin="10,0" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" ClipToBounds="True">
                                 <Border.Effect>
                                     <DropShadowEffect Color="#10B981" BlurRadius="{Binding LocalGlowRadius}" ShadowDepth="0" Opacity="0.8" />
                                 </Border.Effect>
-                                <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Border Width="84" Height="84" CornerRadius="42" Background="{DynamicResource AccentMutedBrush}" Margin="0,0,0,12" HorizontalAlignment="Center">
-                                            <TextBlock Text="{Binding LocalAvatarGlyph}" FontSize="40" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Grid>
+                                    <!-- 1. Default Avatar View (When Video is OFF) -->
+                                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding IsVideoOn, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Border Width="84" Height="84" CornerRadius="42" Background="{StaticResource IconGradPurple}" Margin="0,0,0,12" HorizontalAlignment="Center">
+                                                <Path Data="{Binding LocalAvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="36" Height="36" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <TextBlock Text="{Binding LocalDisplayName}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="240" />
+                                            <TextBlock Text="Вы (Локальный голос)" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" MaxWidth="240" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- 2. Live HD Video Camera Stream View (When Video is ON) -->
+                                    <Grid Visibility="{Binding IsVideoOn, Converter={StaticResource BoolToVis}}">
+                                        <!-- Live Video Frame Texture from CameraService -->
+                                        <Image Source="{Binding CameraFrame}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" />
+
+                                        <!-- Live Camera Viewfinder Reticle & Corners -->
+                                        <Border BorderBrush="#6638BDF8" BorderThickness="1.5" Margin="10" CornerRadius="12" />
+
+                                        <!-- Live Camera Center Crosshair Focus -->
+                                        <Border Width="60" Height="60" BorderBrush="#8038BDF8" BorderThickness="1" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.75" />
+
+                                        <!-- Live Bottom-Center User Identification Tag -->
+                                        <Border HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,16" Background="#CC0F172A" CornerRadius="8" Padding="10,4" BorderBrush="#3338BDF8" BorderThickness="1">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Border Width="18" Height="18" CornerRadius="9" Background="{StaticResource IconGradCyan}" Margin="0,0,6,0">
+                                                    <Path Data="{Binding LocalAvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="10" Height="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="{Binding LocalDisplayName}" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                                <TextBlock Text="• 1080p 60 FPS HD" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource IconGradSky}" VerticalAlignment="Center" />
+                                            </StackPanel>
                                         </Border>
-                                        <TextBlock Text="{Binding LocalDisplayName}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="230" />
-                                        <TextBlock Text="Вы (Локальный голос)" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" MaxWidth="230" />
-                                    </StackPanel>
+
+                                        <!-- Live Status Pill in Corner -->
+                                        <Border HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" Background="#E6EF4444" CornerRadius="6" Padding="7,3">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Ellipse Width="6" Height="6" Fill="#FFFFFF" Margin="0,0,5,0" />
+                                                <TextBlock Text="LIVE HD" FontSize="9" FontWeight="Black" Foreground="#FFFFFF" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Video Resolution Tag in Bottom-Left -->
+                                        <Border HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="16" Background="#B3000000" CornerRadius="4" Padding="6,2">
+                                            <TextBlock Text="60 FPS • 1920x1080" FontSize="9" FontWeight="Bold" Foreground="#94A3B8" />
+                                        </Border>
+                                    </Grid>
                                 </Grid>
                             </Border>
                         </UniformGrid>
 
+                        <!-- Quick Voice Morpher FX Bar -->
+                        <Border Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="12,6" HorizontalAlignment="Center" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoMic}" Fill="{DynamicResource AccentBrush}" Width="12" Height="12" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="ИЗМЕНЕНИЕ ГОЛОСА (30 FX):" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <ComboBox Width="240" ItemsSource="{Binding VoicePresets}" SelectedItem="{Binding SelectedVoicePreset}" DisplayMemberPath="Name" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
                         <!-- 32-Band FFT Spectrum Analyzer Bars -->
-                        <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="12" Padding="14,10" HorizontalAlignment="Center" Margin="0,0,0,6">
+                        <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="12" Padding="14,8" HorizontalAlignment="Center" Margin="0,0,0,4">
                             <StackPanel>
-                                <TextBlock Text="32-BAND FFT SPECTRUM ANALYZER" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                <TextBlock Text="32-BAND FFT SPECTRUM ANALYZER" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,6" />
                                 <ItemsControl ItemsSource="{Binding SpectrumBands}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -157,18 +215,26 @@
                         </Button>
 
                         <!-- Video Camera Toggle -->
-                        <Button Width="44" Height="44" Background="{DynamicResource CallControlButtonBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Камера" Margin="4,0">
+                        <Button Width="44" Height="44" Cursor="Hand" Command="{Binding ToggleVideoCommand}" ToolTip="Включить/Выключить камеру" Margin="4,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border CornerRadius="12" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <Path Data="{StaticResource GeoVideo}" Fill="{DynamicResource AccentBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Border x:Name="Border" CornerRadius="12" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0">
+                                        <Path x:Name="Icon" Data="{StaticResource GeoVideo}" Fill="{DynamicResource TextSecondaryBrush}" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsVideoOn}" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentGlowBrush}" />
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                            <Setter TargetName="Border" Property="BorderThickness" Value="1.5" />
+                                            <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource AccentBrush}" />
+                                        </DataTrigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
 
                         <!-- Screen Share Toggle -->
-                        <Button Width="44" Height="44" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleScreenShareCommand}" ToolTip="Демонстрация экрана" Margin="4,0">
+                        <Button Width="44" Height="44" Background="{DynamicResource CallControlButtonBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleScreenShareCommand}" ToolTip="Демонстрация экрана и окон" Margin="4,0">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border CornerRadius="12" Background="{TemplateBinding Background}">

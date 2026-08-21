@@ -25,174 +25,601 @@
 
                 <!-- Header Actions (Glass Bubbles Toggle, E2EE Shield, Search, Poll, MemberList) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Command="{Binding ToggleGlassBubblesCommand}" Margin="0,0,4,0" Background="Transparent" BorderThickness="0" Cursor="Hand" ToolTip="Режим Floating Glass Bubbles">
-                        <Border Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" CornerRadius="6" Padding="8,4">
-                            <TextBlock Text="💬 Пузыри" FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
+                    <!-- Glass Bubbles Interactive Switch -->
+                    <Button Command="{Binding ToggleGlassBubblesCommand}" Margin="0,0,8,0" Style="{StaticResource IconButtonStyle}" ToolTip="Переключить режим сообщений: Стеклянные пузыри / Компактные строки">
+                        <Border BorderThickness="1" CornerRadius="8" Padding="8,4">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsGlassBubblesMode}" Value="True">
+                                            <Setter Property="Background" Value="#1A3B82F6" />
+                                            <Setter Property="BorderBrush" Value="#4D3B82F6" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoChat}" Fill="{StaticResource IconGradCyan}" Width="12" Height="12" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Пузыри:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                                <Border CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#1E293B" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsGlassBubblesMode}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource IconGradCyan}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="9" FontWeight="Black" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="ВЫКЛ" />
+                                                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsGlassBubblesMode}" Value="True">
+                                                        <Setter Property="Text" Value="ВКЛ" />
+                                                        <Setter Property="Foreground" Value="#FFFFFF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </StackPanel>
                         </Border>
                     </Button>
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenE2EEDialogCommand}" ToolTip="E2EE Сквозное шифрование (AES-256)">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A34D399" BorderBrush="#3334D399" BorderThickness="1">
-                            <Path Data="{StaticResource GeoShieldLock}" Fill="{StaticResource IconGradEmerald}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenE2EEDialogCommand}" ToolTip="E2EE Сквозное шифрование (AES-256)" Margin="2,0">
+                        <Border Width="30" Height="30" CornerRadius="8" Background="#2634D399" BorderBrush="#4D34D399" BorderThickness="1">
+                            <Path Data="{StaticResource GeoShieldLock}" Fill="{StaticResource IconGradEmerald}" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenSearchCommand}" ToolTip="Поиск по сообщениям (Ctrl + F)" Margin="4,0,0,0">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1A38BDF8" BorderBrush="#3338BDF8" BorderThickness="1">
-                            <Path Data="{StaticResource GeoSearch}" Fill="{StaticResource IconGradSky}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenSearchCommand}" ToolTip="Поиск по сообщениям (Ctrl + F)" Margin="2,0">
+                        <Border Width="30" Height="30" CornerRadius="8" Background="#2638BDF8" BorderBrush="#4D38BDF8" BorderThickness="1">
+                            <Path Data="{StaticResource GeoSearch}" Fill="{StaticResource IconGradSky}" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="4,0,0,0">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1AFBBF24" BorderBrush="#33FBBF24" BorderThickness="1">
-                            <Path Data="{StaticResource GeoPoll}" Fill="{StaticResource IconGradAmber}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="2,0">
+                        <Border Width="30" Height="30" CornerRadius="8" Background="#26FBBF24" BorderBrush="#4DFBBF24" BorderThickness="1">
+                            <Path Data="{StaticResource GeoPoll}" Fill="{StaticResource IconGradAmber}" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников" Margin="4,0,0,0">
-                        <Border Width="28" Height="28" CornerRadius="6" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1">
-                            <Path Data="{StaticResource GeoUsers}" Fill="{StaticResource IconGradPurple}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleMemberListCommand}" ToolTip="Список участников" Margin="2,0">
+                        <Border Width="30" Height="30" CornerRadius="8" Background="#26C084FC" BorderBrush="#4DC084FC" BorderThickness="1">
+                            <Path Data="{StaticResource GeoUsers}" Fill="{StaticResource IconGradPurple}" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Chat Messages Scroll Area (Floating Glass Bubbles Design) -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="16,12">
-            <ItemsControl ItemsSource="{Binding Messages}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="0,4" Padding="12,10" CornerRadius="14" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="🔊 Озвучить сообщение (TTS)" Command="{Binding DataContext.SpeakMessageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="💬 Ответить" Command="{Binding DataContext.ReplyToCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <MenuItem Header="📋 Скопировать текст" Command="{Binding DataContext.CopyMessageTextCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                    <Separator />
-                                    <MenuItem Header="🗑️ Удалить сообщение" Foreground="#EF4444" Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
-                                </ContextMenu>
-                            </Border.ContextMenu>
-                            <Border.Effect>
-                                <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="1" Opacity="0.25" />
-                            </Border.Effect>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+        <!-- Chat Messages Virtualized List (Recycling Mode for 100,000+ messages) -->
+        <ListBox Grid.Row="1" ItemsSource="{Binding CurrentMessages}"
+                 ScrollViewer.CanContentScroll="True"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 VirtualizingPanel.IsVirtualizing="True"
+                 VirtualizingPanel.VirtualizationMode="Recycling"
+                 VirtualizingPanel.ScrollUnit="Pixel"
+                 Background="Transparent" BorderThickness="0" Padding="16,12"
+                 AllowDrop="True" Drop="OnChatDrop" DragOver="OnChatDragOver">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0,3" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="BorderBrush" Value="Transparent" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Margin" Value="0,1" />
+                                <Setter Property="Padding" Value="8,6" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsGlassBubblesMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                        <Setter Property="CornerRadius" Value="16" />
+                                        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                                        <Setter Property="BorderBrush" Value="#2600D2FF" />
+                                        <Setter Property="BorderThickness" Value="1.2" />
+                                        <Setter Property="Margin" Value="0,4" />
+                                        <Setter Property="Padding" Value="14,12" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Ответить" Command="{Binding PlacementTarget.Tag.ReplyToCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Перевести сообщение" Command="{Binding PlacementTarget.Tag.TranslateMessageCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Озвучить сообщение (TTS)" Command="{Binding PlacementTarget.Tag.SpeakMessageCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Закрепить / Открепить" Command="{Binding PlacementTarget.Tag.PinMessageCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Создать ветку обсуждения" Command="{Binding PlacementTarget.Tag.OpenThreadCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Копировать текст" Command="{Binding PlacementTarget.Tag.CopyMessageTextCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <Separator />
+                                <MenuItem Header="Удалить" Command="{Binding PlacementTarget.Tag.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            </ContextMenu>
+                        </Border.ContextMenu>
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="1" Opacity="0.25" />
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                                <!-- Author Avatar with Voice Pulse Glow -->
-                                <Border Width="40" Height="40" CornerRadius="20" Background="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,2,12,0">
-                                    <TextBlock Text="{Binding Author.AvatarGlyph}" FontSize="18" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <!-- Author Avatar with Voice Pulse Glow & Custom Image Support -->
+                            <Grid Width="40" Height="40" VerticalAlignment="Top" Margin="0,2,12,0">
+                                <Border Width="40" Height="40" CornerRadius="20" Background="{StaticResource IconGradCyan}" Visibility="{Binding Author.HasCustomAvatarImage, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                    <Path Data="{Binding Author.AvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <Border Width="40" Height="40" CornerRadius="20" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Visibility="{Binding Author.HasCustomAvatarImage, Converter={StaticResource BoolToVis}}">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding Author.AvatarPath}" Stretch="UniformToFill" />
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+
+                            <!-- Message Body -->
+                            <StackPanel Grid.Column="1">
+                                <!-- Pinned Badge -->
+                                <Border Visibility="{Binding IsPinned, Converter={StaticResource BoolToVis}}" Background="#1AFBBF24" BorderBrush="#33FBBF24" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,0,4" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource GeoPin}" Fill="#FBBF24" Width="9" Height="9" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Закрепленное сообщение" FontSize="9" FontWeight="Bold" Foreground="#FBBF24" VerticalAlignment="Center" />
+                                    </StackPanel>
                                 </Border>
 
-                                <!-- Message Body -->
-                                <StackPanel Grid.Column="1">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Author.DisplayName}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                        <TextBlock Text="{Binding FormattedTime}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="8,2,0,0" />
-                                    </StackPanel>
-
-                                    <!-- Content in Glass Bubble -->
-                                    <Border Margin="0,4,0,0" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="10" Padding="10,8" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding Content}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
-                                    </Border>
-
-                                    <!-- Interactive Poll Card if Poll is present -->
-                                    <Border Margin="0,8,0,0" CornerRadius="12" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Padding="14" Visibility="{Binding IsPoll, Converter={StaticResource BoolToVis}}">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                                <Path Data="{StaticResource GeoPoll}" Fill="{DynamicResource AccentBrush}" Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding Poll.Question}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
-                                            </StackPanel>
-
-                                            <!-- Poll Options List -->
-                                            <ItemsControl ItemsSource="{Binding Poll.Options}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button Margin="0,3" Padding="12,8" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" HorizontalContentAlignment="Stretch" Cursor="Hand" Command="{Binding DataContext.VoteCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}">
-                                                            <Button.Template>
-                                                                <ControlTemplate TargetType="Button">
-                                                                    <Border CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
-                                                                        <Grid>
-                                                                            <Grid.RowDefinitions>
-                                                                                <RowDefinition Height="Auto" />
-                                                                                <RowDefinition Height="5" />
-                                                                            </Grid.RowDefinitions>
-                                                                            <Grid Margin="0,0,0,4">
-                                                                                <TextBlock Text="{Binding Text}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" />
-                                                                                <TextBlock HorizontalAlignment="Right" Text="{Binding Percentage, StringFormat='{}{0:F0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
-                                                                            </Grid>
-                                                                            <ProgressBar Grid.Row="1" Value="{Binding Percentage}" Maximum="100" Height="5" Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource BorderSubtleBrush}" BorderThickness="0" />
-                                                                        </Grid>
-                                                                    </Border>
-                                                                </ControlTemplate>
-                                                            </Button.Template>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-
-                                            <TextBlock Text="{Binding Poll.TotalVotes, StringFormat='{}Всего голосов: {0}'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
-                                        </StackPanel>
-                                    </Border>
-
-                                    <!-- Voice Note Card with Whisper AI Transcription Button -->
-                                    <Border Margin="0,6,0,0" HorizontalAlignment="Left" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="10" Visibility="{Binding IsVoiceNote, Converter={StaticResource BoolToVis}}">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Path Data="{StaticResource GeoMic}" Fill="{DynamicResource AccentBrush}" Width="12" Height="12" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                                <TextBlock Text="Голосовое сообщение (0:05)" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="0,0,10,0" />
-                                                <Button Content="🤖 Whisper AI: Расшифровать в текст" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="10,4" FontSize="10" Cursor="Hand" Command="{Binding DataContext.TranscribeVoiceNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                            </StackPanel>
-
-                                            <!-- Transcribed Text View -->
-                                            <Border Margin="0,6,0,0" Padding="8" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" Visibility="{Binding IsTranscribed, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="{Binding TranscriptionText}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
-                                            </Border>
-                                        </StackPanel>
-                                    </Border>
-
-                                    <!-- Reactions Wrap -->
-                                    <ItemsControl ItemsSource="{Binding Reactions}" Margin="0,6,0,0">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button Margin="0,0,6,4" Padding="6,2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnReactionBadgeClicked">
-                                                    <Button.Template>
-                                                        <ControlTemplate TargetType="Button">
-                                                            <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock Text="{Binding EmojiSymbol}" FontSize="12" Margin="0,0,4,0" />
-                                                                    <TextBlock Text="{Binding Count}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                                                </StackPanel>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Author.DisplayName}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <TextBlock Text="{Binding FormattedTime}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="8,2,0,0" />
                                 </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+
+                                <!-- Content in Glass Bubble -->
+                                <Border Margin="0,4,0,0" HorizontalAlignment="Left">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Padding" Value="0,2" />
+                                            <Setter Property="CornerRadius" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding DataContext.IsGlassBubblesMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}" />
+                                                    <Setter Property="CornerRadius" Value="12" />
+                                                    <Setter Property="Padding" Value="12,8" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderSubtleBrush}" />
+                                                    <Setter Property="BorderThickness" Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding Content}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                                </Border>
+
+                                <!-- Translated Message Box -->
+                                <Border Margin="0,4,0,0" CornerRadius="8" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1" Padding="8" Visibility="{Binding IsTranslated, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                            <Path Data="{StaticResource GeoTranslate}" Fill="{StaticResource IconGradCyan}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding TargetLangCode, StringFormat='{}ПЕРЕВОД [{0}]:'}" FontSize="9" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding TranslatedText}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Code Block Container with Syntax Styling -->
+                                <Border Margin="0,6,0,0" CornerRadius="8" Background="#0A0F1D" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="10" Visibility="{Binding HasCodeBlock, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left">
+                                    <StackPanel>
+                                        <Border HorizontalAlignment="Right" Background="#1A38BDF8" CornerRadius="4" Padding="6,2" Margin="0,0,0,4">
+                                            <TextBlock Text="{Binding CodeLanguage}" FontSize="9" FontWeight="Bold" Foreground="{StaticResource IconGradSky}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding CodeContent}" FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11" Foreground="#38BDF8" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Clickable Spoiler Box -->
+                                <Button Margin="0,4,0,0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding DataContext.RevealSpoilerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding HasSpoiler, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left">
+                                    <Border CornerRadius="6" Background="#1E293B" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="8,4">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <StackPanel.Style>
+                                                    <Style TargetType="StackPanel">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSpoilerRevealed}" Value="False">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </StackPanel.Style>
+                                                <Path Data="{StaticResource GeoEye}" Fill="{DynamicResource TextMutedBrush}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="СПОЙЛЕР (Нажмите для просмотра)" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding SpoilerText}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSpoilerRevealed}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Border>
+                                </Button>
+
+                                <!-- Thread Indicator -->
+                                <Button Margin="0,4,0,0" Padding="0" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding DataContext.OpenThreadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding HasThread, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left">
+                                    <Border CornerRadius="6" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1" Padding="8,4">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource GeoThread}" Fill="{StaticResource IconGradPurple}" Width="11" Height="11" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding ThreadReplyCount, StringFormat='{}{0} ответов'}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource IconGradPurple}" VerticalAlignment="Center" />
+                                            <TextBlock Text=" • ветка обсуждения" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="4,0,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                </Button>
+
+                                <!-- File Attachment Chip -->
+                                <Border Margin="0,6,0,0" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="10,8" Visibility="{Binding HasFileAttachment, Converter={StaticResource BoolToVis}}" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="32" Height="32" CornerRadius="8" Background="#1A38BDF8" Margin="0,0,10,0">
+                                            <Path Data="{StaticResource GeoAttach}" Fill="{StaticResource IconGradSky}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding FileSizeFormatted}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Discussion Thread Button -->
+                                <Button Margin="0,6,0,0" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding DataContext.OpenThreadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Visibility="{Binding HasThread, Converter={StaticResource BoolToVis}}">
+                                    <Border Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1" CornerRadius="6" Padding="8,4">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource GeoThread}" Fill="{StaticResource IconGradPurple}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding ThreadReplyCount, StringFormat='{}Ветка обсуждения: {0} отв.'}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradPurple}" />
+                                            <TextBlock Text="{Binding ThreadLastReplyTime, StringFormat='{} • {0}'}" FontSize="9" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </Border>
+                                </Button>
+
+                                <!-- Interactive Rich Poll Card if Poll is present -->
+                                <Border Margin="0,8,0,0" CornerRadius="16" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="#4DFBBF24" BorderThickness="1.5" Padding="16" Visibility="{Binding IsPoll, Converter={StaticResource BoolToVis}}" MaxWidth="520" HorizontalAlignment="Left">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#FBBF24" BlurRadius="16" ShadowDepth="0" Opacity="0.15" />
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <!-- Question Image Banner if present -->
+                                        <Border Visibility="{Binding Poll.HasQuestionImage, Converter={StaticResource BoolToVis}}" Height="140" CornerRadius="12" Margin="0,0,0,12">
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="{Binding Poll.QuestionImageUrl}" Stretch="UniformToFill" />
+                                            </Border.Background>
+                                        </Border>
+
+                                        <!-- Poll Question & Header -->
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Border Width="28" Height="28" CornerRadius="8" Background="#26FBBF24" Margin="0,0,10,0">
+                                                    <Path Data="{StaticResource GeoPoll}" Fill="{StaticResource IconGradAmber}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="{Binding Poll.Question}" FontWeight="Black" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="380" />
+                                            </StackPanel>
+                                            <Border Grid.Column="1" Visibility="{Binding Poll.IsClosed, Converter={StaticResource BoolToVis}}" Background="#26EF4444" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Path Data="{StaticResource GeoShieldLock}" Fill="#EF4444" Width="9" Height="9" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text="ЗАВЕРШЕН" FontSize="9" FontWeight="Black" Foreground="#EF4444" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Poll Options List -->
+                                        <ItemsControl ItemsSource="{Binding Poll.Options}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Margin="0,4" Padding="0" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Cursor="Hand" Command="{Binding VoteCommand}" CommandParameter="{Binding}">
+                                                        <Border CornerRadius="10" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="12,10">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="6" />
+                                                                </Grid.RowDefinitions>
+                                                                <Grid Margin="0,0,0,6">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="*" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <!-- Voted indicator badge -->
+                                                                    <Border Width="16" Height="16" CornerRadius="8" Background="{DynamicResource AccentBrush}" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="{Binding HasVoted, Converter={StaticResource BoolToVis}}">
+                                                                        <Path Data="{StaticResource GeoCheck}" Fill="#FFFFFF" Width="8" Height="8" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                    </Border>
+                                                                    <Border Width="16" Height="16" CornerRadius="8" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1.5" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="{Binding HasVoted, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
+
+                                                                    <!-- Option Image Thumbnail if present -->
+                                                                    <Border Grid.Column="1" Width="36" Height="36" CornerRadius="6" Margin="0,0,10,0" Visibility="{Binding HasImage, Converter={StaticResource BoolToVis}}">
+                                                                        <Border.Background>
+                                                                            <ImageBrush ImageSource="{Binding ImageUrl}" Stretch="UniformToFill" />
+                                                                        </Border.Background>
+                                                                    </Border>
+
+                                                                    <!-- Option Text -->
+                                                                    <TextBlock Grid.Column="2" Text="{Binding Text}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+
+                                                                    <!-- Percentage & Votes Count -->
+                                                                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding VotesCount, StringFormat='{}{0} г.'}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                                        <TextBlock Text="{Binding Percentage, StringFormat='{}{0:F0}%'}" FontSize="12" FontWeight="Black" Foreground="{StaticResource IconGradCyan}" VerticalAlignment="Center" />
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                                <!-- Progress Bar -->
+                                                                <ProgressBar Grid.Row="1" Value="{Binding Percentage}" Maximum="100" Height="6" Foreground="{StaticResource IconGradCyan}" Background="{DynamicResource BorderSubtleBrush}" BorderThickness="0" />
+                                                            </Grid>
+                                                        </Border>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <!-- Poll Footer Meta -->
+                                        <Grid Margin="0,10,0,0">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Poll.TotalVotes, StringFormat='{}Всего голосов: {0}'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                                <Border Width="1" Height="10" Background="{DynamicResource DividerBrush}" Margin="8,0" VerticalAlignment="Center" />
+                                                <StackPanel Orientation="Horizontal" Visibility="{Binding Poll.IsAnonymous, Converter={StaticResource BoolToVis}}">
+                                                    <Path Data="{StaticResource GeoShieldLock}" Fill="{DynamicResource TextMutedBrush}" Width="9" Height="9" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text="Анонимно" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Visibility="{Binding Poll.IsAnonymous, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                                    <Path Data="{StaticResource GeoUser}" Fill="{DynamicResource TextMutedBrush}" Width="9" Height="9" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text="Открытый опрос" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <Button HorizontalAlignment="Right" Style="{StaticResource IconButtonStyle}" Command="{Binding Poll.ToggleCloseCommand}" ToolTip="Завершить / возобновить опрос">
+                                                <Border Background="#1AFFFFFF" CornerRadius="6" Padding="8,4">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Path Data="{StaticResource GeoGear}" Fill="{DynamicResource TextSecondaryBrush}" Width="8" Height="8" Stretch="Uniform" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Завершить опрос" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Voice Note Card with Waveform & Speed Controller -->
+                                <Border Margin="0,6,0,0" HorizontalAlignment="Left" CornerRadius="10" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="10" Visibility="{Binding IsVoiceNote, Converter={StaticResource BoolToVis}}">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                            <Button Command="{Binding DataContext.TogglePlayVoiceNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Width="26" Height="26" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Margin="0,0,8,0">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border CornerRadius="13" Background="{StaticResource IconGradCyan}">
+                                                            <TextBlock Text="▶" FontSize="10" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="Аудиосообщение (0:05)" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                    <Border Width="3" Height="14" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="20" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="8" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="24" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="16" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="12" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="18" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                    <Border Width="3" Height="6" Background="{DynamicResource AccentBrush}" CornerRadius="1.5" Margin="1,0" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Border Background="#1A00D2FF" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding VoicePlaybackSpeed, StringFormat='{}{0:F1}x'}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource IconGradCyan}" />
+                                            </Border>
+                                            <Button Command="{Binding DataContext.TranscribeVoiceNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource IconButtonStyle}" Margin="8,0,0,0">
+                                                <Border Background="{DynamicResource CardHoverBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="6" Padding="8,4">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Path Data="{StaticResource GeoBot}" Fill="{StaticResource IconGradCyan}" Width="12" Height="12" Stretch="Uniform" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                                        <TextBlock Text="Whisper AI" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <!-- Transcribed Text View -->
+                                        <Border Margin="0,4,0,0" Padding="8" Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8" Visibility="{Binding IsTranscribed, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding TranscriptionText}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Reactions Wrap -->
+                                <ItemsControl ItemsSource="{Binding Reactions}" Margin="0,6,0,0">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="0,0,6,4" Padding="6,2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnReactionBadgeClicked">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Padding="{TemplateBinding Padding}">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{Binding EmojiSymbol}" FontSize="12" Margin="0,0,4,0" />
+                                                                <TextBlock Text="{Binding Count}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <!-- Message Input Bar (Bottom) with Modern Glassmorphism & Vector Actions -->
-        <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="16,10">
-            <Border Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="8,4">
+        <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="16,8">
+            <StackPanel>
+                <!-- Floating Emote & Sticker Picker Popup -->
+                <Border Visibility="{Binding IsEmotePickerOpen, Converter={StaticResource BoolToVis}}"
+                        Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                        CornerRadius="14" Padding="12" Margin="0,0,0,8" MaxHeight="220" HorizontalAlignment="Right" Width="320">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" BlurRadius="16" ShadowDepth="4" Opacity="0.4" />
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,8">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoSmile}" Fill="{StaticResource IconGradPurple}" Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <TextBlock Text="Эмодзи и стикеры" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Button HorizontalAlignment="Right" Style="{StaticResource IconButtonStyle}" Command="{Binding CloseEmotePickerCommand}">
+                                <Border Width="22" Height="22" CornerRadius="11" Background="{DynamicResource CardHoverBrush}">
+                                    <Path Data="{StaticResource GeoClose}" Fill="{DynamicResource TextSecondaryBrush}" Width="9" Height="9" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </Button>
+                        </Grid>
+                        <ScrollViewer Grid.Row="1" MaxHeight="170" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <Path Data="{StaticResource GeoLightning}" Fill="{StaticResource IconGradCyan}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                    <TextBlock Text="STORM НАБОР" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentPrimaryBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding Emojis}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="2" Width="30" Height="30" Style="{StaticResource IconButtonStyle}" ToolTip="{Binding Name}" Command="{Binding DataContext.InsertEmojiCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                                <Border CornerRadius="6" Background="{DynamicResource InputBackgroundBrush}" Width="28" Height="28">
+                                                    <TextBlock Text="{Binding Symbol}" FontSize="18" FontFamily="Segoe UI Emoji" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Reply Preview Banner -->
+                <Border Visibility="{Binding ReplyingToMessage, Converter={StaticResource NullToVis}}"
+                        Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1"
+                        CornerRadius="8" Padding="10,5" Margin="0,0,0,6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="{StaticResource GeoSend}" Fill="{StaticResource IconGradCyan}" Width="11" Height="11" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Ответ для " FontSize="11" Foreground="{DynamicResource AccentPrimaryBrush}" FontWeight="Bold" />
+                            <TextBlock Text="{Binding ReplyingToMessage.Author.DisplayName}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="Bold" />
+                            <TextBlock Text=": " FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                            <TextBlock Text="{Binding ReplyingToMessage.Content}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" MaxWidth="500" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Command="{Binding CancelReplyCommand}" Style="{StaticResource IconButtonStyle}" ToolTip="Отменить ответ">
+                            <Border Width="20" Height="20" CornerRadius="10" Background="{DynamicResource CardHoverBrush}">
+                                <Path Data="{StaticResource GeoClose}" Fill="{DynamicResource TextSecondaryBrush}" Width="9" Height="9" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Voice Recording Live Bar (Visible during recording) -->
+                <Border Visibility="{Binding IsRecordingVoice, Converter={StaticResource BoolToVis}}"
+                        Background="#26EF4444" BorderBrush="#4DEF4444" BorderThickness="1" CornerRadius="12" Padding="12,6">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="12" Height="12" CornerRadius="6" Background="#EF4444" Margin="0,0,8,0">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#EF4444" BlurRadius="8" ShadowDepth="0" Opacity="0.8" />
+                                </Border.Effect>
+                            </Border>
+                            <Path Data="{StaticResource GeoMic}" Fill="#EF4444" Width="12" Height="12" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="ИДЕТ ЗАПИСЬ: " FontWeight="Bold" FontSize="12" Foreground="#EF4444" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding VoiceRecordingDuration}" FontWeight="Black" FontSize="13" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <!-- Interactive Waveform preview -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border Width="3" Height="8" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="16" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="22" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="14" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="26" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="18" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                            <Border Width="3" Height="10" Background="#EF4444" CornerRadius="1.5" Margin="1,0" />
+                        </StackPanel>
+                        <!-- Cancel & Send Buttons -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                            <Button Padding="10,4" Margin="0,0,6,0" Style="{StaticResource IconButtonStyle}" Command="{Binding CancelVoiceNoteRecordingCommand}" ToolTip="Отменить запись">
+                                <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8" Padding="10,6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource GeoClose}" Fill="{DynamicResource TextSecondaryBrush}" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Отмена" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Button>
+                            <Button Padding="12,4" Style="{StaticResource IconButtonStyle}" Command="{Binding FinishAndSendVoiceNoteCommand}" ToolTip="Отправить голосовое сообщение">
+                                <Border Background="{StaticResource IconGradCyan}" CornerRadius="8" Padding="12,6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource GeoSend}" Fill="#FFFFFF" Width="10" Height="10" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Отправить" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Standard Input Box Container (Visible when not recording voice) -->
+                <Border Visibility="{Binding IsRecordingVoice, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"
+                        Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Padding="8,4">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -201,44 +628,45 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Attachment (+) Button -->
-                    <Button Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnAttachButtonClicked" ToolTip="Прикрепить файл">
-                        <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource CardHoverBrush}">
-                            <Path Data="{StaticResource GeoAttach}" Fill="{DynamicResource AccentBrush}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="32" Style="{StaticResource IconButtonStyle}" Click="OnAttachButtonClicked" ToolTip="Прикрепить файл">
+                        <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource CardHoverBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1">
+                            <Path Data="{StaticResource GeoAttach}" Fill="{StaticResource IconGradCyan}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </Button>
 
-                    <!-- Text Input Box -->
-                    <TextBox Grid.Column="1" Text="{Binding MessageInputText, UpdateSourceTrigger=PropertyChanged}" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" FontSize="13" VerticalContentAlignment="Center" Margin="8,0" KeyDown="OnMessageInputKeyDown" />
+                    <!-- Text Input Box with WinUI 3 Placeholder -->
+                    <TextBox Grid.Column="1"
+                             Text="{Binding MessageInputText, UpdateSourceTrigger=PropertyChanged}"
+                             Tag="Написать сообщение в чат... (Enter для отправки)"
+                             Background="Transparent"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderThickness="0"
+                             FontSize="13"
+                             VerticalContentAlignment="Center"
+                             Margin="8,0"
+                             KeyDown="OnMessageInputKeyDown" />
 
-                    <!-- Actions (Poll, Emotes/Stickers, Voice Note, Send) -->
+                    <!-- Actions (Emotes/Stickers, Voice Note, Send) -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <Button Width="32" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenCreatePollCommand}" ToolTip="Создать опрос" Margin="2,0">
-                            <Border Width="28" Height="26" CornerRadius="6" Background="#1AFBBF24" BorderBrush="#33FBBF24" BorderThickness="1">
-                                <Path Data="{StaticResource GeoPoll}" Fill="{StaticResource IconGradAmber}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Button Width="32" Height="30" Style="{StaticResource IconButtonStyle}" Command="{Binding OpenEmotePickerCommand}" ToolTip="Эмодзи и стикеры" Margin="2,0">
+                            <Border Width="30" Height="28" CornerRadius="8" Background="#26C084FC" BorderBrush="#4DC084FC" BorderThickness="1">
+                                <Path Data="{StaticResource GeoSmile}" Fill="{StaticResource IconGradPurple}" Width="15" Height="15" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                         </Button>
-                        <Button Width="32" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding OpenEmotePickerCommand}" ToolTip="Эмодзи и стикеры" Margin="2,0">
-                            <Border Width="28" Height="26" CornerRadius="6" Background="#1AC084FC" BorderBrush="#33C084FC" BorderThickness="1">
-                                <TextBlock Text="👾" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Button Width="32" Height="30" Style="{StaticResource IconButtonStyle}" Command="{Binding StartVoiceNoteRecordingCommand}" ToolTip="Записать голосовое сообщение" Margin="2,0">
+                            <Border Width="30" Height="28" CornerRadius="8" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1">
+                                <Path Data="{StaticResource GeoMic}" Fill="{StaticResource IconGradCyan}" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                         </Button>
-                        <Button Width="32" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Click="OnVoiceNoteButtonClicked" ToolTip="Голосовое сообщение" Margin="2,0">
-                            <Border Width="28" Height="26" CornerRadius="6" Background="#1A00D2FF" BorderBrush="#3300D2FF" BorderThickness="1">
-                                <Path Data="{StaticResource GeoMic}" Fill="{StaticResource IconGradCyan}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Button Width="36" Height="30" Style="{StaticResource IconButtonStyle}" Command="{Binding SendMessageCommand}" ToolTip="Отправить сообщение" Margin="4,0,0,0">
+                            <Border CornerRadius="8" Background="{StaticResource IconGradCyan}" Width="36" Height="28">
+                                <Path Data="{StaticResource GeoSend}" Fill="#FFFFFF" Width="14" Height="14" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                        </Button>
-                        <Button Width="36" Height="30" Background="{DynamicResource AccentBrush}" BorderThickness="0" Cursor="Hand" Command="{Binding SendMessageCommand}" ToolTip="Отправить" Margin="4,0,0,0">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border CornerRadius="8" Background="{StaticResource IconGradCyan}">
-                                        <Path Data="{StaticResource GeoSend}" Fill="#FFFFFF" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

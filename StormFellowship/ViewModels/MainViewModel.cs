@@ -9,10 +9,13 @@ namespace StormFellowship.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _windowTitle = "STORM FELLOWSHIP v0.1.1";
+    private string _windowTitle = "STORM FELLOWSHIP v0.2.2";
 
     [ObservableProperty]
     private bool _isCreateFellowshipModalOpen;
+
+    [ObservableProperty]
+    private bool _isAuthModalOpen;
 
     [ObservableProperty]
     private bool _isFellowshipSettingsModalOpen;
@@ -48,6 +51,9 @@ public partial class MainViewModel : ObservableObject
     private bool _isGlassBubblesMode = true;
 
     [ObservableProperty]
+    private bool _isUserProfileQuickCardOpen = false;
+
+    [ObservableProperty]
     private bool _isEmotePickerOpen = false;
 
     [ObservableProperty]
@@ -56,9 +62,26 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isQuickSwitcherModalOpen = false;
 
+    [ObservableProperty]
+    private bool _isFolderManagerModalOpen = false;
+
+    [ObservableProperty]
+    private string _folderEditName = string.Empty;
+
+    [ObservableProperty]
+    private string _folderEditIcon = "📁";
+
+    [ObservableProperty]
+    private string _folderEditColor = "#00A3FF";
+
+    [ObservableProperty]
+    private FellowshipFolder? _selectedFolderForEdit;
+
+    public ObservableCollection<Fellowship> AvailableFellowshipsToAddToFolder { get; } = new();
+
     public ObservableCollection<SoundboardTrack> SoundboardTracks => SoundboardService.Instance.Tracks;
 
-    public double SidebarWidth => IsSidebarCompact ? 56.0 : 240.0;
+    public double SidebarWidth => IsSidebarCompact ? 56.0 : 275.0;
 
     [ObservableProperty]
     private bool _isMemberListVisible = true;
@@ -92,6 +115,9 @@ public partial class MainViewModel : ObservableObject
     private int _newChannelBitrate = 128;
 
     [ObservableProperty]
+    private string _newCategoryName = string.Empty;
+
+    [ObservableProperty]
     private string _editingChannelName = string.Empty;
 
     [ObservableProperty]
@@ -117,40 +143,44 @@ public partial class MainViewModel : ObservableObject
     private string _newPollQuestion = string.Empty;
 
     [ObservableProperty]
-    private string _newPollOption1 = string.Empty;
+    private string _newPollQuestionImageUrl = string.Empty;
 
     [ObservableProperty]
-    private string _newPollOption2 = string.Empty;
+    private bool _newPollAllowMultiple = false;
 
     [ObservableProperty]
-    private string _newPollOption3 = string.Empty;
+    private bool _newPollIsAnonymous = false;
 
-    [ObservableProperty]
-    private string _newPollOption4 = string.Empty;
+    public ObservableCollection<PollOption> NewPollOptions { get; } = new();
 
     // Screen Share Settings
     [ObservableProperty]
-    private string _screenShareSource = "Весь экран (1920x1080)";
+    private string _screenShareSource = "🖥️ Монитор 1: Основной экран (1920x1080 @ 144Hz)";
 
     [ObservableProperty]
-    private string _screenShareQuality = "1080p 60 FPS (Высокое качество)";
+    private string _screenShareQuality = "1080p 60 FPS (Высокая четкость HD)";
 
     [ObservableProperty]
     private bool _screenShareIncludeAudio = true;
 
     public ObservableCollection<string> ScreenShareSources { get; } = new()
     {
-        "Весь экран (1920x1080)",
-        "Окно игры (DirectX/Vulkan Fullscreen)",
-        "Окно браузера / Приложения"
+        "🖥️ Монитор 1: Основной экран (1920x1080 @ 144Hz)",
+        "🖥️ Монитор 2: Дополнительный экран (2560x1440 @ 60Hz)",
+        "🎮 Окно игры (CS2 / Valorant / DirectX 12)",
+        "🌐 Окно браузера (Google Chrome / Edge)",
+        "💻 Visual Studio / Кодовый редактор",
+        "🎛️ Мульти-экран (2 Окна Split 50/50)",
+        "📱 Мульти-стрим (Grid 2x2: 4 Окна)"
     };
 
     public ObservableCollection<string> ScreenShareQualities { get; } = new()
     {
-        "1080p 60 FPS (Высокое качество)",
-        "1440p 60 FPS (2K Ultra)",
-        "4K 60 FPS (Ultra HD)",
-        "1080p 120 FPS (Киберспортивный)"
+        "1080p 60 FPS (Высокая четкость HD)",
+        "1080p 120 FPS (Киберспортивный сверхплавный)",
+        "1440p 60 FPS (2K Ultra HD)",
+        "4K 60 FPS (Cinematic 4K UHD)",
+        "720p 30 FPS (Экономия трафика)"
     };
 
     public ObservableCollection<int> AvailableBitrates { get; } = new() { 64, 96, 128, 256, 384 };
@@ -163,6 +193,7 @@ public partial class MainViewModel : ObservableObject
     public MemberListViewModel MemberListViewModel { get; }
     public UserSettingsViewModel UserSettingsViewModel { get; }
     public RoleManagementViewModel RoleManagementViewModel { get; }
+    public AuthViewModel AuthViewModel { get; }
 
     public MainViewModel CreateFellowshipModalViewModel => this;
     public MainViewModel FellowshipSettingsModalViewModel => this;
@@ -170,6 +201,8 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel EditChannelModalViewModel => this;
 
     public string E2EEFingerprint => EncryptionService.Instance.Fingerprint;
+
+    public User CurrentUser => FellowshipService.Instance.CurrentUser;
 
     public MainViewModel()
     {
@@ -180,11 +213,40 @@ public partial class MainViewModel : ObservableObject
         MemberListViewModel = new MemberListViewModel(this);
         UserSettingsViewModel = new UserSettingsViewModel(this);
         RoleManagementViewModel = new RoleManagementViewModel(this);
+        AuthViewModel = new AuthViewModel(this);
 
         CallService.Instance.CallStateChanged += (call) =>
         {
             IsInCallView = call != null;
         };
+
+        FellowshipService.Instance.CurrentChannelChanged += (chan) =>
+        {
+            if (chan != null && !chan.IsVoice)
+            {
+                IsInCallView = false;
+            }
+        };
+    }
+
+    [RelayCommand]
+    public void OpenAuthDialog()
+    {
+        IsAuthModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseAuthDialog()
+    {
+        IsAuthModalOpen = false;
+    }
+
+    public void RefreshUserProfileBindings()
+    {
+        OnPropertyChanged(nameof(CurrentUser));
+        SidebarViewModel.RefreshProperties();
+        RailViewModel.RefreshProperties();
+        MemberListViewModel.RefreshMembers();
     }
 
     [RelayCommand]
@@ -240,17 +302,88 @@ public partial class MainViewModel : ObservableObject
     public void OpenCreatePollDialog()
     {
         NewPollQuestion = string.Empty;
-        NewPollOption1 = string.Empty;
-        NewPollOption2 = string.Empty;
-        NewPollOption3 = string.Empty;
-        NewPollOption4 = string.Empty;
+        NewPollQuestionImageUrl = string.Empty;
+        NewPollAllowMultiple = false;
+        NewPollIsAnonymous = false;
+        NewPollOptions.Clear();
+        NewPollOptions.Add(new PollOption { Text = string.Empty });
+        NewPollOptions.Add(new PollOption { Text = string.Empty });
         IsCreatePollModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void AddNewPollOption()
+    {
+        if (NewPollOptions.Count < 10)
+        {
+            NewPollOptions.Add(new PollOption { Text = string.Empty });
+        }
+        else
+        {
+            ShowToastNotification("Максимум 10 вариантов ответа в опросе");
+        }
+    }
+
+    [RelayCommand]
+    public void RemoveNewPollOption(PollOption? option)
+    {
+        if (option != null && NewPollOptions.Count > 2)
+        {
+            NewPollOptions.Remove(option);
+        }
+        else
+        {
+            ShowToastNotification("Опрос должен содержать как минимум 2 варианта ответа");
+        }
+    }
+
+    [RelayCommand]
+    public void BrowsePollQuestionImage()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = "Изображения (*.png;*.jpg;*.jpeg;*.gif;*.webp)|*.png;*.jpg;*.jpeg;*.gif;*.webp|Все файлы (*.*)|*.*",
+            Title = "Выберите изображение для вопроса опроса"
+        };
+        if (dlg.ShowDialog() == true)
+        {
+            NewPollQuestionImageUrl = dlg.FileName;
+        }
+    }
+
+    [RelayCommand]
+    public void ClearPollQuestionImage()
+    {
+        NewPollQuestionImageUrl = string.Empty;
+    }
+
+    [RelayCommand]
+    public void BrowseOptionImage(PollOption? option)
+    {
+        if (option == null) return;
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = "Изображения (*.png;*.jpg;*.jpeg;*.gif;*.webp)|*.png;*.jpg;*.jpeg;*.gif;*.webp|Все файлы (*.*)|*.*",
+            Title = "Выберите изображение для варианта ответа"
+        };
+        if (dlg.ShowDialog() == true)
+        {
+            option.ImageUrl = dlg.FileName;
+        }
+    }
+
+    [RelayCommand]
+    public void ClearOptionImage(PollOption? option)
+    {
+        if (option == null) return;
+        option.ImageUrl = string.Empty;
     }
 
     [RelayCommand]
     public void SubmitCreatePoll()
     {
-        if (string.IsNullOrWhiteSpace(NewPollQuestion) || string.IsNullOrWhiteSpace(NewPollOption1) || string.IsNullOrWhiteSpace(NewPollOption2))
+        var validOptions = NewPollOptions.Where(o => !string.IsNullOrWhiteSpace(o.Text)).ToList();
+        if (string.IsNullOrWhiteSpace(NewPollQuestion) || validOptions.Count < 2)
         {
             ShowToastNotification("Введите вопрос и как минимум 2 варианта ответа");
             return;
@@ -259,27 +392,44 @@ public partial class MainViewModel : ObservableObject
         var poll = new PollItem
         {
             Question = NewPollQuestion,
+            QuestionImageUrl = NewPollQuestionImageUrl,
+            AllowMultipleAnswers = NewPollAllowMultiple,
+            IsAnonymous = NewPollIsAnonymous,
             AuthorName = FellowshipService.Instance.CurrentUser.DisplayName
         };
-        poll.Options.Add(new PollOption { Text = NewPollOption1 });
-        poll.Options.Add(new PollOption { Text = NewPollOption2 });
-        if (!string.IsNullOrWhiteSpace(NewPollOption3)) poll.Options.Add(new PollOption { Text = NewPollOption3 });
-        if (!string.IsNullOrWhiteSpace(NewPollOption4)) poll.Options.Add(new PollOption { Text = NewPollOption4 });
+
+        foreach (var opt in validOptions)
+        {
+            poll.Options.Add(new PollOption
+            {
+                Text = opt.Text,
+                ImageUrl = opt.ImageUrl
+            });
+        }
         poll.RecalculatePercentages();
 
-        var channelId = FellowshipService.Instance.CurrentChannel?.Id ?? "general";
+        var channel = FellowshipService.Instance.CurrentChannel;
         var msg = new ChatMessage
         {
-            ChannelId = channelId,
+            ChannelId = channel?.Id ?? "general",
             Author = FellowshipService.Instance.CurrentUser,
-            Content = "Опрос сообщества:",
+            Content = $"📊 Опрос: {NewPollQuestion}",
             Poll = poll,
             Timestamp = DateTime.Now
         };
 
-        FellowshipService.Instance.CurrentChannel?.Messages.Add(msg);
+        if (channel != null)
+        {
+            channel.Messages.Add(msg);
+        }
+        else if (FellowshipService.Instance.CurrentDmUser != null)
+        {
+            var firstChan = FellowshipService.Instance.Fellowships.FirstOrDefault()?.Categories.FirstOrDefault()?.Channels.FirstOrDefault();
+            firstChan?.Messages.Add(msg);
+        }
+
         IsCreatePollModalOpen = false;
-        ShowToastNotification("📊 Опрос успешно опубликован в чате!");
+        ShowToastNotification("📊 Опрос успешно создан и опубликован в чате!");
     }
 
     [RelayCommand]
@@ -291,7 +441,28 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void OpenScreenShareDialog()
     {
+        RefreshRealCaptureSources();
         IsScreenShareModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void RefreshRealCaptureSources()
+    {
+        ScreenShareSources.Clear();
+        var realSources = ScreenCaptureSourceService.GetRealCaptureSources();
+        foreach (var s in realSources)
+        {
+            ScreenShareSources.Add($"{s.Title} — {s.Resolution}");
+        }
+        if (ScreenShareSources.Count > 0)
+        {
+            ScreenShareSource = ScreenShareSources[0];
+        }
+        else
+        {
+            ScreenShareSources.Add("🖥️ Основной экран (1920x1080)");
+            ScreenShareSource = ScreenShareSources[0];
+        }
     }
 
     [RelayCommand]
@@ -299,7 +470,7 @@ public partial class MainViewModel : ObservableObject
     {
         IsScreenShareModalOpen = false;
         CallService.Instance.ToggleScreenShare();
-        ShowToastNotification($"🖥️ Трансляция экрана запущена ({ScreenShareQuality}, WASAPI: {(ScreenShareIncludeAudio ? "Вкл" : "Выкл")})");
+        ShowToastNotification($"🖥️ Трансляция источника запущена: {ScreenShareSource}");
     }
 
     [RelayCommand]
@@ -317,10 +488,63 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void ToggleMemberList()
+    {
+        IsMemberListVisible = !IsMemberListVisible;
+        ShowToastNotification(IsMemberListVisible ? "👥 Список участников отображается" : "👥 Список участников скрыт");
+    }
+
+    [RelayCommand]
     public void ToggleGlassBubbles()
     {
         IsGlassBubblesMode = !IsGlassBubblesMode;
-        ShowToastNotification(IsGlassBubblesMode ? "Режим Floating Glass Bubbles включен" : "Классический режим сообщений");
+        ChatViewModel.RefreshProperties();
+        ShowToastNotification(IsGlassBubblesMode 
+            ? "💬 Режим сообщений: Современные стеклянные пузыри (Glass Bubbles)" 
+            : "📜 Режим сообщений: Компактные строки (Compact Line View)");
+    }
+
+    [RelayCommand]
+    public void OpenUserProfileQuickCard()
+    {
+        IsUserProfileQuickCardOpen = !IsUserProfileQuickCardOpen;
+    }
+
+    [RelayCommand]
+    public void CloseUserProfileQuickCard()
+    {
+        IsUserProfileQuickCardOpen = false;
+    }
+
+    [RelayCommand]
+    public void SetUserStatus(string statusStr)
+    {
+        if (Enum.TryParse<UserStatus>(statusStr, out var status))
+        {
+            FellowshipService.Instance.CurrentUser.Status = status;
+            var label = status switch
+            {
+                UserStatus.Online => "В сети",
+                UserStatus.Idle => "Не активен",
+                UserStatus.DoNotDisturb => "Не беспокоить",
+                UserStatus.Invisible => "Невидимка",
+                _ => "В сети"
+            };
+            ShowToastNotification($"Статус изменен: {label}");
+        }
+        IsUserProfileQuickCardOpen = false;
+    }
+
+    [RelayCommand]
+    public void CopyUserId()
+    {
+        try
+        {
+            var user = FellowshipService.Instance.CurrentUser;
+            System.Windows.Clipboard.SetText($"{user.Username}#{user.Tag}");
+            ShowToastNotification($"📋 ID пользователя скопирован: @{user.Username}#{user.Tag}");
+        }
+        catch { }
     }
 
     [RelayCommand]
@@ -378,13 +602,9 @@ public partial class MainViewModel : ObservableObject
         IsE2EESecurityModalOpen = false;
         IsScreenShareModalOpen = false;
         IsEmotePickerOpen = false;
+        IsUserProfileQuickCardOpen = false;
         IsSoundboardModalOpen = false;
         IsQuickSwitcherModalOpen = false;
-    }
-
-    public void ToggleMemberList()
-    {
-        IsMemberListVisible = !IsMemberListVisible;
     }
 
     public void ShowToastNotification(string message)
@@ -400,7 +620,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CheckForUpdates()
     {
-        ShowToastNotification("STORM FELLOWSHIP v0.1.0 — Установлена новейшая версия!");
+        ShowToastNotification("STORM FELLOWSHIP v0.2.2 — Установлена новейшая версия!");
     }
 
     // Fellowships & Channels Modal management
@@ -417,6 +637,46 @@ public partial class MainViewModel : ObservableObject
         FellowshipNameInput = string.Empty;
         IsCreateFellowshipModalOpen = false;
         ShowToastNotification("Содружество успешно создано!");
+    }
+
+    [ObservableProperty]
+    private string _directLanIpInput = "192.168.1.100";
+
+    public ObservableCollection<LanPeer> DiscoveredLanPeers => CloudSyncService.Instance.DiscoveredPeers;
+
+    [RelayCommand]
+    public void ConnectDirectLanPeer(string? ip)
+    {
+        string targetIp = string.IsNullOrWhiteSpace(ip) ? DirectLanIpInput : ip;
+        CloudSyncService.Instance.ConnectDirectP2P(targetIp, 48150);
+        IsCreateFellowshipModalOpen = false;
+        ShowToastNotification($"🌐 Подключение Direct P2P: {targetIp}:48150");
+    }
+
+    [RelayCommand]
+    public void CopyCurrentInviteLink()
+    {
+        var f = FellowshipService.Instance.CurrentFellowship;
+        if (f != null)
+        {
+            try
+            {
+                System.Windows.Clipboard.SetText($"storm://invite/{f.Id}");
+                ShowToastNotification($"📋 Ссылка скопирована: storm://invite/{f.Id}");
+            }
+            catch { }
+        }
+        else
+        {
+            ShowToastNotification("Выберите содружество для копирования ссылки");
+        }
+    }
+
+    [RelayCommand]
+    public void AnnounceLanPresence()
+    {
+        CloudSyncService.Instance.BroadcastLanPresence();
+        ShowToastNotification("📡 Оповещение отправлено в локальную сеть / VPN!");
     }
 
     [RelayCommand]
@@ -436,9 +696,112 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void CloseFellowshipSettingsDialog() => IsFellowshipSettingsModalOpen = false;
 
-    public void OpenUserSettingsDialog() => IsUserSettingsModalOpen = true;
+    [RelayCommand]
+    public void OpenUserSettings()
+    {
+        IsUserProfileQuickCardOpen = false;
+        IsUserSettingsModalOpen = true;
+    }
+
+    public void OpenUserSettingsDialog() => OpenUserSettings();
 
     public void CloseUserSettingsDialog() => IsUserSettingsModalOpen = false;
+
+    [RelayCommand]
+    public void DeleteFellowship(string? fellowshipId)
+    {
+        if (string.IsNullOrWhiteSpace(fellowshipId)) return;
+        FellowshipService.Instance.DeleteFellowship(fellowshipId);
+        RailViewModel.RefreshProperties();
+        SidebarViewModel.RefreshProperties();
+        ShowToastNotification("🗑️ Содружество удалено");
+    }
+
+    [RelayCommand]
+    public void OpenFolderManager(FellowshipFolder? folder)
+    {
+        if (folder == null) return;
+        SelectedFolderForEdit = folder;
+        FolderEditName = folder.Name;
+        FolderEditIcon = folder.Icon;
+        FolderEditColor = folder.ColorHex;
+        RefreshAvailableFellowshipsForFolder();
+        IsFolderManagerModalOpen = true;
+    }
+
+    [RelayCommand]
+    public void CloseFolderManager()
+    {
+        IsFolderManagerModalOpen = false;
+        SelectedFolderForEdit = null;
+    }
+
+    [RelayCommand]
+    public void SetFolderEditIcon(string? icon)
+    {
+        if (!string.IsNullOrWhiteSpace(icon)) FolderEditIcon = icon;
+    }
+
+    [RelayCommand]
+    public void SetFolderEditColor(string? color)
+    {
+        if (!string.IsNullOrWhiteSpace(color)) FolderEditColor = color;
+    }
+
+    [RelayCommand]
+    public void SaveFolderChanges()
+    {
+        if (SelectedFolderForEdit == null) return;
+        SelectedFolderForEdit.Name = string.IsNullOrWhiteSpace(FolderEditName) ? "Папка" : FolderEditName;
+        SelectedFolderForEdit.Icon = FolderEditIcon;
+        SelectedFolderForEdit.ColorHex = FolderEditColor;
+        IsFolderManagerModalOpen = false;
+        RailViewModel.RefreshProperties();
+        ShowToastNotification("💾 Настройки папки сохранены");
+    }
+
+    [RelayCommand]
+    public void DeleteCurrentFolder()
+    {
+        if (SelectedFolderForEdit == null) return;
+        FellowshipService.Instance.DeleteFolder(SelectedFolderForEdit);
+        IsFolderManagerModalOpen = false;
+        SelectedFolderForEdit = null;
+        RailViewModel.RefreshProperties();
+        ShowToastNotification("🗑️ Папка удалена, содружества извлечены");
+    }
+
+    [RelayCommand]
+    public void ExtractFellowshipFromFolder(Fellowship? fellowship)
+    {
+        if (fellowship == null || SelectedFolderForEdit == null) return;
+        FellowshipService.Instance.RemoveFellowshipFromFolder(fellowship, SelectedFolderForEdit);
+        RefreshAvailableFellowshipsForFolder();
+        OnPropertyChanged(nameof(SelectedFolderForEdit));
+        RailViewModel.RefreshProperties();
+    }
+
+    [RelayCommand]
+    public void AddFellowshipToEditedFolder(Fellowship? fellowship)
+    {
+        if (fellowship == null || SelectedFolderForEdit == null) return;
+        FellowshipService.Instance.MoveFellowshipToFolder(fellowship, SelectedFolderForEdit);
+        RefreshAvailableFellowshipsForFolder();
+        OnPropertyChanged(nameof(SelectedFolderForEdit));
+        RailViewModel.RefreshProperties();
+    }
+
+    private void RefreshAvailableFellowshipsForFolder()
+    {
+        AvailableFellowshipsToAddToFolder.Clear();
+        foreach (var f in FellowshipService.Instance.Fellowships)
+        {
+            if (SelectedFolderForEdit == null || !SelectedFolderForEdit.Fellowships.Contains(f))
+            {
+                AvailableFellowshipsToAddToFolder.Add(f);
+            }
+        }
+    }
 
     public void OpenCreateChannelDialog(ChannelCategory? category = null)
     {

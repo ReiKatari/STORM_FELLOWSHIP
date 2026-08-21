@@ -38,21 +38,39 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="pack://application:,,,/Assets/AppIcon.png" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <Grid Width="24" Height="24" Margin="0,0,8,0" VerticalAlignment="Center">
+                        <Border Width="24" Height="24" CornerRadius="12" Background="{StaticResource IconGradCyan}" Visibility="{Binding CurrentUser.HasCustomAvatarImage, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                            <Path Data="{Binding CurrentUser.AvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="11" Height="11" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border Width="24" Height="24" CornerRadius="12" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" Visibility="{Binding CurrentUser.HasCustomAvatarImage, Converter={StaticResource BoolToVis}}">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding CurrentUser.AvatarPath}" Stretch="UniformToFill" />
+                            </Border.Background>
+                        </Border>
+                    </Grid>
                     <TextBlock Text="STORM OVERLAY" FontSize="11" FontWeight="Black" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleChatCommand}" ToolTip="Чат" Margin="0,0,4,0">
-                        <TextBlock Text="💬" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="26" Height="26" Style="{StaticResource IconButtonStyle}" Click="OnClickThroughClicked" ToolTip="Режим клика насквозь (Click-Through)" Margin="0,0,4,0">
+                        <Border Width="24" Height="24" CornerRadius="6" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoCrosshair}" Stroke="#00D2FF" StrokeThickness="1.5" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
-                    <Button Width="24" Height="24" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding CloseOverlayCommand}" ToolTip="Скрыть оверлей">
-                        <TextBlock Text="✕" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="26" Height="26" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleChatCommand}" ToolTip="Чат" Margin="0,0,4,0">
+                        <Border Width="24" Height="24" CornerRadius="6" Background="#2638BDF8" BorderBrush="#4D38BDF8" BorderThickness="1">
+                            <Path Data="{StaticResource GeoChat}" Fill="{StaticResource IconGradSky}" Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Button>
+                    <Button Width="26" Height="26" Style="{StaticResource IconButtonStyle}" Command="{Binding CloseOverlayCommand}" ToolTip="Скрыть оверлей (ESC)">
+                        <Border Width="24" Height="24" CornerRadius="6" Background="#26EF4444" BorderBrush="#4DEF4444" BorderThickness="1">
+                            <Path Data="{StaticResource GeoWinClose}" Stroke="#EF4444" StrokeThickness="1.8" Width="10" Height="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- Active Voice Participants (Avatars with Neon Speaking Rings) -->
+            <!-- Active Voice Participants (Interactive Click & Mute) -->
             <Border Grid.Row="1" Background="#660F172A" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="10" Padding="8" Margin="0,0,0,10">
                 <ItemsControl ItemsSource="{Binding SpeakingParticipants}">
                     <ItemsControl.ItemsPanel>
@@ -62,15 +80,27 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="6,4" HorizontalAlignment="Center">
-                                <Grid Width="42" Height="42" HorizontalAlignment="Center">
-                                    <Ellipse Width="42" Height="42" Stroke="{DynamicResource StatusOnlineBrush}" StrokeThickness="2.5" />
-                                    <Border Width="34" Height="34" CornerRadius="17" Background="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding AvatarGlyph}" FontSize="16" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                </Grid>
-                                <TextBlock Text="{Binding DisplayName}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" MaxWidth="60" />
-                            </StackPanel>
+                            <Button Style="{StaticResource IconButtonStyle}" Command="{Binding DataContext.SelectParticipantCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Margin="4,2">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Заглушить для себя" Command="{Binding PlacementTarget.DataContext.MuteParticipantForMeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel HorizontalAlignment="Center">
+                                    <Grid Width="42" Height="42" HorizontalAlignment="Center">
+                                        <Ellipse Width="42" Height="42" Stroke="{DynamicResource StatusOnlineBrush}" StrokeThickness="2.5" />
+                                        <Border Width="34" Height="34" CornerRadius="17" Background="{StaticResource IconGradCyan}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding HasCustomAvatarImage, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+                                            <Path Data="{Binding AvatarGlyph, Converter={StaticResource GeoKeyToGeo}}" Fill="#FFFFFF" Width="16" Height="16" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <Border Width="34" Height="34" CornerRadius="17" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding HasCustomAvatarImage, Converter={StaticResource BoolToVis}}">
+                                            <Border.Background>
+                                                <ImageBrush ImageSource="{Binding AvatarPath}" Stretch="UniformToFill" />
+                                            </Border.Background>
+                                        </Border>
+                                    </Grid>
+                                    <TextBlock Text="{Binding DisplayName}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" MaxWidth="60" />
+                                </StackPanel>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -83,7 +113,7 @@
                     <ItemsControl ItemsSource="{Binding RecentChatMessages}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,3" Padding="4" CornerRadius="6" Background="#331E293B">
+                                <Border Margin="0,3" Padding="6" CornerRadius="8" Background="#331E293B">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding Author.DisplayName}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="0,0,6,0" />
@@ -98,21 +128,29 @@
                 </ScrollViewer>
             </Border>
 
-            <!-- Bottom Floating Control Bar -->
+            <!-- Bottom Floating Control Bar with Vector Icons -->
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Text="{Binding QuickMessageText, UpdateSourceTrigger=PropertyChanged}" Background="#661E293B" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="8,5" FontSize="11" KeyDown="OnQuickMessageKeyDown" />
+                <TextBox Text="{Binding QuickMessageText, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Быстрое сообщение в оверлее..."
+                         Background="#661E293B" Foreground="{DynamicResource TextPrimaryBrush}"
+                         BorderBrush="{DynamicResource BorderSubtleBrush}" Padding="10,6" FontSize="11"
+                         KeyDown="OnQuickMessageKeyDown" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
-                    <Button Width="30" Height="28" Background="#661E293B" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleMuteCommand}" ToolTip="Микрофон" Margin="0,0,4,0">
-                        <TextBlock Text="{Binding MicIcon}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="30" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleMuteCommand}" ToolTip="Микрофон" Margin="0,0,4,0">
+                        <Border Width="30" Height="28" CornerRadius="8" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoMic}" Fill="{StaticResource IconGradCyan}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
-                    <Button Width="30" Height="28" Background="#661E293B" BorderThickness="0" Cursor="Hand" Command="{Binding ToggleDeafenCommand}" ToolTip="Звук">
-                        <TextBlock Text="{Binding SoundIcon}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Button Width="32" Height="30" Style="{StaticResource IconButtonStyle}" Command="{Binding ToggleDeafenCommand}" ToolTip="Звук">
+                        <Border Width="30" Height="28" CornerRadius="8" Background="#2600D2FF" BorderBrush="#4D00D2FF" BorderThickness="1">
+                            <Path Data="{StaticResource GeoHeadphones}" Fill="{StaticResource IconGradCyan}" Width="13" Height="13" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
                     </Button>
                 </StackPanel>
             </Grid>

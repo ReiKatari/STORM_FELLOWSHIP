@@ -23,6 +23,7 @@ public partial class ChannelSidebarViewModel : ObservableObject
     public ObservableCollection<ChannelCategory> Categories => CurrentFellowship?.Categories ?? new ObservableCollection<ChannelCategory>();
 
     public bool IsMuted => AudioService.Instance.IsMuted;
+    public bool IsMicMuted => IsMuted;
     public bool IsDeafened => AudioService.Instance.IsDeafened;
     public string MicIcon => IsMuted ? "🔇" : "🎤";
     public string SoundIcon => IsDeafened ? "🔇" : "🎧";
@@ -53,6 +54,11 @@ public partial class ChannelSidebarViewModel : ObservableObject
     }
 
     public void RefreshAll()
+    {
+        RefreshProperties();
+    }
+
+    public void RefreshProperties()
     {
         OnPropertyChanged(nameof(CurrentFellowship));
         OnPropertyChanged(nameof(CurrentDmUser));
@@ -141,6 +147,12 @@ public partial class ChannelSidebarViewModel : ObservableObject
     public void OpenFellowshipSettings()
     {
         _mainVM.OpenFellowshipSettingsDialog();
+    }
+
+    [RelayCommand]
+    public void OpenUserProfileQuickCard()
+    {
+        _mainVM.OpenUserProfileQuickCard();
     }
 
     [RelayCommand]

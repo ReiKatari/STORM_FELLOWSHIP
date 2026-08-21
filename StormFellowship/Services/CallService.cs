@@ -70,7 +70,7 @@ public class CallService : ICallService
         {
             Type = CallType.GroupVoiceChannel,
             State = CallState.Connected,
-            Title = $"🔊 {voiceChannel.Name.ToUpper()}",
+            Title = voiceChannel.Name.ToUpper(),
             LocalUser = localUser,
             RemoteUser = new User
             {
@@ -102,6 +102,7 @@ public class CallService : ICallService
         if (ActiveCall != null)
         {
             AudioService.Instance.PlaySoundCue(SoundCueType.CallEnd);
+            CameraService.Instance.StopCamera();
             ActiveCall.State = CallState.Ended;
             _callTimer.Stop();
             _waveformTimer.Stop();
@@ -145,6 +146,14 @@ public class CallService : ICallService
         if (ActiveCall != null)
         {
             ActiveCall.IsVideoOn = !ActiveCall.IsVideoOn;
+            if (ActiveCall.IsVideoOn)
+            {
+                CameraService.Instance.StartCamera();
+            }
+            else
+            {
+                CameraService.Instance.StopCamera();
+            }
         }
     }
 

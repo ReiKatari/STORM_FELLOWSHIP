@@ -17,13 +17,18 @@ public partial class ChatViewModel : ObservableObject
     private ChatMessage? _replyingToMessage;
 
     [ObservableProperty]
-    private bool _isEmojiPickerOpen;
+    private bool _isRecordingVoice = false;
 
     [ObservableProperty]
-    private bool _isStickerPickerOpen;
+    private string _voiceRecordingDuration = "00:00";
 
     [ObservableProperty]
-    private string _searchFilter = string.Empty;
+    private bool _isEmotePickerOpen = false;
+
+    private System.Windows.Threading.DispatcherTimer? _voiceTimer;
+    private int _voiceSeconds = 0;
+
+    public bool IsGlassBubblesMode => _mainVM.IsGlassBubblesMode;
 
     public Channel? CurrentChannel => FellowshipService.Instance.CurrentChannel;
     public User? CurrentDmUser => FellowshipService.Instance.CurrentDmUser;
@@ -33,12 +38,12 @@ public partial class ChatViewModel : ObservableObject
     {
         get
         {
-            if (IsDirectMessages && CurrentDmUser != null)
+            if (IsDirectMessages)
             {
-                return FellowshipService.Instance.Fellowships.FirstOrDefault()?.Categories.FirstOrDefault()?.Channels.FirstOrDefault()?.Messages
-                    ?? new ObservableCollection<ChatMessage>();
+                var dmUserId = CurrentDmUser?.Id ?? "user_bot";
+                return FellowshipService.Instance.GetDirectMessages(dmUserId);
             }
-            return CurrentChannel?.Messages ?? new ObservableCollection<ChatMessage>();
+            return CurrentChannel?.Messages ?? FellowshipService.Instance.GetDirectMessages("user_bot");
         }
     }
 
@@ -82,12 +87,83 @@ public partial class ChatViewModel : ObservableObject
         OnPropertyChanged(nameof(HeaderTopic));
         OnPropertyChanged(nameof(ChannelName));
         OnPropertyChanged(nameof(ChannelTopic));
+        OnPropertyChanged(nameof(IsGlassBubblesMode));
+    }
+
+    [RelayCommand]
+    public void OpenEmotePicker()
+    {
+        IsEmotePickerOpen = !IsEmotePickerOpen;
+    }
+
+    [RelayCommand]
+    public void CloseEmotePicker()
+    {
+        IsEmotePickerOpen = false;
+    }
+
+    [RelayCommand]
+    public void InsertRawEmoji(string symbol)
+    {
+        MessageInputText += (string.IsNullOrEmpty(MessageInputText) ? "" : " ") + symbol;
     }
 
     [RelayCommand]
     public void ToggleMemberList()
     {
         _mainVM.ToggleMemberList();
+    }
+
+    [RelayCommand]
+    public void ToggleGlassBubbles()
+    {
+        _mainVM.ToggleGlassBubbles();
+        OnPropertyChanged(nameof(IsGlassBubblesMode));
+    }
+
+    [RelayCommand]
+    public void StartVoiceNoteRecording()
+    {
+        IsRecordingVoice = true;
+        _voiceSeconds = 0;
+        VoiceRecordingDuration = "00:00";
+        _mainVM.ShowToastNotification("🎙️ Началась запись голосового сообщения...");
+
+        _voiceTimer?.Stop();
+        _voiceTimer = new System.Windows.Threading.DispatcherTimer();
+        _voiceTimer.Interval = TimeSpan.FromSeconds(1);
+        _voiceTimer.Tick += (s, e) =>
+        {
+            _voiceSeconds++;
+            var mins = _voiceSeconds / 60;
+            var secs = _voiceSeconds % 60;
+            VoiceRecordingDuration = $"{mins:D2}:{secs:D2}";
+        };
+        _voiceTimer.Start();
+    }
+
+    [RelayCommand]
+    public void CancelVoiceNoteRecording()
+    {
+        _voiceTimer?.Stop();
+        IsRecordingVoice = false;
+        _voiceSeconds = 0;
+        _mainVM.ShowToastNotification("❌ Запись аудиосообщения отменена");
+    }
+
+    [RelayCommand]
+    public void FinishAndSendVoiceNote()
+    {
+        _voiceTimer?.Stop();
+        IsRecordingVoice = false;
+
+        var duration = Math.Max(1, _voiceSeconds);
+        var channelId = CurrentChannel?.Id ?? "dm_channel";
+        var msg = ChatService.Instance.SendVoiceNote(channelId, duration);
+        CurrentMessages.Add(msg);
+        _voiceSeconds = 0;
+        _mainVM.ShowToastNotification($"🎙️ Голосовое сообщение отправлено ({duration} сек)");
+        RefreshProperties();
     }
 
     [RelayCommand]
@@ -142,25 +218,180 @@ public partial class ChatViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public async Task TranslateMessage(ChatMessage message)
+    {
+        if (message == null) return;
+        if (message.IsTranslated)
+        {
+            message.IsTranslated = false;
+            return;
+        }
+
+        var targetLang = TranslationService.Instance.TargetLanguage.Code;
+        _mainVM.ShowToastNotification($"🌍 Перевод сообщения на {TranslationService.Instance.TargetLanguage.Name}...");
+        message.TranslatedText = await TranslationService.Instance.TranslateTextAsync(message.Content, targetLang);
+        message.TargetLangCode = targetLang.ToUpper();
+        message.IsTranslated = true;
+    }
+
+    [RelayCommand]
+    public void RevealSpoiler(ChatMessage message)
+    {
+        if (message != null)
+        {
+            message.IsSpoilerRevealed = !message.IsSpoilerRevealed;
+        }
+    }
+
+    [RelayCommand]
+    public void TogglePlayVoiceNote(ChatMessage message)
+    {
+        if (message == null || !message.IsVoiceNote) return;
+
+        message.IsVoicePlaying = !message.IsVoicePlaying;
+        if (message.IsVoicePlaying)
+        {
+            AudioService.Instance.PlaySoundCue(SoundCueType.UserJoin);
+            _mainVM.ShowToastNotification($"▶️ Воспроизведение аудиосообщения ({message.VoicePlaybackSpeed:F1}x)");
+        }
+    }
+
+    [RelayCommand]
+    public void SetVoiceSpeed(object[] parameters)
+    {
+        if (parameters.Length >= 2 && parameters[0] is ChatMessage msg && parameters[1] is double speed)
+        {
+            msg.VoicePlaybackSpeed = speed;
+            _mainVM.ShowToastNotification($"⚡ Скорость аудио: {speed:F2}x");
+        }
+    }
+
+    [RelayCommand]
+    public void OpenThread(ChatMessage message)
+    {
+        if (message == null) return;
+        message.HasThread = true;
+        message.ThreadReplyCount++;
+        message.ThreadLastReplyTime = DateTime.Now.ToString("HH:mm");
+        _mainVM.ShowToastNotification($"🧵 Ветка обсуждения открыта для сообщения от {message.Author.DisplayName}");
+    }
+
+    [RelayCommand]
+    public void AttachFile()
+    {
+        try
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Прикрепить файл к сообщению",
+                Filter = "Все файлы (*.*)|*.*|Изображения (*.png;*.jpg;*.gif)|*.png;*.jpg;*.gif|Архивы (*.zip;*.rar;*.7z)|*.zip;*.rar;*.7z",
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                ProcessFileAttachment(dialog.FileName);
+            }
+        }
+        catch { }
+    }
+
+    public void ProcessFileAttachment(string filePath)
+    {
+        if (!System.IO.File.Exists(filePath)) return;
+
+        var fileInfo = new System.IO.FileInfo(filePath);
+        var channelId = CurrentChannel?.Id ?? "dm_channel";
+
+        var msg = new ChatMessage
+        {
+            ChannelId = channelId,
+            Author = FellowshipService.Instance.CurrentUser,
+            Content = $"📎 Прикреплен файл: {fileInfo.Name}",
+            HasFileAttachment = true,
+            FileName = fileInfo.Name,
+            FileSizeFormatted = $"{fileInfo.Length / 1024.0 / 1024.0:F2} МБ",
+            FileExtension = fileInfo.Extension.ToUpperInvariant(),
+            Timestamp = DateTime.Now
+        };
+
+        CurrentMessages.Add(msg);
+        _mainVM.ShowToastNotification($"📤 Файл {fileInfo.Name} загружен в чат");
+    }
+
+    [RelayCommand]
     public void SendMessage()
     {
         if (string.IsNullOrWhiteSpace(MessageInputText)) return;
 
-        var channelId = CurrentChannel?.Id ?? "dm_channel";
-        var msg = ChatService.Instance.SendMessage(channelId, MessageInputText, ReplyingToMessage);
+        var text = MessageInputText;
+        var channelId = CurrentChannel?.Id ?? (CurrentDmUser?.Id ?? "user_bot");
+        var msg = ChatService.Instance.SendMessage(channelId, text, ReplyingToMessage);
+
+        // Parse Code Blocks ```csharp ... ```
+        if (text.Contains("```"))
+        {
+            var parts = text.Split("```", StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 1)
+            {
+                msg.HasCodeBlock = true;
+                msg.CodeLanguage = "C# / Code";
+                msg.CodeContent = parts[0].Trim();
+            }
+        }
+
+        // Parse Spoilers ||hidden text||
+        if (text.Contains("||"))
+        {
+            var spoilerParts = text.Split("||", StringSplitOptions.RemoveEmptyEntries);
+            if (spoilerParts.Length >= 1)
+            {
+                msg.HasSpoiler = true;
+                msg.SpoilerText = spoilerParts[0].Trim();
+            }
+        }
         
         CurrentMessages.Add(msg);
 
         MessageInputText = string.Empty;
         ReplyingToMessage = null;
         RefreshProperties();
+
+        // If in DM with bot, auto-reply
+        if (IsDirectMessages && (CurrentDmUser == null || CurrentDmUser.Id == "user_bot"))
+        {
+            Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                var botReply = new ChatMessage
+                {
+                    Author = new User
+                    {
+                        Id = "user_bot",
+                        Username = "storm_ai",
+                        DisplayName = "STORM Bot",
+                        Tag = "0000",
+                        AvatarGlyph = "🤖",
+                        RoleName = "Бот",
+                        RoleColorHex = "#00D2FF"
+                    },
+                    Content = $"⚡ [STORM AI]: Получено сообщение «{text}». E2EE канал защищен AES-256.",
+                    Timestamp = DateTime.Now
+                };
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentMessages.Add(botReply);
+                    RefreshProperties();
+                });
+            });
+        }
     }
 
     [RelayCommand]
     public void InsertEmoji(EmojiItem emoji)
     {
-        MessageInputText += $" {emoji.Symbol} ";
-        IsEmojiPickerOpen = false;
+        MessageInputText += (string.IsNullOrEmpty(MessageInputText) ? "" : " ") + emoji.Symbol;
+        IsEmotePickerOpen = false;
     }
 
     [RelayCommand]
@@ -169,7 +400,7 @@ public partial class ChatViewModel : ObservableObject
         var channelId = CurrentChannel?.Id ?? "dm_channel";
         var msg = ChatService.Instance.SendMessage(channelId, "", ReplyingToMessage, stickerUrl: sticker.ImagePath);
         CurrentMessages.Add(msg);
-        IsStickerPickerOpen = false;
+        IsEmotePickerOpen = false;
         ReplyingToMessage = null;
         RefreshProperties();
     }
@@ -186,7 +417,9 @@ public partial class ChatViewModel : ObservableObject
     [RelayCommand]
     public void ReplyTo(ChatMessage message)
     {
+        if (message == null) return;
         ReplyingToMessage = message;
+        _mainVM.ShowToastNotification($"↩️ Ответ на сообщение от {message.Author.DisplayName}");
     }
 
     [RelayCommand]
@@ -198,21 +431,21 @@ public partial class ChatViewModel : ObservableObject
     [RelayCommand]
     public void PinMessage(ChatMessage message)
     {
+        if (message == null) return;
         ChatService.Instance.PinMessage(message);
-        _mainVM.ShowToastNotification(message.IsPinned ? "Сообщение закреплено" : "Сообщение откреплено");
+        _mainVM.ShowToastNotification(message.IsPinned ? "📌 Сообщение закреплено" : "📌 Сообщение откреплено");
     }
 
     [RelayCommand]
     public void DeleteMessage(ChatMessage message)
     {
-        if (CurrentChannel != null)
+        if (message == null) return;
+        CurrentMessages.Remove(message);
+        if (CurrentChannel != null && CurrentChannel.Messages.Contains(message))
         {
-            ChatService.Instance.DeleteMessage(CurrentChannel, message);
+            CurrentChannel.Messages.Remove(message);
         }
-        else
-        {
-            CurrentMessages.Remove(message);
-        }
+        _mainVM.ShowToastNotification("🗑️ Сообщение удалено");
     }
 
     [RelayCommand]

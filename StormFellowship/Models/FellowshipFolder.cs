@@ -12,6 +12,9 @@ public partial class FellowshipFolder : ObservableObject
     private string _name = "Папка";
 
     [ObservableProperty]
+    private string _icon = "📁";
+
+    [ObservableProperty]
     private string _colorHex = "#00A3FF";
 
     [ObservableProperty]

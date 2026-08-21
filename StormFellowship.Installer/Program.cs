@@ -12,7 +12,7 @@ internal static class Program
         try
         {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string installDir = Path.Combine(localAppData, "StormFellowship");
+            string installDir = Path.Combine(localAppData, "Programs", "StormFellowship");
             string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "STORM FELLOWSHIP");
 
@@ -36,6 +36,9 @@ internal static class Program
                 CopyDirectory(sourceAssembling, installDir);
             }
 
+            // Clean Zone.Identifier from all installed files to prevent Smart App Control blocks
+            UnblockAllFiles(installDir);
+
             string exePath = Path.Combine(installDir, "StormFellowship.exe");
             string iconPath = Path.Combine(installDir, "Assets", "AppIcon.ico");
 
@@ -51,7 +54,7 @@ internal static class Program
             using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\StormFellowship"))
             {
                 key.SetValue("DisplayName", "STORM FELLOWSHIP");
-                key.SetValue("DisplayVersion", "0.1.1");
+                key.SetValue("DisplayVersion", "0.2.2");
                 key.SetValue("Publisher", "ReiKatari");
                 key.SetValue("DisplayIcon", iconPath);
                 key.SetValue("InstallLocation", installDir);
@@ -87,7 +90,7 @@ timeout /t 2 >nul
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.1.1 успешно установлена!\n\n• Все необходимые компоненты встроены и настроены\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
+            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.2.2 успешно установлена и разблокирована!\n\n• Бесплатный облачный бэкенд и синхронизация (Supabase Realtime)\n• Формы входа, регистрации и облачного профиля\n• Подключение по ссылке-приглашению (storm://invite/) и Direct LAN P2P\n• HD видео с веб-камеры и локальный предпросмотр\n• Полная поддержка аватаров в игровом оверлее\n• 100% векторная графика без черных силуэтов\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
 
             // Launch app
             if (File.Exists(exePath))
@@ -172,6 +175,21 @@ timeout /t 2 >nul
         }
     }
 
+    private static void UnblockAllFiles(string directory)
+    {
+        try
+        {
+            foreach (string file in Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories))
+            {
+                DeleteFileW(file + ":Zone.Identifier");
+            }
+        }
+        catch
+        {
+            // Safe fallback
+        }
+    }
+
     private static void CreateShortcut(string shortcutPath, string targetPath, string workingDir, string iconPath, string description)
     {
         try
@@ -199,6 +217,10 @@ timeout /t 2 >nul
             // Fallback safe
         }
     }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool DeleteFileW(string lpFileName);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int MessageBox(nint hWnd, string text, string caption, uint type);

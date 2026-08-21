@@ -30,7 +30,7 @@ public partial class MemberListViewModel : ObservableObject
         RefreshMembers();
     }
 
-    private void RefreshMembers()
+    public void RefreshMembers()
     {
         OnlineMembers.Clear();
         OfflineMembers.Clear();
@@ -56,12 +56,23 @@ public partial class MemberListViewModel : ObservableObject
     [RelayCommand]
     public void CallMember(User user)
     {
+        if (user == null) return;
         CallService.Instance.StartDirectCall(user);
+    }
+
+    [RelayCommand]
+    public void VideoCallMember(User user)
+    {
+        if (user == null) return;
+        CallService.Instance.StartDirectCall(user);
+        CallService.Instance.ToggleVideo();
+        _mainVM.ShowToastNotification($"📹 Начало видеозвонка с {user.DisplayName}");
     }
 
     [RelayCommand]
     public void MessageMember(User user)
     {
+        if (user == null) return;
         FellowshipService.Instance.SelectDirectMessage(user);
     }
 
@@ -72,8 +83,8 @@ public partial class MemberListViewModel : ObservableObject
         {
             user.IsMutedForMe = !user.IsMutedForMe;
             _mainVM.ShowToastNotification(user.IsMutedForMe
-                ? $"Пользователь {user.DisplayName} заглушен для вас"
-                : $"Звук пользователя {user.DisplayName} включен");
+                ? $"🔇 Пользователь {user.DisplayName} заглушен для вас"
+                : $"🔊 Звук пользователя {user.DisplayName} включен");
         }
     }
 
@@ -86,6 +97,46 @@ public partial class MemberListViewModel : ObservableObject
             _mainVM.ShowToastNotification(user.IsPrioritySpeaker
                 ? $"🎙️ {user.DisplayName} назначен приоритетным оратором"
                 : $"Приоритетный голос отключен для {user.DisplayName}");
+        }
+    }
+
+    [RelayCommand]
+    public void SetMemberRole(object[] parameters)
+    {
+        if (parameters != null && parameters.Length >= 2 && parameters[0] is User user && parameters[1] is string roleName)
+        {
+            user.RoleName = roleName;
+            user.RoleColorHex = roleName switch
+            {
+                "Модератор" => "#22C55E",
+                "Оратор" => "#F59E0B",
+                "Администратор" => "#EF4444",
+                _ => "#94A3B8"
+            };
+            RefreshMembers();
+            _mainVM.ShowToastNotification($"👑 Роль {roleName} присвоена {user.DisplayName}");
+        }
+    }
+
+    [RelayCommand]
+    public void KickMember(User user)
+    {
+        if (user != null && CurrentFellowship != null)
+        {
+            CurrentFellowship.Members.Remove(user);
+            RefreshMembers();
+            _mainVM.ShowToastNotification($"🚫 Пользователь {user.DisplayName} исключен из содружества");
+        }
+    }
+
+    [RelayCommand]
+    public void BanMember(User user)
+    {
+        if (user != null && CurrentFellowship != null)
+        {
+            CurrentFellowship.Members.Remove(user);
+            RefreshMembers();
+            _mainVM.ShowToastNotification($"⛔ Пользователь {user.DisplayName} заблокирован");
         }
     }
 
