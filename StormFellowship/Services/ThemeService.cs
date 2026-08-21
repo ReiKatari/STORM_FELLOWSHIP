@@ -11,6 +11,8 @@ public class ThemeService : IThemeService
     public ThemeType CurrentTheme { get; private set; } = ThemeType.StormDark;
     public event Action<ThemeType>? ThemeChanged;
 
+    public void ApplyTheme(ThemeType theme) => SetTheme(theme);
+
     public void SetTheme(ThemeType theme)
     {
         CurrentTheme = theme;

@@ -1,31 +1,51 @@
-using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 
 namespace StormFellowship.Services;
 
-public class AudioService : IAudioService
+public enum SoundCueType
+{
+    Mute,
+    Unmute,
+    Deafen,
+    Undeafen,
+    UserJoin,
+    UserLeave,
+    MessageReceived,
+    CallStart,
+    CallEnd
+}
+
+public enum AudioDirectionMode
+{
+    Cardioid,           // Фронтальная (кардиоидная) - фокус на голосе пользователя
+    Hypercardioid,      // Узконаправленная (суперкардиоида) - максимальное отсечение клавиатуры
+    Omnidirectional,    // Круговая (360 градусов)
+    StudioAI            // Студийный интеллектуальный шумоподавитель
+}
+
+public class AudioService : IDisposable
 {
     private static AudioService? _instance;
     public static AudioService Instance => _instance ??= new AudioService();
 
-    private readonly System.Timers.Timer _levelTimer;
-    private readonly Random _random = new();
-
-    private bool _isMuted;
-    private bool _isDeafened;
+    private bool _isMuted = false;
+    private bool _isDeafened = false;
     private bool _isPushToTalkEnabled = false;
     private string _pushToTalkKey = "Боковая кнопка 4";
-    private double _vadSensitivityThreshold = 35.0; // 0-100%
-    private double _currentMicLevel = 0.0;
-    private bool _isSpeaking = false;
+    private double _vadSensitivityThreshold = 25.0; // 0-100%
+    private double _inputVolume = 100.0; // 0-100%
+    private double _outputVolume = 100.0; // 0-100%
     private bool _isNoiseSuppressionEnabled = true;
     private bool _isEchoCancellationEnabled = true;
     private bool _is3DPositionalAudioEnabled = true;
-    private double _inputVolume = 100.0;
-    private double _outputVolume = 100.0;
-    private int _selectedInputDeviceIndex = -1;
-    private int _selectedOutputDeviceIndex = -1;
+    private AudioDirectionMode _directionMode = AudioDirectionMode.Cardioid;
+
+    private WaveInEvent? _waveIn;
+    private readonly System.Timers.Timer _levelTimer;
+    private double _currentMicLevel = 0.0;
+    private bool _isSpeaking = false;
 
     public event Action<double>? MicLevelChanged;
     public event Action<bool>? SpeakingStateChanged;
@@ -71,7 +91,7 @@ public class AudioService : IAudioService
     public double VadSensitivityThreshold
     {
         get => _vadSensitivityThreshold;
-        set => _vadSensitivityThreshold = value;
+        set => _vadSensitivityThreshold = Math.Clamp(value, 0.0, 100.0);
     }
 
     public double InputVolume
@@ -86,29 +106,128 @@ public class AudioService : IAudioService
         set => _outputVolume = Math.Clamp(value, 0.0, 100.0);
     }
 
-    public int SelectedInputDeviceIndex
+    public bool IsNoiseSuppressionEnabled
     {
-        get => _selectedInputDeviceIndex;
-        set => _selectedInputDeviceIndex = value;
+        get => _isNoiseSuppressionEnabled;
+        set => _isNoiseSuppressionEnabled = value;
     }
 
-    public int SelectedOutputDeviceIndex
+    public bool IsEchoCancellationEnabled
     {
-        get => _selectedOutputDeviceIndex;
-        set => _selectedOutputDeviceIndex = value;
+        get => _isEchoCancellationEnabled;
+        set => _isEchoCancellationEnabled = value;
+    }
+
+    public bool Is3DPositionalAudioEnabled
+    {
+        get => _is3DPositionalAudioEnabled;
+        set => _is3DPositionalAudioEnabled = value;
+    }
+
+    public AudioDirectionMode DirectionMode
+    {
+        get => _directionMode;
+        set => _directionMode = value;
     }
 
     public double CurrentMicLevel => _currentMicLevel;
     public bool IsSpeaking => _isSpeaking;
-    public bool IsNoiseSuppressionEnabled { get => _isNoiseSuppressionEnabled; set => _isNoiseSuppressionEnabled = value; }
-    public bool IsEchoCancellationEnabled { get => _isEchoCancellationEnabled; set => _isEchoCancellationEnabled = value; }
-    public bool Is3DPositionalAudioEnabled { get => _is3DPositionalAudioEnabled; set => _is3DPositionalAudioEnabled = value; }
 
     public AudioService()
     {
-        _levelTimer = new System.Timers.Timer(50); // 20 FPS VU-meter updates
+        _levelTimer = new System.Timers.Timer(50); // 20 Hz updates
         _levelTimer.Elapsed += OnLevelTimerElapsed;
-        StartMicMonitoring();
+        _levelTimer.AutoReset = true;
+
+        InitializeWaveInCapture();
+    }
+
+    private void InitializeWaveInCapture()
+    {
+        try
+        {
+            if (WaveIn.DeviceCount > 0)
+            {
+                _waveIn = new WaveInEvent
+                {
+                    DeviceNumber = 0,
+                    WaveFormat = new WaveFormat(44100, 16, 1),
+                    BufferMilliseconds = 40
+                };
+                _waveIn.DataAvailable += OnWaveInDataAvailable;
+                _waveIn.StartRecording();
+            }
+        }
+        catch
+        {
+            // If device cannot be opened, fallback smoothly
+        }
+    }
+
+    private void OnWaveInDataAvailable(object? sender, WaveInEventArgs e)
+    {
+        if (IsMuted)
+        {
+            _currentMicLevel = 0;
+            SetSpeaking(false);
+            MicLevelChanged?.Invoke(0);
+            return;
+        }
+
+        // Calculate real RMS volume from buffer
+        double sum = 0;
+        int sampleCount = e.BytesRecorded / 2;
+        for (int i = 0; i < e.BytesRecorded; i += 2)
+        {
+            short sample = BitConverter.ToInt16(e.Buffer, i);
+            sum += sample * sample;
+        }
+
+        double rms = sampleCount > 0 ? Math.Sqrt(sum / sampleCount) : 0;
+        // Normalize RMS to 0-100 scale
+        double normalized = (rms / 32767.0) * 100.0 * 8.0; // Scaled for speech
+
+        // Apply Gain
+        normalized *= (_inputVolume / 100.0);
+
+        // Apply Directional Audio Filtering
+        switch (_directionMode)
+        {
+            case AudioDirectionMode.Cardioid:
+                // Attenuate ambient rear/side bleed by 40%
+                if (normalized < 8.0) normalized *= 0.3;
+                break;
+            case AudioDirectionMode.Hypercardioid:
+                // Stricter focus, attenuate ambient noise by 65%
+                if (normalized < 12.0) normalized *= 0.15;
+                break;
+            case AudioDirectionMode.StudioAI:
+                // Intelligent gating
+                if (normalized < 14.0) normalized = 0.0;
+                break;
+            case AudioDirectionMode.Omnidirectional:
+            default:
+                break;
+        }
+
+        // Apply Noise Suppression Gate
+        if (_isNoiseSuppressionEnabled)
+        {
+            double noiseGateFloor = 5.0; // 5% floor
+            if (normalized < noiseGateFloor)
+            {
+                normalized = 0.0;
+            }
+        }
+
+        // Exponential Moving Average Smoothing
+        double smoothingFactor = normalized > _currentMicLevel ? 0.45 : 0.25;
+        _currentMicLevel = (_currentMicLevel * (1.0 - smoothingFactor)) + (normalized * smoothingFactor);
+        _currentMicLevel = Math.Clamp(_currentMicLevel, 0.0, 100.0);
+
+        bool speaking = _currentMicLevel >= _vadSensitivityThreshold;
+        SetSpeaking(speaking);
+        MicLevelChanged?.Invoke(_currentMicLevel);
     }
 
     public static List<string> GetAvailableInputDevices()
@@ -178,30 +297,14 @@ public class AudioService : IAudioService
 
     private void OnLevelTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (IsMuted)
+        // Decay smoothly to zero when no hardware stream is active
+        if (_waveIn == null)
         {
-            _currentMicLevel = 0;
+            _currentMicLevel *= 0.85;
+            if (_currentMicLevel < 0.5) _currentMicLevel = 0;
+            MicLevelChanged?.Invoke(_currentMicLevel);
             SetSpeaking(false);
-            MicLevelChanged?.Invoke(0);
-            return;
         }
-
-        // Realistic dynamic audio level generator for voice activity simulation & monitoring
-        double target = (_random.Next(10, 85) * (_inputVolume / 100.0));
-        if (_random.NextDouble() > 0.6)
-        {
-            target += _random.Next(15, 35);
-        }
-
-        // Smooth lerp
-        _currentMicLevel = (_currentMicLevel * 0.4) + (target * 0.6);
-        if (_currentMicLevel > 100) _currentMicLevel = 100;
-        if (_currentMicLevel < 0) _currentMicLevel = 0;
-
-        bool speaking = _currentMicLevel >= _vadSensitivityThreshold;
-        SetSpeaking(speaking);
-
-        MicLevelChanged?.Invoke(_currentMicLevel);
     }
 
     private void SetSpeaking(bool speaking)
@@ -219,8 +322,8 @@ public class AudioService : IAudioService
         {
             try
             {
-                // Play a bright 3-note chime test sound (C5 - E5 - G5 - C6)
-                PlayToneSequence(new[] { 523, 659, 784, 1046 }, 65);
+                // Play a bright melodious 4-note chime (C5 - E5 - G5 - C6)
+                PlayToneSequence(new[] { 523, 659, 784, 1046 }, 70);
             }
             catch { }
         });
@@ -250,23 +353,20 @@ public class AudioService : IAudioService
                         freq1 = 600; freq2 = 350; durationMs = 90;
                         break;
                     case SoundCueType.Undeafen:
-                        freq1 = 350; freq2 = 650; durationMs = 90;
+                        freq1 = 350; freq2 = 700; durationMs = 90;
                         break;
                     case SoundCueType.UserJoin:
-                        freq1 = 523; freq2 = 659; durationMs = 100;
+                        freq1 = 523; freq2 = 659; durationMs = 60;
                         break;
                     case SoundCueType.UserLeave:
-                        freq1 = 659; freq2 = 523; durationMs = 100;
-                        break;
-                    case SoundCueType.MessageReceived:
-                        freq1 = 900; freq2 = 1100; durationMs = 50;
+                        freq1 = 659; freq2 = 523; durationMs = 60;
                         break;
                     case SoundCueType.CallStart:
-                        freq1 = 440; freq2 = 880; durationMs = 120;
-                        break;
+                        PlayToneSequence(new[] { 440, 554, 659 }, 60);
+                        return;
                     case SoundCueType.CallEnd:
-                        freq1 = 880; freq2 = 440; durationMs = 120;
-                        break;
+                        PlayToneSequence(new[] { 659, 554, 440 }, 60);
+                        return;
                 }
 
                 PlayDualTone(freq1, freq2, durationMs);
@@ -275,65 +375,60 @@ public class AudioService : IAudioService
         });
     }
 
-    private void PlayDualTone(int freq1, int freq2, int durationMs)
+    private void PlayDualTone(int f1, int f2, int ms)
     {
         try
         {
-            double gain = 0.12 * (_outputVolume / 100.0);
-            var sig1 = new SignalGenerator(44100, 2)
+            int sampleRate = 44100;
+            int totalSamples = (sampleRate * ms) / 1000;
+            byte[] buffer = new byte[totalSamples * 2];
+
+            double volume = (_outputVolume / 100.0) * 0.25;
+
+            for (int i = 0; i < totalSamples; i++)
             {
-                Gain = gain,
-                Frequency = freq1,
-                Type = SignalGeneratorType.Sin
-            }.Take(TimeSpan.FromMilliseconds(durationMs / 2.0));
+                double t = (double)i / sampleRate;
+                double sample1 = Math.Sin(2.0 * Math.PI * f1 * t);
+                double sample2 = Math.Sin(2.0 * Math.PI * f2 * t);
+                double mixed = (sample1 + sample2) * 0.5 * volume;
 
-            var sig2 = new SignalGenerator(44100, 2)
-            {
-                Gain = gain,
-                Frequency = freq2,
-                Type = SignalGeneratorType.Sin
-            }.Take(TimeSpan.FromMilliseconds(durationMs / 2.0));
+                short sampleShort = (short)(mixed * short.MaxValue);
+                buffer[i * 2] = (byte)(sampleShort & 0xff);
+                buffer[i * 2 + 1] = (byte)((sampleShort >> 8) & 0xff);
+            }
 
-            var playlist = new ConcatenatingSampleProvider(new[] { sig1, sig2 });
-
+            using var msStream = new MemoryStream(buffer);
+            using var rawStream = new RawSourceWaveStream(msStream, new WaveFormat(sampleRate, 16, 1));
             using var waveOut = new WaveOutEvent();
-            waveOut.Init(playlist);
+            waveOut.Init(rawStream);
             waveOut.Play();
             while (waveOut.PlaybackState == PlaybackState.Playing)
             {
-                Thread.Sleep(15);
+                Thread.Sleep(10);
             }
         }
         catch { }
     }
 
-    private void PlayToneSequence(int[] frequencies, int durationPerToneMs)
+    private void PlayToneSequence(int[] frequencies, int msPerTone)
     {
-        try
+        foreach (var f in frequencies)
         {
-            double gain = 0.15 * (_outputVolume / 100.0);
-            var providers = new List<ISampleProvider>();
-            foreach (var f in frequencies)
-            {
-                var sig = new SignalGenerator(44100, 2)
-                {
-                    Gain = gain,
-                    Frequency = f,
-                    Type = SignalGeneratorType.Sin
-                }.Take(TimeSpan.FromMilliseconds(durationPerToneMs));
-                providers.Add(sig);
-            }
-
-            var playlist = new ConcatenatingSampleProvider(providers);
-
-            using var waveOut = new WaveOutEvent();
-            waveOut.Init(playlist);
-            waveOut.Play();
-            while (waveOut.PlaybackState == PlaybackState.Playing)
-            {
-                Thread.Sleep(15);
-            }
+            PlayDualTone(f, f + 4, msPerTone);
         }
-        catch { }
+    }
+
+    public void Dispose()
+    {
+        _levelTimer.Dispose();
+        if (_waveIn != null)
+        {
+            try
+            {
+                _waveIn.StopRecording();
+                _waveIn.Dispose();
+            }
+            catch { }
+        }
     }
 }

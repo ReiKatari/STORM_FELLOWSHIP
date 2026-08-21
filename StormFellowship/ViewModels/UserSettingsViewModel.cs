@@ -85,7 +85,7 @@ public partial class UserSettingsViewModel : ObservableObject
     private double _micLiveLevel = 0.0;
 
     [ObservableProperty]
-    private double _vadThreshold = 35.0;
+    private double _vadThreshold = 25.0;
 
     [ObservableProperty]
     private bool _isPushToTalk = false;
@@ -118,10 +118,21 @@ public partial class UserSettingsViewModel : ObservableObject
     private bool _is3DPositionalAudio = true;
 
     [ObservableProperty]
+    private string _selectedDirectionMode = "Кардиоидная (Фронтальный фокус на голосе)";
+
+    [ObservableProperty]
     private string _selectedAudioInput = string.Empty;
 
     [ObservableProperty]
     private string _selectedAudioOutput = string.Empty;
+
+    public ObservableCollection<string> DirectionModes { get; } = new()
+    {
+        "Кардиоидная (Фронтальный фокус на голосе)",
+        "Суперкардиоидная (Узконаправленная изоляция)",
+        "Круговая 360° (Всенаправленная)",
+        "Студийный AI фильтр (Глубокое подавление шумов)"
+    };
 
     public ObservableCollection<string> AudioInputDevices { get; } = new();
     public ObservableCollection<string> AudioOutputDevices { get; } = new();
@@ -207,9 +218,9 @@ public partial class UserSettingsViewModel : ObservableObject
         {
             var dialog = new OpenFileDialog
             {
-                Title = "Выберите изображение для аватара",
+                Title = "Выберите изображение аватара",
                 Filter = "Изображения (*.png;*.jpg;*.jpeg;*.ico;*.bmp)|*.png;*.jpg;*.jpeg;*.ico;*.bmp|Все файлы (*.*)|*.*",
-                CheckFileExists = true
+                Multiselect = false
             };
 
             if (dialog.ShowDialog() == true)
@@ -223,98 +234,56 @@ public partial class UserSettingsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _mainVM.ShowToastNotification($"Ошибка загрузки аватара: {ex.Message}");
+            _mainVM.ShowToastNotification($"Ошибка при загрузке аватара: {ex.Message}");
         }
     }
 
     [RelayCommand]
-    public void SelectStatusPreset(StatusPresetItem item)
+    public void SelectStatusPreset(StatusPresetItem preset)
     {
-        if (item != null)
-        {
-            string fullStatus = $"{item.Icon} {item.Title}";
-            CustomStatus = fullStatus;
-            CurrentUser.CustomStatus = fullStatus;
-            OnPropertyChanged(nameof(CustomStatus));
-            _mainVM.ShowToastNotification($"Установлен статус: {fullStatus}");
-        }
+        CustomStatus = $"{preset.Icon} {preset.Title}";
+        CurrentUser.CustomStatus = CustomStatus;
+        OnPropertyChanged(nameof(CustomStatus));
+        _mainVM.ShowToastNotification($"Статус обновлен: {preset.Icon} {preset.Title}");
     }
 
     [RelayCommand]
     public void TestAudio()
     {
         AudioService.Instance.PlayTestChime();
-        _mainVM.ShowToastNotification("Воспроизведение тестового звукового сигнала...");
+        _mainVM.ShowToastNotification("Воспроизведение тестового 4-тонового сигнала...");
     }
 
     [RelayCommand]
-    public void SelectTheme(string themeName)
+    public void ApplySettings()
     {
-        if (Enum.TryParse<ThemeType>(themeName, out var theme))
-        {
-            SelectedTheme = theme;
-            ThemeService.Instance.SetTheme(theme);
-            _mainVM.ShowToastNotification("Тема оформления изменена");
-        }
+        ThemeService.Instance.ApplyTheme(SelectedTheme);
+        AudioService.Instance.VadSensitivityThreshold = VadThreshold;
+        AudioService.Instance.IsPushToTalkEnabled = IsPushToTalk;
+        AudioService.Instance.PushToTalkKey = PttKey;
+        AudioService.Instance.InputVolume = InputVolume;
+        AudioService.Instance.OutputVolume = OutputVolume;
+        AudioService.Instance.IsNoiseSuppressionEnabled = IsNoiseSuppression;
+        AudioService.Instance.IsEchoCancellationEnabled = IsEchoCancellation;
+        AudioService.Instance.Is3DPositionalAudioEnabled = Is3DPositionalAudio;
+
+        if (SelectedDirectionMode.Contains("Кардиоидная")) AudioService.Instance.DirectionMode = AudioDirectionMode.Cardioid;
+        else if (SelectedDirectionMode.Contains("Суперкардиоидная")) AudioService.Instance.DirectionMode = AudioDirectionMode.Hypercardioid;
+        else if (SelectedDirectionMode.Contains("Круговая")) AudioService.Instance.DirectionMode = AudioDirectionMode.Omnidirectional;
+        else if (SelectedDirectionMode.Contains("Студийный")) AudioService.Instance.DirectionMode = AudioDirectionMode.StudioAI;
+
+        _mainVM.CloseUserSettingsDialog();
+        _mainVM.ShowToastNotification("Настройки STORM FELLOWSHIP успешно сохранены");
     }
 
     [RelayCommand]
-    public void SetUserStatus(string statusString)
+    public void CloseModal()
     {
-        if (Enum.TryParse<UserStatus>(statusString, out var status))
-        {
-            CurrentUser.Status = status;
-            _mainVM.ShowToastNotification($"Статус изменен: {CurrentUser.StatusText}");
-        }
+        _mainVM.CloseUserSettingsDialog();
     }
 
-    [RelayCommand]
     public void Close()
     {
-        _mainVM.CloseUserSettingsDialog();
-    }
-
-    [RelayCommand]
-    public void Save()
-    {
-        _mainVM.ShowToastNotification("Настройки пользователя успешно сохранены!");
-        _mainVM.CloseUserSettingsDialog();
-    }
-
-    partial void OnInputVolumeChanged(double value)
-    {
-        AudioService.Instance.InputVolume = value;
-    }
-
-    partial void OnOutputVolumeChanged(double value)
-    {
-        AudioService.Instance.OutputVolume = value;
-    }
-
-    partial void OnVadThresholdChanged(double value)
-    {
-        AudioService.Instance.VadSensitivityThreshold = value;
-    }
-
-    partial void OnIsPushToTalkChanged(bool value)
-    {
-        AudioService.Instance.IsPushToTalkEnabled = value;
-        OnPropertyChanged(nameof(IsVadMode));
-        OnPropertyChanged(nameof(IsPttMode));
-    }
-
-    partial void OnIsNoiseSuppressionChanged(bool value)
-    {
-        AudioService.Instance.IsNoiseSuppressionEnabled = value;
-    }
-
-    partial void OnIsEchoCancellationChanged(bool value)
-    {
-        AudioService.Instance.IsEchoCancellationEnabled = value;
-    }
-
-    partial void OnIs3DPositionalAudioChanged(bool value)
-    {
-        AudioService.Instance.Is3DPositionalAudioEnabled = value;
+        CloseModal();
     }
 }

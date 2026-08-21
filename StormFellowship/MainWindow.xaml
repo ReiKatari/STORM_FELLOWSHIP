@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
         xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
-        Title="STORM FELLOWSHIP v0.0.4"
+        Title="STORM FELLOWSHIP v0.0.5"
         Icon="pack://application:,,,/Assets/AppIcon.ico"
         Width="1280" Height="800"
         MinWidth="960" MinHeight="600"

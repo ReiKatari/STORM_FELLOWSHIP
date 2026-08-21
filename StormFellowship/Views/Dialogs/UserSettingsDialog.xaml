@@ -3,23 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Backdrop Overlay (Click to close) -->
     <Grid Background="{DynamicResource ModalOverlayBackgroundBrush}" MouseDown="OnBackdropMouseDown">
-        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="720" Height="560" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
+        <Border Background="{DynamicResource ModalDialogBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="12" Width="720" Height="580" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="OnDialogCardMouseDown">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="52" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="52" />
+                    <RowDefinition Height="54" />
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
                 <Border Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="20,0">
                     <Grid VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="⚙" FontSize="16" Foreground="{DynamicResource AccentBrush}" Margin="0,0,10,0" VerticalAlignment="Center" />
+                            <TextBlock Text="⚙️" FontSize="16" Margin="0,0,10,0" VerticalAlignment="Center" />
                             <TextBlock Text="НАСТРОЙКИ STORM FELLOWSHIP" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Button HorizontalAlignment="Right" Width="30" Height="30" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding CloseCommand}" ToolTip="Закрыть (ESC)">
-                            <TextBlock Text="✕" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <!-- High Contrast Close Button -->
+                        <Button HorizontalAlignment="Right" Width="32" Height="32" Background="Transparent" BorderThickness="0" Cursor="Hand" Command="{Binding CloseCommand}" ToolTip="Закрыть (ESC)">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="CloseBorder" CornerRadius="6" Background="Transparent">
+                                        <TextBlock Text="✕" FontSize="14" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="CloseBorder" Property="Background" Value="#EF4444" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
                         </Button>
                     </Grid>
                 </Border>
@@ -27,18 +39,18 @@
                 <!-- Main Content Tabs -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="210" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Navigation Tabs -->
                     <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,1,0" Padding="8,10">
                         <StackPanel>
-                            <Button Content="🎨 Внешний вид и темы" Click="OnTabThemesClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
-                            <Button Content="🎙️ Голос и звук" Click="OnTabAudioClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
-                            <Button Content="👤 Профиль и статусы" Click="OnTabProfileClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
-                            <Button Content="⌨️ Горячие клавиши" Click="OnTabHotkeysClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
-                            <Button Content="ℹ️ О программе" Click="OnTabAboutClicked" Margin="0,2" Padding="10,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="🎨 Внешний вид и темы" Click="OnTabThemesClicked" Margin="0,2" Padding="12,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="🎙️ Голос и звук" Click="OnTabAudioClicked" Margin="0,2" Padding="12,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="👤 Профиль и статусы" Click="OnTabProfileClicked" Margin="0,2" Padding="12,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="⌨️ Горячие клавиши" Click="OnTabHotkeysClicked" Margin="0,2" Padding="12,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                            <Button Content="ℹ️ О программе" Click="OnTabAboutClicked" Margin="0,2" Padding="12,8" HorizontalContentAlignment="Left" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
                         </StackPanel>
                     </Border>
 
@@ -103,19 +115,23 @@
 
                                 <!-- Input Device -->
                                 <TextBlock Text="УСТРОЙСТВО ВВОДА (МИКРОФОН)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
-                                <ComboBox ItemsSource="{Binding AudioInputDevices}" SelectedItem="{Binding SelectedAudioInput}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Padding="8,6" Margin="0,0,0,6" />
+                                <ComboBox ItemsSource="{Binding AudioInputDevices}" SelectedItem="{Binding SelectedAudioInput}" Margin="0,0,0,6" />
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Slider Minimum="0" Maximum="100" Value="{Binding InputVolume}" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="{Binding InputVolume, StringFormat='{}{0:0}%'}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding InputVolume, StringFormat='{}{0:0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
                                 </Grid>
+
+                                <!-- Directional Audio Mode Selection -->
+                                <TextBlock Text="НАПРАВЛЕННОСТЬ ЗВУКА МИКРОФОНА:" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
+                                <ComboBox ItemsSource="{Binding DirectionModes}" SelectedItem="{Binding SelectedDirectionMode}" Margin="0,0,0,12" />
 
                                 <!-- Output Device & Test Sound -->
                                 <TextBlock Text="УСТРОЙСТВО ВЫВОДА (ДИНАМИКИ / НАУШНИКИ)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4" />
-                                <ComboBox ItemsSource="{Binding AudioOutputDevices}" SelectedItem="{Binding SelectedAudioOutput}" Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Padding="8,6" Margin="0,0,0,6" />
+                                <ComboBox ItemsSource="{Binding AudioOutputDevices}" SelectedItem="{Binding SelectedAudioOutput}" Margin="0,0,0,6" />
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -123,8 +139,8 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Slider Minimum="0" Maximum="100" Value="{Binding OutputVolume}" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1" Text="{Binding OutputVolume, StringFormat='{}{0:0}%'}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" Margin="10,0,12,0" VerticalAlignment="Center" />
-                                    <Button Grid.Column="2" Content="🔊 Проверить звук" Command="{Binding TestAudioCommand}" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="12,4" Cursor="Hand" FontWeight="SemiBold" FontSize="11" />
+                                    <TextBlock Grid.Column="1" Text="{Binding OutputVolume, StringFormat='{}{0:0}%'}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="10,0,12,0" VerticalAlignment="Center" />
+                                    <Button Grid.Column="2" Content="🔊 Проверить звук" Command="{Binding TestAudioCommand}" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource AccentBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="12,5" Cursor="Hand" FontWeight="SemiBold" FontSize="11" />
                                 </Grid>
 
                                 <Separator Background="{DynamicResource DividerBrush}" Margin="0,4,0,12" />
@@ -144,7 +160,7 @@
 
                                 <CheckBox Content="Звуковые сигналы событий" IsChecked="{Binding SoundCuesEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
                                 <CheckBox Content="Пространственный 3D-звук" IsChecked="{Binding SpatialAudioEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
-                                <CheckBox Content="Аппаратное шумоподавление" IsChecked="{Binding NoiseSuppressionEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
+                                <CheckBox Content="Интеллектуальное аппаратное шумоподавление" IsChecked="{Binding NoiseSuppressionEnabled}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
                             </StackPanel>
 
                             <!-- TAB 3: USER PROFILE & STATUSES -->
@@ -206,10 +222,10 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Button Margin="2" Padding="8,4" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnStatusPresetClicked">
+                                                    <Button Margin="2" Padding="8,5" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Cursor="Hand" Tag="{Binding}" Click="OnStatusPresetClicked">
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{Binding Icon}" FontSize="12" Margin="0,0,6,0" />
-                                                            <TextBlock Text="{Binding Title}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                            <TextBlock Text="{Binding Icon}" FontSize="12" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                            <TextBlock Text="{Binding Title}" FontSize="11" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
                                                         </StackPanel>
                                                     </Button>
                                                 </DataTemplate>
@@ -222,44 +238,91 @@
                             <!-- TAB 4: HOTKEYS -->
                             <StackPanel x:Name="TabHotkeysContent" Visibility="Collapsed">
                                 <TextBlock Text="ГОРЯЧИЕ КЛАВИШИ" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10" />
-                                <Border Background="{DynamicResource CardBackgroundBrush}" Padding="12" CornerRadius="8">
+
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="Клавиша активации микрофона" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                            <TextBlock Text="Удерживайте клавишу для передачи голоса в каналах" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Text="Нажми и говори (Push to Talk)" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Удерживайте для активации голоса" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
                                         </StackPanel>
-                                        <Button Grid.Column="1" Content="{Binding PttKeyName}" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="Bold" Padding="12,4" Cursor="Hand" />
+                                        <Border Grid.Column="1" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="4" Padding="10,4">
+                                            <TextBlock Text="{Binding PttKey}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Быстрое отключение микрофона (Mute)" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Переключить микрофон" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="4" Padding="10,4">
+                                            <TextBlock Text="Ctrl + Shift + M" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Заглушить все звуки (Deafen)" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="Отключить динамики и микрофон" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{DynamicResource InputBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="4" Padding="10,4">
+                                            <TextBlock Text="Ctrl + Shift + D" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                        </Border>
                                     </Grid>
                                 </Border>
                             </StackPanel>
 
                             <!-- TAB 5: ABOUT -->
                             <StackPanel x:Name="TabAboutContent" Visibility="Collapsed">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                    <Border Width="40" Height="40" CornerRadius="8" Background="{DynamicResource AccentBrush}" Margin="0,0,10,0">
-                                        <TextBlock Text="⚡" FontSize="20" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Border>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="STORM FELLOWSHIP" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                        <TextBlock Text="Версия 0.0.3 (Официальный релиз)" FontSize="11" Foreground="{DynamicResource AccentBrush}" />
+                                <TextBlock Text="О ПРОГРАММЕ" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,12" />
+
+                                <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                            <Image Source="pack://application:,,,/Assets/AppIcon.png" Width="36" Height="36" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="STORM FELLOWSHIP" FontWeight="Black" FontSize="15" Foreground="{DynamicResource AccentBrush}" />
+                                                <TextBlock Text="Версия 0.0.5 • Высокопроизводительный звуковой движок" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Text="Профессиональная десктопная платформа нового поколения для общения, голосовых созвонов, видеосвязи и управления сообществами." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                                        <TextBlock Text="Разработчик: ReiKatari" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
                                     </StackPanel>
-                                </StackPanel>
-                                <TextBlock Text="Высокопроизводительная настольная платформа для общения, совместных голосовых и видеосозвонов нового поколения." FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
-                                <TextBlock Text="Студийное качество звука, минимальная задержка, интерактивный чат, гибкие настройки и управление содружествами." FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                                </Border>
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
                 </Grid>
 
-                <!-- Footer -->
+                <!-- Footer Buttons -->
                 <Border Grid.Row="2" Background="{DynamicResource ModalHeaderBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="20,0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <Button Content="Закрыть" Background="{DynamicResource CardBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="16,6" Margin="0,0,10,0" Cursor="Hand" Command="{Binding CloseCommand}" />
-                        <Button Content="Сохранить изменения" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" FontWeight="SemiBold" BorderThickness="0" Padding="16,6" Cursor="Hand" Command="{Binding SaveCommand}" />
+                        <Button Content="Закрыть" Command="{Binding CloseCommand}" Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}" BorderThickness="0" Padding="16,8" Margin="0,0,10,0" Cursor="Hand" FontWeight="SemiBold" FontSize="12" />
+                        <Button Content="Сохранить изменения" Command="{Binding ApplySettingsCommand}" Background="{DynamicResource AccentBrush}" Foreground="#FFFFFF" BorderThickness="0" Padding="18,8" Cursor="Hand" FontWeight="Bold" FontSize="12">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border CornerRadius="6" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </StackPanel>
                 </Border>
             </Grid>

@@ -24,7 +24,7 @@ public partial class MainWindow : Window
         Loaded += (s, e) =>
         {
             var hwnd = new WindowInteropHelper(this).Handle;
-            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.4");
+            TrayService.Instance.Initialize(hwnd, "STORM FELLOWSHIP v0.0.5");
         };
 
         Closing += (s, e) =>
