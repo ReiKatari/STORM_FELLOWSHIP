@@ -69,7 +69,7 @@ namespace StormFellowship.Installer
 
         private void InitializeComponent()
         {
-            this.Text = $"{AppDisplayName} — Установка";
+            this.Text = $"{AppDisplayName} {AppVersion} — Установка";
             this.Size = new Size(620, 520);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -88,7 +88,7 @@ namespace StormFellowship.Installer
 
             lblTitle = new Label
             {
-                Text = $"⚡ {AppDisplayName}",
+                Text = $"⚡ {AppDisplayName} {AppVersion}",
                 Font = new Font("Segoe UI", 14f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(14, 165, 233),
                 AutoSize = true,
@@ -239,7 +239,7 @@ namespace StormFellowship.Installer
 
             chkRunAfter = new CheckBox
             {
-                Text = $"Запустить {AppDisplayName} сразу после завершения",
+                Text = $"Запустить {AppDisplayName} {AppVersion} сразу после завершения",
                 Checked = true,
                 Location = new Point(10, 270),
                 AutoSize = true,
@@ -341,7 +341,7 @@ namespace StormFellowship.Installer
         private void BtnBrowse_Click(object? sender, EventArgs e)
         {
             using var fbd = new FolderBrowserDialog();
-            fbd.Description = $"Выберите папку для установки {AppDisplayName}:";
+            fbd.Description = $"Выберите папку для установки {AppDisplayName} {AppVersion}:";
             fbd.UseDescriptionForTitle = true;
             if (fbd.ShowDialog() == DialogResult.OK)
             {
@@ -651,7 +651,7 @@ namespace StormFellowship.Installer
                     shortcut.TargetPath = targetExe;
                     shortcut.WorkingDirectory = targetDir;
                     shortcut.IconLocation = (File.Exists(targetIco) ? targetIco : targetExe) + ",0";
-                    shortcut.Description = AppDisplayName;
+                    shortcut.Description = $"{AppDisplayName} {AppVersion}";
                     shortcut.Save();
                 }
 
@@ -663,7 +663,7 @@ namespace StormFellowship.Installer
                     deskShortcut.TargetPath = targetExe;
                     deskShortcut.WorkingDirectory = targetDir;
                     deskShortcut.IconLocation = (File.Exists(targetIco) ? targetIco : targetExe) + ",0";
-                    deskShortcut.Description = AppDisplayName;
+                    deskShortcut.Description = $"{AppDisplayName} {AppVersion}";
                     deskShortcut.Save();
                 }
             }
