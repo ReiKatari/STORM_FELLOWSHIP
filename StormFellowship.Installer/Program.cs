@@ -20,7 +20,7 @@ namespace StormFellowship.Installer
         private Label lblSubtitle = null!;
         private Button btnInstall = null!;
         private Button btnCancel = null!;
-        private const string AppVersion = "0.2.2";
+        private const string AppVersion = "0.2.3";
         private const string AppDisplayName = "STORM FELLOWSHIP";
         private const string ExeName = "StormFellowship.exe";
         private const string IcoName = "AppIcon.ico";
@@ -802,6 +802,7 @@ namespace StormFellowship.Installer
         }
     }
 }
+
 
 
 

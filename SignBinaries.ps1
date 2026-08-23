@@ -12,15 +12,16 @@ Get-ChildItem -Path "E:\STORM FELLOWSHIP" -Recurse | Unblock-File -ErrorAction S
 $filesToSign = @(
     "E:\STORM FELLOWSHIP\Assembling\StormFellowship.exe",
     "E:\STORM FELLOWSHIP\Assembling\StormFellowship.dll",
-    "E:\STORM FELLOWSHIP\Files\STORM_FELLOWSHIP_0.2.2_setup.exe"
+    "E:\STORM FELLOWSHIP\Files\STORM_FELLOWSHIP_0.2.3_setup.exe"
 )
 
 foreach ($f in $filesToSign) {
     if (Test-Path $f) {
-        $desc = "STORM FELLOWSHIP 0.2.2"
+        $desc = "STORM FELLOWSHIP 0.2.3"
         $argsList = "sign /fd SHA256 /d `"$desc`" /sha1 F8A8D6D6A6954867F08F480210CA0A81F2FEF756 `"$f`""
         
         Write-Host "Running signtool for $f ..."
         Start-Process -FilePath $signtool -ArgumentList $argsList -Wait -NoNewWindow
     }
 }
+

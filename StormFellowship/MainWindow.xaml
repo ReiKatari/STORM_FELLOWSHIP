@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:StormFellowship.Views.Controls"
         xmlns:dialogs="clr-namespace:StormFellowship.Views.Dialogs"
         mc:Ignorable="d"
-        Title="STORM FELLOWSHIP v0.2.2"
+        Title="STORM FELLOWSHIP 0.2.3"
         Icon="pack://application:,,,/Assets/AppIcon.png"
         Height="780" Width="1240"
         MinHeight="620" MinWidth="940"
@@ -251,3 +251,4 @@
         </Grid>
     </Grid>
 </Window>
+

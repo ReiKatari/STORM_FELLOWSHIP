@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%20Windows%2011-0078D4?style=for-the-badge&logo=windows" />
   <img src="https://img.shields.io/badge/Framework-.NET%208%20LTS%20%2F%20WPF%20Fluent-00D2FF?style=for-the-badge&logo=windows-terminal" />
   <img src="https://img.shields.io/badge/Language-C%23%20%2F%20.NET-7928CA?style=for-the-badge&logo=c-sharp" />
-  <img src="https://img.shields.io/badge/Version-v0.2.2-10B981?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Version-0.2.3-10B981?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge" />
 </p>
 
@@ -20,9 +20,9 @@
 
 ## ⚡ О проекте
 
-**STORM FELLOWSHIP v0.2.2** — это передовой клиент для командного, игрового и персонального общения, разработанный на базе высокопроизводительного рантайма **.NET 8 LTS** с современным интерфейсом **Fluent Glassmorphism** и глубокой интеграцией Windows 11 DWM.
+**STORM FELLOWSHIP 0.2.3** — это передовой клиент для командного, игрового и персонального общения, разработанный на базе высокопроизводительного рантайма **.NET 8 LTS** с современным интерфейсом **Fluent Glassmorphism** и глубокой интеграцией Windows 11 DWM.
 
-### 🌟 Ключевые возможности версии 0.2.2:
+### 🌟 Ключевые возможности версии 0.2.3:
 1. ☁️ **Бесплатный облачный бэкенд и синхронизация (Free 24/7 Cloud)**:
    - Поддержка Supabase / Firebase Realtime DB для мгновенной 24/7 синхронизации каналов, сообщений и профилей.
    - Полноценные формы авторизации: **Вход**, **Регистрация**, **Смена аккаунта** и офлайн-гостевой режим.
@@ -80,8 +80,8 @@ E:\STORM FELLOWSHIP\
 │   ├── StormFellowship.exe                 # Исполняемый файл программы
 │   └── Assets/ & Redist/                   # Встроенные ресурсы и нативные DLL
 ├── Files\                                  # Пакеты установки для пользователей
-│   ├── STORM_FELLOWSHIP_0.2.2_setup.exe    # Графический мастер установки
-│   ├── STORM_FELLOWSHIP_0.2.2.zip          # Портативный релизный архив
+│   ├── STORM_FELLOWSHIP_0.2.3_setup.exe    # Графический мастер установки
+│   ├── STORM_FELLOWSHIP_0.2.3.zip          # Портативный релизный архив
 │   ├── Install.ps1                         # Скрипт быстрой автоматической установки
 │   └── Uninstall.ps1                       # Скрипт полного удаления
 ├── Run_STORM_FELLOWSHIP.cmd                # Лаунчер приложения со снятием блокировок Windows
@@ -93,7 +93,7 @@ E:\STORM FELLOWSHIP\
 ## 🛠️ Установка и запуск
 
 ### Вариант 1: Быстрая установка через установщик
-Запустите `Run_Setup.cmd` или `STORM_FELLOWSHIP_0.2.2_setup.exe` из папки `Files`, либо выполните команду в PowerShell:
+Запустите `Run_Setup.cmd` или `STORM_FELLOWSHIP_0.2.3_setup.exe` из папки `Files`, либо выполните команду в PowerShell:
 ```powershell
 powershell -ExecutionPolicy Bypass -File "E:\STORM FELLOWSHIP\Files\Install.ps1"
 ```
@@ -107,4 +107,5 @@ powershell -ExecutionPolicy Bypass -File "E:\STORM FELLOWSHIP\Files\Install.ps1"
 
 - **Разработчик**: [ReiKatari](https://github.com/ReiKatari)
 - **Репозиторий проекта**: [https://github.com/ReiKatari/STORM_FELLOWSHIP](https://github.com/ReiKatari/STORM_FELLOWSHIP)
-- **Версия**: `0.2.2` (Релиз)
+- **Версия**: `0.2.3` (Релиз)
+

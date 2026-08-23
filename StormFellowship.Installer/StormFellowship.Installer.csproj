@@ -7,15 +7,15 @@
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.2.2</Version>
-    <AssemblyVersion>0.2.2.0</AssemblyVersion>
-    <FileVersion>0.2.2.0</FileVersion>
-    <Product>STORM FELLOWSHIP 0.2.2</Product>
+    <Version>0.2.3</Version>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+    <FileVersion>0.2.3.0</FileVersion>
+    <Product>STORM FELLOWSHIP 0.2.3</Product>
     <Company>STORM TEAM</Company>
     <Authors>ReiKatari</Authors>
-    <AssemblyTitle>STORM FELLOWSHIP 0.2.2</AssemblyTitle>
-    <Title>STORM FELLOWSHIP 0.2.2</Title>
-    <Description>STORM FELLOWSHIP 0.2.2</Description>
+    <AssemblyTitle>STORM FELLOWSHIP 0.2.3</AssemblyTitle>
+    <Title>STORM FELLOWSHIP 0.2.3</Title>
+    <Description>STORM FELLOWSHIP 0.2.3</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
@@ -24,3 +24,4 @@
     <EmbeddedResource Include="Payload.zip" />
   </ItemGroup>
 </Project>
+
