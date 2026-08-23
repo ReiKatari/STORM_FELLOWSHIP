@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>StormFellowship.Installer</RootNamespace>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -20,5 +21,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="STORM_Certificate.cer" />
+    <EmbeddedResource Include="Payload.zip" />
   </ItemGroup>
 </Project>

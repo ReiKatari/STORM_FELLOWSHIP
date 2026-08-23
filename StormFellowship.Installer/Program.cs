@@ -1,7 +1,8 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Reflection;
+using System.IO.Compression;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace StormFellowship.Installer;
 
@@ -56,6 +57,9 @@ internal static class Program
     [STAThread]
     static void Main(string[] args)
     {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
         try
         {
             string selfExe = Process.GetCurrentProcess().MainModule?.FileName ?? "";
@@ -141,37 +145,57 @@ internal static class Program
             string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "STORM FELLOWSHIP");
 
-            // Look for Assembling directory
-            string appBase = AppDomain.CurrentDomain.BaseDirectory;
-            string sourceAssembling = Path.Combine(@"E:\STORM FELLOWSHIP\Assembling");
-            if (!Directory.Exists(sourceAssembling))
-            {
-                sourceAssembling = Path.GetFullPath(Path.Combine(appBase, "..", "Assembling"));
-            }
-
             Directory.CreateDirectory(installDir);
             Directory.CreateDirectory(startMenuDir);
-
-            // Install bundled prerequisites if present
-            InstallPrerequisites(sourceAssembling, appBase);
-
-            // Copy files from Assembling to Install Directory
-            if (Directory.Exists(sourceAssembling))
-            {
-                CopyDirectory(sourceAssembling, installDir);
-            }
-
-            // Clean Zone.Identifier from all installed files to prevent Smart App Control blocks
-            UnblockAllFiles(installDir);
-
-            string exePath = Path.Combine(installDir, "StormFellowship.exe");
-            string iconPath = Path.Combine(installDir, "Assets", "AppIcon.ico");
             
             // Add Defender Exclusion for Installation Directory
             if (IsAdministrator())
             {
                 AddDefenderExclusionSilently(installDir);
             }
+
+            // Extract Payload.zip
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                foreach (var name in asm.GetManifestResourceNames())
+                {
+                    if (name.EndsWith("Payload.zip", StringComparison.OrdinalIgnoreCase))
+                    {
+                        using var stream = asm.GetManifestResourceStream(name);
+                        if (stream != null)
+                        {
+                            using var zip = new ZipArchive(stream, ZipArchiveMode.Read);
+                            foreach (var entry in zip.Entries)
+                            {
+                                string destPath = Path.Combine(installDir, entry.FullName);
+                                if (string.IsNullOrEmpty(entry.Name))
+                                {
+                                    Directory.CreateDirectory(destPath);
+                                    continue;
+                                }
+                                Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
+                                entry.ExtractToFile(destPath, true);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка извлечения файлов:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Install bundled prerequisites if present
+            InstallPrerequisites(installDir);
+
+            // Clean Zone.Identifier from all installed files to prevent Smart App Control blocks
+            UnblockAllFiles(installDir);
+
+            string exePath = Path.Combine(installDir, "StormFellowship.exe");
+            string iconPath = Path.Combine(installDir, "Assets", "AppIcon.ico");
 
             // Create Desktop Shortcut
             string desktopShortcut = Path.Combine(desktopDir, "STORM FELLOWSHIP.lnk");
@@ -221,7 +245,7 @@ timeout /t 2 >nul
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP 0.2.2 успешно установлена и разблокирована!\n\n• Бесплатный облачный бэкенд и синхронизация (Supabase Realtime)\n• Формы входа, регистрации и облачного профиля\n• Подключение по ссылке-приглашению (storm://invite/) и Direct LAN P2P\n• HD видео с веб-камеры и локальный предпросмотр\n• Полная поддержка аватаров в игровом оверлее\n• 100% векторная графика без черных силуэтов\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP 0.2.2.", "Установка STORM FELLOWSHIP 0.2.2", 0x00000040);
+            MessageBox.Show("STORM FELLOWSHIP 0.2.2 успешно установлена и разблокирована!\n\n• Бесплатный облачный бэкенд и синхронизация (Supabase Realtime)\n• Формы входа, регистрации и облачного профиля\n• Подключение по ссылке-приглашению (storm://invite/) и Direct LAN P2P\n• HD видео с веб-камеры и локальный предпросмотр\n• Полная поддержка аватаров в игровом оверлее\n• 100% векторная графика без черных силуэтов\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP 0.2.2.", "Установка STORM FELLOWSHIP 0.2.2", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Launch app
             if (File.Exists(exePath))
@@ -236,89 +260,64 @@ timeout /t 2 >nul
         }
         catch (Exception ex)
         {
-            MessageBox(nint.Zero, $"Ошибка при установке:\n{ex.Message}", "Ошибка установки STORM FELLOWSHIP", 0x00000010);
+            MessageBox.Show($"Ошибка при установке:\n{ex.Message}", "Ошибка установки STORM FELLOWSHIP", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
-    private static void InstallPrerequisites(string sourceAssembling, string appBase)
+    private static void InstallPrerequisites(string installDir)
     {
         try
         {
-            string[] redistSearchPaths = new[]
+            string rPath = Path.Combine(installDir, "Redist");
+            if (!Directory.Exists(rPath)) return;
+
+            // VC++ Redistributable
+            string vcInstaller = Path.Combine(rPath, "vc_redist.x64.exe");
+            if (File.Exists(vcInstaller))
             {
-                Path.Combine(sourceAssembling, "Redist"),
-                Path.Combine(appBase, "Redist"),
-                Path.Combine(@"E:\STORM FELLOWSHIP\Files\Redist")
-            };
+                var p = Process.Start(new ProcessStartInfo
+                {
+                    FileName = vcInstaller,
+                    Arguments = "/install /quiet /norestart",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                });
+                p?.WaitForExit(30000);
+            }
 
-            foreach (var rPath in redistSearchPaths)
+            // WebView2 Bootstrapper
+            string wvInstaller = Path.Combine(rPath, "MicrosoftEdgeWebview2Setup.exe");
+            if (File.Exists(wvInstaller))
             {
-                if (!Directory.Exists(rPath)) continue;
-
-                // VC++ Redistributable
-                string vcInstaller = Path.Combine(rPath, "vc_redist.x64.exe");
-                if (File.Exists(vcInstaller))
+                var p = Process.Start(new ProcessStartInfo
                 {
-                    var p = Process.Start(new ProcessStartInfo
-                    {
-                        FileName = vcInstaller,
-                        Arguments = "/install /quiet /norestart",
-                        UseShellExecute = true,
-                        CreateNoWindow = true
-                    });
-                    p?.WaitForExit(30000);
-                }
-
-                // WebView2 Bootstrapper
-                string wvInstaller = Path.Combine(rPath, "MicrosoftEdgeWebview2Setup.exe");
-                if (File.Exists(wvInstaller))
-                {
-                    var p = Process.Start(new ProcessStartInfo
-                    {
-                        FileName = wvInstaller,
-                        Arguments = "/silent /install",
-                        UseShellExecute = true,
-                        CreateNoWindow = true
-                    });
-                    p?.WaitForExit(30000);
-                }
-
-                break;
+                    FileName = wvInstaller,
+                    Arguments = "/silent /install",
+                    UseShellExecute = true,
+                    CreateNoWindow = true
+                });
+                p?.WaitForExit(30000);
             }
         }
-        catch
-        {
-            // Ignore optional prerequisites installation errors if already installed
-        }
-    }
-
-    private static void CopyDirectory(string sourceDir, string targetDir)
-    {
-        foreach (string dir in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
-        {
-            Directory.CreateDirectory(dir.Replace(sourceDir, targetDir));
-        }
-
-        foreach (string file in Directory.GetFiles(sourceDir, "*.*", SearchOption.AllDirectories))
-        {
-            string dest = file.Replace(sourceDir, targetDir);
-            File.Copy(file, dest, true);
-        }
+        catch { }
     }
 
     private static void UnblockAllFiles(string directory)
     {
         try
         {
-            foreach (string file in Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories))
+            var psi = new ProcessStartInfo
             {
-                DeleteFileW(file + ":Zone.Identifier");
-            }
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"Get-ChildItem -Path '{directory}' -Recurse | Unblock-File -ErrorAction SilentlyContinue\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            using var p = Process.Start(psi);
+            p?.WaitForExit(5000);
         }
-        catch
-        {
-            // Safe fallback
-        }
+        catch { }
     }
 
     private static void CreateShortcut(string shortcutPath, string targetPath, string workingDir, string iconPath, string description)
@@ -343,16 +342,6 @@ timeout /t 2 >nul
                 }
             }
         }
-        catch
-        {
-            // Fallback safe
-        }
+        catch { }
     }
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool DeleteFileW(string lpFileName);
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern int MessageBox(nint hWnd, string text, string caption, uint type);
 }
