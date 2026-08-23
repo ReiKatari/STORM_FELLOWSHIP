@@ -12,7 +12,9 @@
     <Product>STORM FELLOWSHIP 0.2.2</Product>
     <Company>STORM TEAM</Company>
     <Authors>ReiKatari</Authors>
-    <Description>Setup wizard for STORM FELLOWSHIP v0.2.2</Description>
+    <AssemblyTitle>STORM FELLOWSHIP 0.2.2</AssemblyTitle>
+    <Title>STORM FELLOWSHIP 0.2.2</Title>
+    <Description>STORM FELLOWSHIP 0.2.2</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 

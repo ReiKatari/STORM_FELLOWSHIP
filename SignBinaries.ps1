@@ -1,7 +1,7 @@
-$cert = Get-Item "Cert:\CurrentUser\My\F8A8D6D6A6954867F08F480210CA0A81F2FEF756" -ErrorAction SilentlyContinue
+$signtool = (Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe" | Select-Object -Last 1).FullName
 
-if (-not $cert) {
-    Write-Host "Certificate STORM TEAM not found!"
+if (-not $signtool) {
+    Write-Host "signtool.exe not found!"
     exit 1
 }
 
@@ -17,7 +17,10 @@ $filesToSign = @(
 
 foreach ($f in $filesToSign) {
     if (Test-Path $f) {
-        $res = Set-AuthenticodeSignature -FilePath $f -Certificate $cert -HashAlgorithm SHA256
-        Write-Host "[SIGN] $f -> $($res.Status) ($($res.StatusMessage))"
+        $desc = "STORM FELLOWSHIP 0.2.2"
+        $argsList = "sign /fd SHA256 /d `"$desc`" /sha1 F8A8D6D6A6954867F08F480210CA0A81F2FEF756 `"$f`""
+        
+        Write-Host "Running signtool for $f ..."
+        Start-Process -FilePath $signtool -ArgumentList $argsList -Wait -NoNewWindow
     }
 }
