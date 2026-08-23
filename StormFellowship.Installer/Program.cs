@@ -53,9 +53,9 @@ internal static class Program
             // Write Registry Entries for Add/Remove Programs
             using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\StormFellowship"))
             {
-                key.SetValue("DisplayName", "STORM FELLOWSHIP");
+                key.SetValue("DisplayName", "STORM FELLOWSHIP 0.2.2");
                 key.SetValue("DisplayVersion", "0.2.2");
-                key.SetValue("Publisher", "ReiKatari");
+                key.SetValue("Publisher", "STORM TEAM");
                 key.SetValue("DisplayIcon", iconPath);
                 key.SetValue("InstallLocation", installDir);
                 key.SetValue("UninstallString", $"cmd.exe /c \"{Path.Combine(installDir, "Uninstall.cmd")}\"");
@@ -90,7 +90,7 @@ timeout /t 2 >nul
             File.WriteAllText(uninstallerCmd, uninstallScript);
 
             // Notify user of completion
-            MessageBox(nint.Zero, "STORM FELLOWSHIP v0.2.2 успешно установлена и разблокирована!\n\n• Бесплатный облачный бэкенд и синхронизация (Supabase Realtime)\n• Формы входа, регистрации и облачного профиля\n• Подключение по ссылке-приглашению (storm://invite/) и Direct LAN P2P\n• HD видео с веб-камеры и локальный предпросмотр\n• Полная поддержка аватаров в игровом оверлее\n• 100% векторная графика без черных силуэтов\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP.", "Установка STORM FELLOWSHIP", 0x00000040);
+            MessageBox(nint.Zero, "STORM FELLOWSHIP 0.2.2 успешно установлена и разблокирована!\n\n• Бесплатный облачный бэкенд и синхронизация (Supabase Realtime)\n• Формы входа, регистрации и облачного профиля\n• Подключение по ссылке-приглашению (storm://invite/) и Direct LAN P2P\n• HD видео с веб-камеры и локальный предпросмотр\n• Полная поддержка аватаров в игровом оверлее\n• 100% векторная графика без черных силуэтов\n• Создан ярлык на Рабочем столе\n• Программа добавлена в меню «Пуск»\n• Зарегистрирован протокол storm://\n\nНажмите OK для запуска STORM FELLOWSHIP 0.2.2.", "Установка STORM FELLOWSHIP 0.2.2", 0x00000040);
 
             // Launch app
             if (File.Exists(exePath))
