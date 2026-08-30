@@ -1,65 +1,35 @@
-<div align="center">
+# STORM FELLOWSHIP
 
-<img src="logo.png" width="128" height="128" alt="STORM FELLOWSHIP Logo" />
+## **О проекте**
+STORM FELLOWSHIP — сетевой координатор, менеджер игровых сессий и инструмент синхронизации игровых сохранений для совместной локальной и онлайн игры. Позволяет организовывать P2P-сессии, синхронизировать сохранения между разными устройствами (PC, Android, Switch) и координировать запуск многопользовательских проектов.
 
-# ⚡ STORM FELLOWSHIP
+## **Происхождение и форки**
+Оригинальная разработка ReiKatari в составе экосистемы STORM SOFT.
 
-<p align="center">
-  <b>Интерактивная звуковая панель (Soundboard) и менеджер аудио-эффектов для стримов и голосовых чатов.</b>
-</p>
+## **Технологический стек**
+- **Языки программирования**: TypeScript, C#, Node.js
+- **Сетевой стек**: WebSockets, WebRTC P2P Data Channels, NAT Traversal (STUN/TURN)
+- **Интерфейс**: React, Tailwind CSS, WPF / Electron Frontend
+- **Криптография**: End-to-End шифрование сессий (AES-256-GCM, ECDH)
 
-[![Version](https://img.shields.io/badge/version-0.2.3-00D2FF.svg?style=for-the-badge)](https://github.com/ReiKatari/STORM_FELLOWSHIP)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2011%20%7C%2010-0EA5E9.svg?style=for-the-badge)](https://github.com/ReiKatari/STORM_FELLOWSHIP)
-[![Publisher](https://img.shields.io/badge/Publisher-STORM%20TEAM-10B981.svg?style=for-the-badge)](https://github.com/ReiKatari)
-[![Developer](https://img.shields.io/badge/Author-ReiKatari-F59E0B.svg?style=for-the-badge)](https://github.com/ReiKatari)
-[![Signed](https://img.shields.io/badge/Security-SHA256%20Signed-10B981.svg?style=for-the-badge)](https://github.com/ReiKatari)
+## **Ключевые возможности**
+- **Мгновенная синхронизация сохранений**: Автоматическая передача файлов сохранений между ПК и мобильными устройствами без облачных посредников.
+- **P2P Комнаты и Лобби**: Быстрое создание лобби для совместной игры с обменом IP и состоянием готовности игроков.
+- **Сквозное шифрование**: Полная конфиденциальность передаваемых данных и игровых профилей.
 
-</div>
+## **Поддерживаемые платформы и эмуляторы**
+- **Операционные системы**: Windows 10, Windows 11 (x64), Android, Linux
 
----
+## **Установка и запуск**
+1. Скачайте релиз из секции **Releases** на GitHub.
+2. Установите и запустите клиент на устройствах участников игровой сессии.
 
-## 🌟 О проекте / Overview
+## **Безопасность и цифровые подписи**
+Дистрибутивы подписаны цифровым сертификатом **CN=STORM SOFT, O=STORM EDEN** (SHA-256 Authenticode).
 
-**STORM FELLOWSHIP** — компонент программного комплекса **STORM**, разработанный с упором на максимальную производительность, современный дизайн и надёжность.
+## **Авторы и лицензия**
+- **Автор проекта**: ReiKatari
+- **Лицензия**: MIT License
 
-* **Версия:** $ver
-* **Издатель:** STORM TEAM
-* **Ведущий разработчик:** ReiKatari
-* **Технологический стек:** $tech
-
----
-
-## 🚀 Установка / Installation
-
-Установка производится через единый инсталлятор **STORM INSTALLER**:
-
-1. Запустите файл STORM_STORM_FELLOWSHIP_0.2.3_Setup.exe.
-2. Выберите режим:
-   * **Стандартная установка** — установка в C:\Program Files\STORM FELLOWSHIP с созданием ярлыков и регистрацией в системе.
-   * **Портативная версия** — распаковка в любую выбранную папку без изменения реестра.
-3. Опция автоматической регистрации доверенного сертификата STORM TEAM исключает предупреждения SmartScreen и Smart App Control.
-
----
-
-## 🛡️ Безопасность и Цифровая подпись / Code Signing
-
-Все исполняемые файлы и инсталляторы подписаны сертификатом **STORM TEAM** с использованием хэширования SHA-256 и RFC 3161 Timestamping.
-
-* Для ручной установки сертификата в хранилище доверенных корневых центров запустите:
-  Files\Разблокировать_И_Установить_Сертификат.bat от имени Администратора.
-
----
-
-## 📁 Структура репозитория / Structure
-
-* Assembling/ — скомпилированные релизные бинарные файлы и зависимости программы.
-* Files/ — инсталлятор, сертификат STORM_Certificate.cer и сервисные скрипты.
-* Sources/ — исходный код решения.
-
----
-
-## 👥 Авторы и Лицензия / Credits
-
-* **Разработчик:** [ReiKatari](https://github.com/ReiKatari)
-* **Издатель:** **STORM TEAM**
-* © 2026 STORM TEAM. Все права защищены.
+## **Благодарности**
+- **Сообщество открытых P2P технологий** — за протоколы WebRTC и децентрализованные сетевые стандарты.
